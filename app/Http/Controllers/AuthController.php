@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
@@ -35,7 +36,16 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $user = User::find(Auth::user()->id);
+        $user_roles = $user->roles()->pluck('nom');
+
+
+        return response()->json([
+            'success' => true,
+            'token' => $token,  
+            'status' => 200,
+            'roles' => $user_roles,
+        ]);
     }
 
     /**
