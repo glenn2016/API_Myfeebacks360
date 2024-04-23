@@ -97,8 +97,21 @@ class EvenementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Evenement $evenement)
+    public function softDelete($id)
     {
-        //
+        $evenement = Evenement::find($id);
+    
+        if ($evenement) {
+            $evenement->delete(); // Utilise la suppression douce
+            return response()->json([
+                'message' => 'evenement soft deleted successfully',
+                'status' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'evenement not found',
+                'status' => 404
+            ], 404);
+        }
     }
 }

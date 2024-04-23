@@ -121,8 +121,21 @@ class EvaluationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Evaluation $evaluation)
+    public function softDelete($id)
     {
-        //
+        $evaluation = Evaluation::find($id);
+    
+        if ($evaluation) {
+            $evaluation->delete(); // Utilise la suppression douce
+            return response()->json([
+                'message' => 'evaluation soft deleted successfully',
+                'status' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'evaluation not found',
+                'status' => 404
+            ], 404);
+        }
     }
 }

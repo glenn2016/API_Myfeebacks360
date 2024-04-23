@@ -82,13 +82,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //Entreprise
     Route::post('/entreprise/create',[EntrepriseController::class,'create'])->middleware('auth:api');
     Route::put('/entreprise/update/{id}', [EntrepriseController::class, 'update'])->middleware('auth:api');
-    Route::put('/entreprises/{id}/soft-delete', [EntrepriseController::class, 'delete'])->middleware('auth:api');
+    Route::put('/entreprises/{id}/soft-delete', [EntrepriseController::class, 'softDelete'])->middleware('auth:api');
     //Role
     Route::get('/roles',[RoleController::class,'index'])->middleware('auth:api');
     //Evenement
     Route::post('/evenement/create',[EvenementController::class,'create'])->middleware('auth:api');
     Route::put('/evenement/update/{id}', [EvenementController::class, 'update'])->middleware('auth:api');
-    Route::put('/evenements/{id}/soft-delete', [EvenementController::class, 'delete'])->middleware('auth:api');
+    Route::put('/evenements/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
 });
 
 Route::middleware(['auth', 'role:participant'])->group(function () {
@@ -96,10 +96,10 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     //Feddback
     Route::post('/fedddback/create',[FeddbackController::class,'create'])->middleware('auth:api');
     Route::put('/fedddback/update/{id}', [FeddbackController::class, 'update'])->middleware('auth:api');
-    Route::put('/fedddbacks/{id}/soft-delete', [FeddbackController::class, 'delete'])->middleware('auth:api');
+    Route::put('/fedddbacks/{id}/soft-delete', [FeddbackController::class, 'softDelete'])->middleware('auth:api');
 
     //Evaluations
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::put('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
-    Route::put('/evaluations/{id}/soft-delete', [EvenementController::class, 'delete'])->middleware('auth:api');
+    Route::put('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
 });

@@ -7,6 +7,9 @@ use App\Models\User;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class AuthController extends Controller
@@ -28,6 +31,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+
     public function login()
     {
         $credentials = request(['email', 'password']);
@@ -38,7 +42,6 @@ class AuthController extends Controller
 
         $user = User::find(Auth::user()->id);
         $user_roles = $user->roles()->pluck('nom');
-
 
         return response()->json([
             'success' => true,
@@ -70,6 +73,45 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
+    public function create(Request $request){
+        $validations = Validator::make($request->all(), [
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => 'required|string|min:8',
+        ]);
+    
+        if ($validations->fails()) {
+            $errors = $validations->errors();
+            return response()->json([
+                'errors' => $errors,
+                'status' => 401
+            ]);
+        }
+
+        if ($validations->passes()) {
+            $user = User::create([
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'email' => $request->email,
+                'categorie_id' => $request->categorie_id,
+                'entreprise_id' => $request->entreprise_id,
+                'password' => Hash::make($request->password),
+            ]);
+    
+            // Attache le rôle à l'utilisateur
+            $user->roles()->attach(2);
+    
+            // Crée un jeton d'authentification pour l'utilisateur
+            $token = $user->createToken('auth_token')->accessToken;
+    
+            return response()->json([
+                'token' => $token,      
+                'type' => 'Bearer'
+            ]);
+        }
+    }
+
     /**
      * Refresh a token.
      *
@@ -95,4 +137,5 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
+
 }

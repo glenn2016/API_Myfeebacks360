@@ -86,8 +86,22 @@ class EntrepriseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Entreprise $entreprise)
+    public function softDelete($id)
     {
-        //
+        $entreprise = Entreprise::find($id);
+    
+        if ($entreprise) {
+            $entreprise->delete(); // Utilise la suppression douce
+            return response()->json([
+                'message' => 'entreprise soft deleted successfully',
+                'status' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'entreprise not found',
+                'status' => 404
+            ], 404);
+        }
     }
+
 }
