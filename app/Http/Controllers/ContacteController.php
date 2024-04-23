@@ -12,16 +12,39 @@ class ContacteController extends Controller
      */
     public function index()
     {
-        //
+        $evenements = Contacte::all();
+        return response()->json([
+            'Contactes' => $evenements,
+            'status' => 200
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
+    public function create(Request $request){
+        $validatedData = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'max:255'],
+            'telephone' => ['required', 'string', 'max:255'],
+            'message' => ['required', 'string', 'max:255'],
+        ]);
+    
+        $contacte = new Contacte();
+        $contacte->nom = $validatedData['nom'];
+        $contacte->prenom = $validatedData['prenom'];
+        $contacte->email = $validatedData['email'];
+        $contacte->telephone = $validatedData['telephone'];
+        $contacte->message = $validatedData['message'];
+        $contacte->save();
+    
+        return response()->json([
+            'message' => 'contacte créé avec succès',
+            'contacte' => $contacte,
+        ], 200);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -34,9 +57,12 @@ class ContacteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Contacte $contacte)
-    {
-        //
+    public function show($id){
+        return response()->json([
+            'contacte' => Contacte::find($id),
+            'message' => 'contacte recuperer',
+            'status' => 200
+        ]);
     }
 
     /**
