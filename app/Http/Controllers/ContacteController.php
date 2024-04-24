@@ -12,9 +12,9 @@ class ContacteController extends Controller
      */
     public function index()
     {
-        $evenements = Contacte::all();
+        $contacte = Contacte::all();
         return response()->json([
-            'Contactes' => $evenements,
+            'Contactes' => $contacte,
             'status' => 200
         ]);
     }
@@ -25,17 +25,13 @@ class ContacteController extends Controller
     public function create(Request $request){
         $validatedData = $request->validate([
             'nom' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'max:255'],
-            'telephone' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string', 'max:255'],
         ]);
     
         $contacte = new Contacte();
         $contacte->nom = $validatedData['nom'];
-        $contacte->prenom = $validatedData['prenom'];
         $contacte->email = $validatedData['email'];
-        $contacte->telephone = $validatedData['telephone'];
         $contacte->message = $validatedData['message'];
         $contacte->save();
     

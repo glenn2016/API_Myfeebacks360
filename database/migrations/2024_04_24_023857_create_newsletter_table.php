@@ -11,20 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contactes', function (Blueprint $table) {
+        Schema::create('newsletter', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
-            $table->string('email');
-            $table->string('message');
-            $table->softDeletes();
+            $table->string('email')->unique();
+            $table->string('status');
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('contactes');
+        Schema::dropIfExists('newsletter');
     }
 };
