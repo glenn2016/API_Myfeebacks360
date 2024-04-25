@@ -40,6 +40,15 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+        $user = Auth::user();
+
+        if ($user->etat === 0) {
+            return response()->json([
+                'error' => 'Votre compte est bloqué',
+                'status'=>402
+            ]);
+        }
+    
         $user = User::find(Auth::user()->id);
         $user_roles = $user->roles()->pluck('nom');
 
@@ -135,10 +144,7 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
-
     //listes empoloyer
-
-
     public function index()
     {
         $users = User::whereHas('roles', function ($query) {
@@ -159,7 +165,6 @@ class AuthController extends Controller
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
-            'password' => 'sometimes|required|string|min:8', // Utilisez 'sometimes' pour le champ password si vous souhaitez qu'il soit facultatif lors de la mise à jour
             'categorie_id' => ['nullable', 'exists:categories,id'],
             'entreprise_id' => ['nullable', 'exists:entreprises,id'],
         ]);
@@ -171,33 +176,23 @@ class AuthController extends Controller
                 'status' => 400
             ], 400);
         }
-
         // Récupère l'utilisateur à mettre à jour
         $user = User::findOrFail($id);
-
         // Mise à jour des attributs de l'utilisateur
         $user->nom = $request->nom;
         $user->prenom = $request->prenom;
         $user->email = $request->email;
-        
-        // Vérifie si un nouveau mot de passe est fourni
-        if ($request->has('password')) {
-            $user->password = Hash::make($request->password);
-        }
-
         // Mise à jour de la catégorie et de l'entreprise si les IDs sont fournis dans la requête
         if ($request->filled('categorie_id')) {
             $user->categorie_id = $request->categorie_id;
         }
-
         if ($request->filled('entreprise_id')) {
             $user->entreprise_id = $request->entreprise_id;
         }
-
         // Enregistre les modifications
         $user->save();
 
-        // Retourne la réponse JSON avec l'utilisateur mis à jour
+        // Retourne la réponse JSONcavec l'utilisateur mis à jour
         return response()->json([
             'message' => 'Utilisateur mis à jour avec succès',
             'user' => $user,
@@ -222,16 +217,18 @@ class AuthController extends Controller
             'status' => 200
         ]);
     }
-    
 
     public function bloquer($id)
     {
         $user = User::find($id);
+
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
-        $user->update(['etat' => false]);
-        return response()->json(['message' => 'Utilisateur bloqué avec succès'], 200);
+        $user->etat = 0;
+        $user->save();
+        return response()->json(
+            ['message' => 'Utilisateur bloqué avec succès','User'=>$user], 200);
     }
 
     public function debloquer($id)
@@ -240,9 +237,15 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
-        $user->update(['etat' => true]);
-        return response()->json(['message' => 'Utilisateur débloqué avec succès'], 200);
+        $user->etat = 1;
+        $user->save();
+
+        return response()->json(['message' => 'Utilisateur débloqué avec succès','User'=>$user], 200);
     }
+
+
+
+
+    
 }
     
-

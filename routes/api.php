@@ -79,10 +79,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/participant/update/{id}',[Authcontroller::class,'update'])->middleware('auth:api');
     Route::get('/participants',[Authcontroller::class,'index'])->middleware('auth:api'); 
     Route::get('/participants/{id}',[Authcontroller::class,'show'])->middleware('auth:api');
-    
-    Route::put('/participant/{id}/bloquer',[Authcontroller::class,'bloquer'])->middleware('auth:api');
-    Route::put('/participant/{id}/debloquer',[Authcontroller::class,'debloquer'])->middleware('auth:api');
-
+    Route::post('/participant/{id}/bloquer',[Authcontroller::class,'bloquer'])->middleware('auth:api');
+    Route::post('/participant/{id}/debloquer',[Authcontroller::class,'debloquer'])->middleware('auth:api');
     //Categorie
     Route::post('/categorie/create',[CategorieController::class,'create'])->middleware('auth:api');
     Route::post('/categorie/update/{id}', [CategorieController::class, 'update'])->middleware('auth:api');
