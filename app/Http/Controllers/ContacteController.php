@@ -80,8 +80,21 @@ class ContacteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contacte $contacte)
+    public function softDelete($id)
     {
-        //
+        $Contacte = Contacte::find($id);
+    
+        if ($Contacte) {
+            $Contacte->delete(); // Utilise la suppression douce
+            return response()->json([
+                'message' => 'Contacte soft deleted successfully',
+                'status' => 200
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Contacte not found',
+                'status' => 404
+            ], 404);
+        }
     }
 }

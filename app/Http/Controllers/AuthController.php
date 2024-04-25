@@ -101,10 +101,8 @@ class AuthController extends Controller
     
             // Attache le rôle à l'utilisateur
             $user->roles()->attach(2);
-    
             // Crée un jeton d'authentification pour l'utilisateur
             $token = $user->createToken('auth_token')->accessToken;
-    
             return response()->json([
                 'token' => $token,      
                 'type' => 'Bearer'
@@ -137,5 +135,21 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
+
+    //listes empoloyer
+
+
+    public function index()
+    {
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('nom', 'participant');
+        })->with('categorie', 'entreprise', 'roles')->get();
+
+        return response()->json([
+            'participants' => $users,
+            'status' => 200
+        ]);
+    }
+
 
 }

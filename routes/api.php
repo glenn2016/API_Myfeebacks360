@@ -65,20 +65,25 @@ Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 Route::post('/contacte/create',[ContacteController::class,'create']);
 
 
+
+Route::get('/participants',[Authcontroller::class,'index']);
+
+
+
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //ADmin_Authentifie
     Route::get('/user_admin',[Authcontroller::class,'user'])->middleware('auth:api');
     //Contacte
     Route::get('/contacte/{id}',[ContacteController::class,'show'])->middleware('auth:api');
     Route::get('/contactes',[ContacteController::class,'index'])->middleware('auth:api');
-    Route::delete('/contacte/{id}/soft-delete', [ContacteController::class, 'delete'])->middleware('auth:api');
+    Route::delete('/contacte/{id}/soft-delete', [ContacteController::class, 'softDelete'])->middleware('auth:api');
     //Participant
     Route::post('/participant/create',[Authcontroller::class,'create'])->middleware('auth:api');
     //Categorie
     Route::post('/categorie/create',[CategorieController::class,'create'])->middleware('auth:api');
     Route::post('/categorie/update/{id}', [CategorieController::class, 'update'])->middleware('auth:api');
     Route::delete('/categories/{id}/soft-delete', [CategorieController::class, 'softDelete'])->middleware('auth:api');
-
     //Entreprise
     Route::post('/entreprise/create',[EntrepriseController::class,'create'])->middleware('auth:api');
     Route::post('/entreprise/update/{id}', [EntrepriseController::class, 'update'])->middleware('auth:api');
@@ -103,3 +108,5 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
 });
+
+
