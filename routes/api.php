@@ -66,10 +66,6 @@ Route::post('/contacte/create',[ContacteController::class,'create']);
 
 
 
-Route::get('/participants',[Authcontroller::class,'index']);    
-
-
-
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //ADmin_Authentifie
@@ -80,6 +76,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/contacte/{id}/soft-delete', [ContacteController::class, 'softDelete'])->middleware('auth:api');
     //Participant
     Route::post('/participant/create',[Authcontroller::class,'create'])->middleware('auth:api');
+    Route::get('/participants',[Authcontroller::class,'index'])->middleware('auth:api');    
     //Categorie
     Route::post('/categorie/create',[CategorieController::class,'create'])->middleware('auth:api');
     Route::post('/categorie/update/{id}', [CategorieController::class, 'update'])->middleware('auth:api');
