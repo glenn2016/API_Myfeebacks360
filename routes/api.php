@@ -66,7 +66,7 @@ Route::post('/contacte/create',[ContacteController::class,'create']);
 
 
 
-Route::get('/participants',[Authcontroller::class,'index']);
+Route::get('/participants',[Authcontroller::class,'index']);    
 
 
 

@@ -142,7 +142,7 @@ class AuthController extends Controller
     public function index()
     {
         $users = User::whereHas('roles', function ($query) {
-            $query->where('nom', 'participant');
+            $query->where('nom', 'Participant');
         })->with('categorie', 'entreprise', 'roles')->get();
 
         return response()->json([
@@ -150,6 +150,4 @@ class AuthController extends Controller
             'status' => 200
         ]);
     }
-
-
 }

@@ -83,4 +83,15 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Feddback::class);
     }
+
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class);
+    }
+
+    public function entreprise()
+    {
+        return $this->belongsTo(Entreprise::class);
+    }
+
 }
