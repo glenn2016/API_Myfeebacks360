@@ -144,7 +144,10 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
+
     //listes empoloyer
+
+
     public function index()
     {
         $users = User::whereHas('roles', function ($query) {
@@ -168,7 +171,6 @@ class AuthController extends Controller
             'categorie_id' => ['nullable', 'exists:categories,id'],
             'entreprise_id' => ['nullable', 'exists:entreprises,id'],
         ]);
-
         // Vérifie si la validation a échoué
         if ($validator->fails()) {
             return response()->json([
@@ -191,9 +193,8 @@ class AuthController extends Controller
         }
         // Enregistre les modifications
         $user->save();
-
         // Retourne la réponse JSONcavec l'utilisateur mis à jour
-        return response()->json([
+        return response()->json(4[
             'message' => 'Utilisateur mis à jour avec succès',
             'user' => $user,
             'status' => 200
@@ -203,7 +204,6 @@ class AuthController extends Controller
     public function show($id)
     {
         $participant = User::with('categorie', 'entreprise', 'roles')->find($id);
-
         if (!$participant) {
             return response()->json([
                 'message' => 'Participant non trouvé',

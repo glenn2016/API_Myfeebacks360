@@ -11,6 +11,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\ContacteController;
+use App\Http\Controllers\NewsletterController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -63,11 +65,17 @@ Route::get('/entreprises',[EntrepriseController::class,'index']);
 Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 //Contacte
 Route::post('/contacte/create',[ContacteController::class,'create']);
-
+//Newsletter
+Route::post('/newsletter/create',[NewsletterController::class,'create']);
 
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    //Newsletter
+    Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
+    Route::delete('/newsletter/{id}/soft-delete', [NewsletterController::class, 'softDelete'])->middleware('auth:api');
+
     //ADmin_Authentifie
     Route::get('/user_admin',[Authcontroller::class,'user'])->middleware('auth:api');
     //Contacte
