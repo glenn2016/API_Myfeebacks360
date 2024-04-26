@@ -86,6 +86,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/participant/create',[Authcontroller::class,'create'])->middleware('auth:api');
     Route::post('/participant/update/{id}',[Authcontroller::class,'update'])->middleware('auth:api');
     Route::get('/participants',[Authcontroller::class,'index'])->middleware('auth:api'); 
+    Route::get('/participants/bloquer',[Authcontroller::class,'indexs'])->middleware('auth:api'); 
     Route::get('/participants/{id}',[Authcontroller::class,'show'])->middleware('auth:api');
     Route::post('/participant/{id}/bloquer',[Authcontroller::class,'bloquer'])->middleware('auth:api');
     Route::post('/participant/{id}/debloquer',[Authcontroller::class,'debloquer'])->middleware('auth:api');

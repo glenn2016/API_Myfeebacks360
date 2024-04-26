@@ -152,7 +152,25 @@ class AuthController extends Controller
     {
         $users = User::whereHas('roles', function ($query) {
             $query->where('nom', 'Participant');
-        })->with('categorie', 'entreprise', 'roles')->get();
+        })
+        ->where('etat', 0) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
+        ->with('categorie', 'entreprise', 'roles')
+        ->get();
+    
+        return response()->json([
+            'participants' => $users,   
+            'status' => 200
+        ]);
+    }
+
+    public function indexs()
+    {
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('nom', 'Participant');
+        })
+        ->where('etat', 1) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
+        ->with('categorie', 'entreprise', 'roles')
+        ->get();
 
         return response()->json([
             'participants' => $users,
@@ -194,7 +212,7 @@ class AuthController extends Controller
         // Enregistre les modifications
         $user->save();
         // Retourne la réponse JSONcavec l'utilisateur mis à jour
-        return response()->json(4[
+        return response()->json([
             'message' => 'Utilisateur mis à jour avec succès',
             'user' => $user,
             'status' => 200
