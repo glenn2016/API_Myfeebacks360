@@ -29,7 +29,6 @@ class FeddbackController extends Controller
         $validator = Validator::make($request->all(), [
             'evenement_id' => ['required', 'numeric'], // Assurez-vous que evenement_id est numérique
             'titre' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date'],
         ]);
     
         if ($validator->fails()) {
@@ -86,7 +85,6 @@ class FeddbackController extends Controller
         $validator = Validator::make($request->all(), [
             'evenement_id' => ['required', 'numeric'], // Assurez-vous que evenement_id est numérique
             'titre' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date'],
         ]);
     
         if ($validator->fails()) {
@@ -99,7 +97,7 @@ class FeddbackController extends Controller
         $validatedData = $validator->validated();
 
         $feedback = Feddback::find($id);
-        
+
         $feedback->commentaire = $validatedData['titre'];
         $feedback->date = $validatedData['date'];
         $feedback->evenement_id = $validatedData['evenement_id'];
