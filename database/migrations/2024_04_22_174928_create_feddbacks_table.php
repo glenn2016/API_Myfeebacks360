@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('feddbacks', function (Blueprint $table) {
             $table->id();
-            $table->string('commantaire');
+            $table->string('question_one');
+            $table->string('question_deux');
+            $table->string('question_trois');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->nullable();
             $table->unsignedBigInteger('evenement_id')->nullable();

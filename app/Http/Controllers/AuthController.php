@@ -153,9 +153,9 @@ class AuthController extends Controller
         $users = User::whereHas('roles', function ($query) {
             $query->where('nom', 'Participant');
         })
-        ->where('etat', 0) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
+        ->where('etat', 1) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
         ->with('categorie', 'entreprise', 'roles')
-        ->get();
+        ->get();    
     
         return response()->json([
             'participants' => $users,   
@@ -168,7 +168,7 @@ class AuthController extends Controller
         $users = User::whereHas('roles', function ($query) {
             $query->where('nom', 'Participant');
         })
-        ->where('etat', 1) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
+        ->where('etat', 0) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
         ->with('categorie', 'entreprise', 'roles')
         ->get();
 

@@ -75,7 +75,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //Newsletter
     Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
     Route::delete('/newsletter/{id}/soft-delete', [NewsletterController::class, 'softDelete'])->middleware('auth:api');
-
     //ADmin_Authentifie
     Route::get('/user_admin',[Authcontroller::class,'user'])->middleware('auth:api');
     //Contacte
@@ -118,5 +117,3 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
 });
-
-

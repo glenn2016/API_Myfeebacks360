@@ -57,7 +57,7 @@ class EvenementController extends Controller
     public function show($id){
         return response()->json([
             'Evenement' => Evenement::find($id),
-            'message' => 'Evenement recuperer',
+            'message'    => 'Evenement recuperer',
             'status' => 200
         ]);
     }
