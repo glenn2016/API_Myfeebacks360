@@ -15,9 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('titre');
             $table->unsignedBigInteger('evenement_id')->nullable();
-            $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade')->nullable();
-            $table->date('date_creation');
-            $table->integer('etat')->default(1)->nullable();
+            $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade')->nullable();            $table->integer('etat')->default(1)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
