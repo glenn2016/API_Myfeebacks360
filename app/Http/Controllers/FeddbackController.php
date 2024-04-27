@@ -14,12 +14,15 @@ class FeddbackController extends Controller
      */
     public function index()
     {
-        $totalFeddbacks = Feddback::all();
+        $feedbacks = Feddback::with('evenement')->get();
+
         return response()->json([
-            'feedbacks' => $totalFeddbacks,
+            'feedbacks' => $feedbacks,
             'status' => 200
         ]);
     }
+
+    
 
     /**
      * Show the form for creating a new resource.

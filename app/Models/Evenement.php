@@ -19,4 +19,6 @@ class Evenement extends Model
     {
         return $this->hasMany(Feddback::class);
     }
+
+
 }

@@ -17,4 +17,9 @@ class Feddback extends Model
     {
         return $this->hasMany(Questionsfeedback::class);
     }
+
+    public function evenement()
+    {
+        return $this->belongsTo(Evenement::class);
+    }
 }
