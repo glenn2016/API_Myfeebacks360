@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Feddback extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'titre',
+        'evenement_id',
+    ];
 
     public function questionsfeedback()
     {

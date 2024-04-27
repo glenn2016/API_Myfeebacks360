@@ -41,8 +41,7 @@ class FeddbackController extends Controller
         $validatedData = $validator->validated();
     
         $feedback = new Feddback();
-        $feedback->commentaire = $validatedData['titre'];
-        $feedback->date = $validatedData['date'];
+        $feedback->titre = $validatedData['titre'];
         $feedback->evenement_id = $validatedData['evenement_id'];
         $feedback->save();
     
@@ -98,13 +97,11 @@ class FeddbackController extends Controller
 
         $feedback = Feddback::find($id);
 
-        $feedback->commentaire = $validatedData['titre'];
-        $feedback->date = $validatedData['date'];
+        $feedback->titre = $validatedData['titre'];
         $feedback->evenement_id = $validatedData['evenement_id'];
 
         $feedback->save();
 
-    
         return response()->json([
             'message' => 'Feedback mis à jour avec succès',
             'feedback' => $feedback,

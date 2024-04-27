@@ -113,10 +113,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/fedddback/update/{id}', [FeddbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/fedddbacks/{id}/soft-delete', [FeddbackController::class, 'softDelete'])->middleware('auth:api');
 
-     //Feddback
-     Route::post('/questionsfeedback/create',[QuestionsfeedbackController::class,'create'])->middleware('auth:api');
-     Route::post('/questionsfeedback/update/{id}', [QuestionsfeedbackController::class, 'update'])->middleware('auth:api');
-     Route::delete('/questionsfeedbacks/{id}/soft-delete', [QuestionsfeedbackController::class, 'softDelete'])->middleware('auth:api');
+    //Feddback
+    Route::post('/questionsfeedback/create',[QuestionsfeedbackController::class,'create'])->middleware('auth:api');
+    Route::post('/questionsfeedback/update/{id}', [QuestionsfeedbackController::class, 'update'])->middleware('auth:api');
+    Route::delete('/questionsfeedbacks/{id}/soft-delete', [QuestionsfeedbackController::class, 'softDelete'])->middleware('auth:api');
  
  
 });
