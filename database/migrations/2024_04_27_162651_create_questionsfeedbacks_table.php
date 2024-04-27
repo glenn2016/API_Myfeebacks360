@@ -11,23 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evaluations', function (Blueprint $table) {
+        Schema::create('questionsfeedbacks', function (Blueprint $table) {
             $table->id();
-            $table->string('titre')->nullable();
-            $table->string('description')->nullable();
-            $table->integer('etat')->default(1)->nullable();
-            $table->softDeletes();
+            $table->string('nom');
+            $table->unsignedBigInteger('feddback_id')->nullable();
+            $table->foreign('feddback_id')->references('id')->on('feddbacks')->onDelete('cascade')->nullable();
             $table->timestamps();
         });
     }
-
-    
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('evaluations');
+        Schema::dropIfExists('questionsfeedbacks');
     }
 };

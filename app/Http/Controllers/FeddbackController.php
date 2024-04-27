@@ -28,7 +28,8 @@ class FeddbackController extends Controller
 
         $validator = Validator::make($request->all(), [
             'evenement_id' => ['required', 'numeric'], // Assurez-vous que evenement_id est numérique
-            'commentaire' => ['required', 'string', 'max:255'],
+            'titre' => ['required', 'string', 'max:255'],
+            'date' => ['required', 'date'],
         ]);
     
         if ($validator->fails()) {
@@ -40,12 +41,10 @@ class FeddbackController extends Controller
     
         $validatedData = $validator->validated();
     
-        $user_id = Auth::id();
         $feedback = new Feddback();
-        $feedback->user_id = $user_id;
-        $feedback->commentaire = $validatedData['commentaire'];
+        $feedback->commentaire = $validatedData['titre'];
+        $feedback->date = $validatedData['date'];
         $feedback->evenement_id = $validatedData['evenement_id'];
-    
         $feedback->save();
     
         return response()->json([
@@ -86,7 +85,8 @@ class FeddbackController extends Controller
     public function update(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'evenement_id' => ['required', 'numeric'], // Assurez-vous que evenement_id est numérique
-            'commentaire' => ['required', 'string', 'max:255'],
+            'titre' => ['required', 'string', 'max:255'],
+            'date' => ['required', 'date'],
         ]);
     
         if ($validator->fails()) {
@@ -97,14 +97,15 @@ class FeddbackController extends Controller
         }
     
         $validatedData = $validator->validated();
-    
-        $user_id = Auth::id();
+
         $feedback = Feddback::find($id);
-        $feedback->user_id = $user_id;
-        $feedback->commentaire = $validatedData['commentaire'];
+        
+        $feedback->commentaire = $validatedData['titre'];
+        $feedback->date = $validatedData['date'];
         $feedback->evenement_id = $validatedData['evenement_id'];
-    
+
         $feedback->save();
+
     
         return response()->json([
             'message' => 'Feedback mis à jour avec succès',

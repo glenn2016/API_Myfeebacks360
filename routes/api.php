@@ -12,6 +12,9 @@ use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\ContacteController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\QuestionsfeedbackController;
+
+
 
 
 /*
@@ -38,7 +41,6 @@ Route::group([
 Route::post('login', [AuthController::class ,'login']);
 Route::post('logout', [AuthController::class ,'logout']);
 Route::post('refresh', [AuthController::class ,'refresh']);
-Route::post('me', [AuthController::class ,'me']);
 
 
 //Participant
@@ -67,7 +69,9 @@ Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 Route::post('/contacte/create',[ContacteController::class,'create']);
 //Newsletter
 Route::post('/newsletter/create',[NewsletterController::class,'create']);
-
+//Questionsfeedback
+Route::get('/QuestionsfeedbackC/listes',[QuestionsfeedbackController::class,'index']);
+Route::get('/Questionsfeedbacks/{id}',[QuestionsfeedbackController::class,'show']);
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -103,15 +107,23 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evenement/create',[EvenementController::class,'create'])->middleware('auth:api');
     Route::post('/evenement/update/{id}', [EvenementController::class, 'update'])->middleware('auth:api');
     Route::delete('/evenements/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
-});
 
-Route::middleware(['auth', 'role:participant'])->group(function () {
-    Route::get('/user_participant',[Authcontroller::class,'user'])->middleware('auth:api');
     //Feddback
     Route::post('/fedddback/create',[FeddbackController::class,'create'])->middleware('auth:api');
     Route::post('/fedddback/update/{id}', [FeddbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/fedddbacks/{id}/soft-delete', [FeddbackController::class, 'softDelete'])->middleware('auth:api');
 
+     //Feddback
+     Route::post('/questionsfeedback/create',[QuestionsfeedbackController::class,'create'])->middleware('auth:api');
+     Route::post('/questionsfeedback/update/{id}', [QuestionsfeedbackController::class, 'update'])->middleware('auth:api');
+     Route::delete('/questionsfeedbacks/{id}/soft-delete', [QuestionsfeedbackController::class, 'softDelete'])->middleware('auth:api');
+ 
+ 
+});
+
+Route::middleware(['auth', 'role:participant'])->group(function () {
+    Route::get('/user_participant',[Authcontroller::class,'user'])->middleware('auth:api');
+   
     //Evaluations
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');

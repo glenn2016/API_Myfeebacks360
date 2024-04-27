@@ -5,12 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Feddback extends Model
+class Questionsfeedback extends Model
 {
     use HasFactory;
 
-    public function questionsfeedback()
-    {
-        return $this->hasMany(Questionsfeedback::class);
-    }
+    
 }

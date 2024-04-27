@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('feddbacks', function (Blueprint $table) {
             $table->id();
-            $table->string('question_one');
-            $table->string('question_deux');
-            $table->string('question_trois');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->nullable();
+            $table->string('titre');
             $table->unsignedBigInteger('evenement_id')->nullable();
             $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade')->nullable();
+            $table->date('date_creation');
+            $table->integer('etat')->default(1)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
