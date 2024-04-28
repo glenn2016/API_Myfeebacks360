@@ -13,6 +13,7 @@ use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\ContacteController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\QuestionsfeedbackController;
+use App\Http\Controllers\ReponsefeedbackController;
 
 
 
@@ -123,7 +124,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/user_participant',[Authcontroller::class,'user'])->middleware('auth:api');
+
+    //ReponseFeddback
+    Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
+
+    Route::get('/reponsefeedback/', [QuestionsfeedbackController::class, 'index'])->middleware('auth:api');
+
+
    
+
+
+
+    
     //Evaluations
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
