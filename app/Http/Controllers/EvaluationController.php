@@ -27,10 +27,8 @@ class EvaluationController extends Controller
     public function create(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'evaluer_id' => ['required', 'numeric'],
-            'question_one' => ['required', 'string', 'max:55'],
-            'question_deux' => ['required', 'string', 'max:455'],
-            'question_trois' => ['required', 'string', 'max:455'],
+            'titre' => ['required', 'string', 'max:55'],
+            'description' => ['required', 'string', 'max:455'],
         ]);
     
         if ($validator->fails()) {
@@ -42,13 +40,10 @@ class EvaluationController extends Controller
     
         $validatedData = $validator->validated();
     
-        $user_id = Auth::id();
         $Evaluation = new Evaluation();
-        $Evaluation->evaluateur_id = $user_id;
-        $Evaluation->evaluer_id = $validatedData['evaluer_id'];
-        $Evaluation->question_one = $validatedData['question_one'];
-        $Evaluation->question_deux = $validatedData['question_deux'];
-        $Evaluation->question_trois = $validatedData['question_trois'];
+        $Evaluation->titre = $validatedData['titre'];
+        $Evaluation->description = $validatedData['description'];
+
         $Evaluation->save();
         return response()->json([
             'message' => 'Evaluation créé avec succès',

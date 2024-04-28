@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Evaluation extends Model
 {
     use HasFactory;
+
+    public function questionsEvaluation()
+    {
+        return $this->hasMany(QuestionsEvaluation::class);
+    }
+
 }
