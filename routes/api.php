@@ -75,8 +75,13 @@ Route::get('/Questionsfeedback/listes',[QuestionsfeedbackController::class,'inde
 Route::get('/Questionsfeedbacks/{id}',[QuestionsfeedbackController::class,'show']);
 
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+//reponsefeedbacks
+Route::get('/reponsefeedback', [ReponsefeedbackController::class, 'index']);
+Route::get('/reponsefeedback/{id}',[ReponsefeedbackController::class,'show']);
 
+
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
     //Newsletter
     Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
     Route::delete('/newsletter/{id}/soft-delete', [NewsletterController::class, 'softDelete'])->middleware('auth:api');
@@ -121,18 +126,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
  
 
 
-
-
-    //ReponseFeddback
-    Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
-    Route::get('/reponsefeedback/', [ReponsefeedbackController::class, 'index'])->middleware('auth:api');
-    
-    
- 
+  
 });
 
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/user_participant',[Authcontroller::class,'user'])->middleware('auth:api');
+
+
+    //ReponseFeddback
+    Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
+    Route::post('/reponsefeedback/update/{id}', [reponsefeedbackController::class, 'update'])->middleware('auth:api');
+    Route::delete('/reponsefeedback/{id}/soft-delete', [reponsefeedbackController::class, 'softDelete'])->middleware('auth:api');
+
 
 
    
