@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reponsefeedback;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 
 class ReponsefeedbackController extends Controller
 {
@@ -13,24 +16,23 @@ class ReponsefeedbackController extends Controller
      */
     public function index()
     {
-        //
-        $reponsefeedback = Reponsefeedback::all();
+        $reponsefeedback = Reponsefeedback::with(['questionsfeedback.feedback','users'])->get();
+    
         return response()->json([
-            'feedbacks' => $reponsefeedback,
+            'reponsefeedback' => $reponsefeedback,
             'status' => 200
         ]);
     }
-
+    
     /**
      * Show the form for creating a new resource.
      */
     public function create(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'evenement_id' => ['required', 'numeric'], // Assurez-vous que evenement_id est numérique
-            'titre' => ['required', 'string', 'max:255'],
+            'questionsfeedbacks_id' => ['required', 'numeric'], // Assurez-vous que evenement_id est numérique
+            'nom' => ['required', 'string', 'max:255'],
         ]);
-    
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator->errors(),
@@ -38,18 +40,23 @@ class ReponsefeedbackController extends Controller
             ], 400);
         }
     
-        $validatedData = $validator->validated();
+        $user = Auth::user(); // Utilisez la méthode statique auth() de la classe Auth pour récupérer l'utilisateur authentifié
     
-        $feedback = new Reponsefeedback();
-        $feedback->titre = $validatedData['titre'];
-        $feedback->evenement_id = $validatedData['evenement_id'];
-        $feedback->save();
+        $validatedData = $validator->validated();
+        $reponsefeedback = new Reponsefeedback();
+        $reponsefeedback->nom = $validatedData['nom'];
+        $reponsefeedback->user_id= $user->id; // Assurez-vous d'accéder à l'attribut id de l'utilisateur
+        $reponsefeedback->questionsfeedbacks_id = $validatedData['questionsfeedbacks_id'];
+    
+        $reponsefeedback->save();
     
         return response()->json([
-            'message' => 'Feedback créé avec succès',
-            'feedback' => $feedback,
+            'message' => 'reponsefeedback créé avec succès',
+            'reponsefeedback' => $reponsefeedback,
         ], 200);
     }
+
+
     /**
      * Store a newly created resource in storage.
      */

@@ -71,7 +71,7 @@ Route::post('/contacte/create',[ContacteController::class,'create']);
 //Newsletter
 Route::post('/newsletter/create',[NewsletterController::class,'create']);
 //Questionsfeedback
-Route::get('/QuestionsfeedbackC/listes',[QuestionsfeedbackController::class,'index']);
+Route::get('/Questionsfeedback/listes',[QuestionsfeedbackController::class,'index']);
 Route::get('/Questionsfeedbacks/{id}',[QuestionsfeedbackController::class,'show']);
 
 
@@ -119,16 +119,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/questionsfeedback/update/{id}', [QuestionsfeedbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/questionsfeedbacks/{id}/soft-delete', [QuestionsfeedbackController::class, 'softDelete'])->middleware('auth:api');
  
+
+
+
+
+    //ReponseFeddback
+    Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
+    Route::get('/reponsefeedback/', [ReponsefeedbackController::class, 'index'])->middleware('auth:api');
+    
+    
  
 });
 
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/user_participant',[Authcontroller::class,'user'])->middleware('auth:api');
-
-    //ReponseFeddback
-    Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
-
-    Route::get('/reponsefeedback/', [QuestionsfeedbackController::class, 'index'])->middleware('auth:api');
 
 
    

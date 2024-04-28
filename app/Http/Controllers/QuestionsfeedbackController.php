@@ -6,6 +6,7 @@ use App\Models\Questionsfeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+
 class QuestionsfeedbackController extends Controller
 {
     /**
@@ -14,9 +15,10 @@ class QuestionsfeedbackController extends Controller
     public function index()
     {
         //
-        $totalFeddbacks = Questionsfeedback::all();
+        $totalQeddbacks = Questionsfeedback::with('feddback')->get();
+
         return response()->json([
-            'feedbacks' => $totalFeddbacks,
+            'Questionsfeedback' => $totalQeddbacks,
             'status' => 200
         ]);
     }

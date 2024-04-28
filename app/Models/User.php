@@ -79,6 +79,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Evaluation::class);
     }
 
+    public function questionsfeedback()
+    {
+        return $this->hasMany(Questionsfeedback::class);
+    }
+
     public function fedddbacks()
     {
         return $this->hasMany(Feddback::class);
@@ -92,6 +97,11 @@ class User extends Authenticatable implements JWTSubject
     public function entreprise()
     {
         return $this->belongsTo(Entreprise::class);
+    }
+
+    public function reponsefeedback()
+    {
+        return $this->hasMany(Reponsefeedback::class);
     }
 
 }

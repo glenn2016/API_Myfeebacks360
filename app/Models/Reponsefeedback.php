@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Reponsefeedback extends Model
 {
     use HasFactory;
+
+    public function questionsfeedback()
+    {
+        return $this->belongsTo(Questionsfeedback::class, 'questionsfeedbacks_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class,'user_id');
+    }
+  
+
+    
+
 }
