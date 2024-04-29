@@ -15,7 +15,7 @@ class QuestionsfeedbackController extends Controller
     public function index()
     {
         //
-        $totalQeddbacks = Questionsfeedback::with('feddback')->get();
+        $totalQeddbacks = Questionsfeedback::with('feedback')->get();
 
         return response()->json([
             'Questionsfeedback' => $totalQeddbacks,

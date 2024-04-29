@@ -148,12 +148,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
  
- 
-    //reponseevaluations
-    Route::post('/reponseevaluation/create',[ReponsesEvaluationController::class,'create'])->middleware('auth:api');
-    Route::post('/reponseevaluation/update/{id}', [ReponsesEvaluationController::class, 'update'])->middleware('auth:api');
-    Route::delete('/reponseevaluation/{id}/soft-delete', [ReponsesEvaluationController::class, 'softDelete'])->middleware('auth:api');
-
 
   
 });
@@ -166,6 +160,15 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
     Route::post('/reponsefeedback/update/{id}', [reponsefeedbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/reponsefeedback/{id}/soft-delete', [reponsefeedbackController::class, 'softDelete'])->middleware('auth:api');
+
+
+     
+    //reponseevaluations
+    Route::post('/reponseevaluation/create',[ReponsesEvaluationController::class,'create'])->middleware('auth:api');
+    Route::post('/reponseevaluation/update/{id}', [ReponsesEvaluationController::class, 'update'])->middleware('auth:api');
+    Route::delete('/reponseevaluation/{id}/soft-delete', [ReponsesEvaluationController::class, 'softDelete'])->middleware('auth:api');
+
+
 
 
 
