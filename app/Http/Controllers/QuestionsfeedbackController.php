@@ -15,13 +15,28 @@ class QuestionsfeedbackController extends Controller
     public function index()
     {
         //
-        $totalQeddbacks = Questionsfeedback::with('feedback')->get();
+        $totalQeddbacks = Questionsfeedback::with('evenement')->get();
 
         return response()->json([
             'Questionsfeedback' => $totalQeddbacks,
             'status' => 200
         ]);
     }
+
+    public function evenementquestion(Request $request)
+    {
+        $eventId = $request->input('evenement_id'); // Supposons que vous recevez l'ID de l'événement en paramètre
+
+        $questions = Questionsfeedback::whereHas('evenement', function ($query) use ($eventId) {
+            $query->where('id', $eventId);
+        })->get();
+
+        return response()->json([
+            'Questionsfeedback' => $questions,
+            'status' => 200
+        ]);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -31,12 +46,14 @@ class QuestionsfeedbackController extends Controller
         $validatedData = $request->validate([
             'nom' => ['required', 'string', 'max:255'],
             'feddback_id' => ['required', 'numeric'],
+            'evenement_id' => ['required', 'numeric'],
         ]);
 
         $questionsfeedback = new Questionsfeedback();
         $questionsfeedback->nom = $validatedData['nom'];
-
         $questionsfeedback->feddback_id = $validatedData['feddback_id'];
+        $questionsfeedback->evenement_id = $validatedData['evenement_id'];
+
 
         $questionsfeedback->save();
 
@@ -81,6 +98,8 @@ class QuestionsfeedbackController extends Controller
         $validator = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
             'feddback_id' => ['required', 'numeric'],
+            'evenement_id' => ['required', 'numeric'],
+
         ]);
     
         if ($validator->fails()) {
@@ -96,6 +115,9 @@ class QuestionsfeedbackController extends Controller
         $questionsfeedback->nom = $validatedData['nom'];
 
         $questionsfeedback->feddback_id = $validatedData['feddback_id'];
+
+        $questionsfeedback->evenement_id = $validatedData['evenement_id'];
+
 
         $questionsfeedback->save();
     

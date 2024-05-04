@@ -18,5 +18,10 @@ class Questionsfeedback extends Model
     {
         return $this->belongsTo(Feddback::class, 'feddback_id');
     }
+
+    public function evenement()
+    {
+        return $this->belongsTo(Evenement::class);
+    }
   
 }

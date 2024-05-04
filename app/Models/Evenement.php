@@ -15,10 +15,9 @@ class Evenement extends Model
         'date_debut',
         'date_fin',
     ];
-    public function fedddbacks()
+
+    public function questionsfeedback()
     {
-        return $this->hasMany(Feddback::class);
+        return $this->hasMany(Questionsfeedback::class);
     }
-
-
 }

@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('questionsfeedbacks', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->unsignedBigInteger('feddback_id')->nullable();
-            $table->foreign('feddback_id')->references('id')->on('feddbacks')->onDelete('cascade')->nullable();
+            $table->unsignedBigInteger('evenement_id')->nullable();
+            $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade')->nullable();            
+            $table->integer('etat')->default(1)->nullable();
             $table->timestamps();
         });
     }
