@@ -45,13 +45,11 @@ class QuestionsfeedbackController extends Controller
     public function create(Request $request){
         $validatedData = $request->validate([
             'nom' => ['required', 'string', 'max:255'],
-            'feddback_id' => ['required', 'numeric'],
             'evenement_id' => ['required', 'numeric'],
         ]);
 
         $questionsfeedback = new Questionsfeedback();
         $questionsfeedback->nom = $validatedData['nom'];
-        $questionsfeedback->feddback_id = $validatedData['feddback_id'];
         $questionsfeedback->evenement_id = $validatedData['evenement_id'];
 
 
@@ -97,7 +95,6 @@ class QuestionsfeedbackController extends Controller
         
         $validator = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
-            'feddback_id' => ['required', 'numeric'],
             'evenement_id' => ['required', 'numeric'],
 
         ]);
@@ -113,8 +110,6 @@ class QuestionsfeedbackController extends Controller
 
         $questionsfeedback = new Questionsfeedback();
         $questionsfeedback->nom = $validatedData['nom'];
-
-        $questionsfeedback->feddback_id = $validatedData['feddback_id'];
 
         $questionsfeedback->evenement_id = $validatedData['evenement_id'];
 
