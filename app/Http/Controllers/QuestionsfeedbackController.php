@@ -23,18 +23,15 @@ class QuestionsfeedbackController extends Controller
         ]);
     }
 
-    public function evenementquestion(Request $request)
+    public function evenementquestion($evenement_id)
     {
-        $eventId = $request->input('evenement_id'); // Supposons que vous recevez l'ID de l'événement en paramètre
+    // Récupérer toutes les questions associées à l'événement spécifié
+    $questions = Questionsfeedback::where('evenement_id', $evenement_id)->get();
 
-        $questions = Questionsfeedback::whereHas('evenement', function ($query) use ($eventId) {
-            $query->where('id', $eventId);
-        })->get();
-
-        return response()->json([
-            'Questionsfeedback' => $questions,
-            'status' => 200
-        ]);
+    return response()->json([
+        'questions' => $questions,
+        'status' => 200
+    ]);
     }
 
 
@@ -110,6 +107,7 @@ class QuestionsfeedbackController extends Controller
 
         $questionsfeedback = new Questionsfeedback();
         $questionsfeedback->nom = $validatedData['nom'];
+
 
         $questionsfeedback->evenement_id = $validatedData['evenement_id'];
 

@@ -91,6 +91,10 @@ Route::get('/reponseevaluation', [ReponsesEvaluationController::class, 'index'])
 Route::get('/reponseevaluation/{id}',[ReponsesEvaluationController::class,'show']);
 
 
+Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::class,'evenementquestion']);
+
+ 
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //Newsletter
     Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
