@@ -28,39 +28,39 @@ class ReponsefeedbackController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'reponses.*.questionsfeedbacks_id' => ['required', 'numeric'], // Assurez-vous que chaque réponse a un ID de questionsfeedbacks
-            'reponses.*.nom' => ['required', 'string', 'max:255'], // Assurez-vous que chaque réponse a un nom valide
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-                'status' => 400
-            ], 400);
-        }
-    
-        $user = Auth::user(); // Récupérez l'utilisateur authentifié
-    
-        $reponses = []; // Initialisez un tableau pour stocker les réponses créées
-    
-        foreach ($request->input('reponses') as $reponseData) {
-            $reponsefeedback = new Reponsefeedback();
-            $reponsefeedback->nom = $reponseData['nom'];
-            $reponsefeedback->user_id = $user->id;
-            $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
-            $reponsefeedback->save();
-    
-            $reponses[] = $reponsefeedback;
-        }
-    
+{
+    $validator = Validator::make($request->all(), [
+        'reponses.*.questionsfeedbacks_id' => ['required', 'numeric'],
+        'reponses.*.nom' => ['required', 'string', 'max:255'],
+    ]);
+
+    if ($validator->fails()) {
         return response()->json([
-            'message' => 'Réponses créées avec succès',
-            'reponses' => $reponses,
-        ], 200);
+            'errors' => $validator->errors(),
+            'status' => 400
+        ], 400);
     }
-    
+
+    $user = Auth::user();
+    $reponses = [];
+
+    foreach ($request->input('reponses') as $reponseData) {
+        $reponse = Reponsefeedback::create([
+            'nom' => $reponseData['nom'],
+            'user_id' => $user->id,
+            'questionsfeedbacks_id' => $reponseData['questionsfeedbacks_id'],
+        ]);
+
+        $reponses[] = $reponse;
+    }
+
+    return response()->json([
+        'message' => 'Réponses créées avec succès',
+        'reponses' => $reponses,
+    ], 200);
+}
+
+
     /**
      * Store a newly created resource in storage.
      */
