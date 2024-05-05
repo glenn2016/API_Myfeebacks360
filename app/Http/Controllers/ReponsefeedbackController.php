@@ -30,8 +30,8 @@ class ReponsefeedbackController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'questionsfeedbacks_id' => ['required', 'numeric'],
-            'nom' => ['required', 'string', 'max:255'],
+            'reponses.*.questionsfeedbacks_id' => ['required', 'numeric'], // Assurez-vous que chaque réponse a un ID de questionsfeedbacks
+            'reponses.*.nom' => ['required', 'string', 'max:255'], // Assurez-vous que chaque réponse a un nom valide
         ]);
     
         if ($validator->fails()) {
@@ -41,27 +41,26 @@ class ReponsefeedbackController extends Controller
             ], 400);
         }
     
-        $user = Auth::user();
-        $userId = $user->id;
+        $user = Auth::user(); // Récupérez l'utilisateur authentifié
     
-        $questionsfeedbacksId = $request->input('questionsfeedbacks_id'); // Récupérez l'ID des questionsfeedbacks depuis la requête
+        $reponses = []; // Initialisez un tableau pour stocker les réponses créées
     
-        $reponsefeedback = []; // Définissez la variable $reponsefeedback
+        foreach ($request->input('reponses') as $reponseData) {
+            $reponsefeedback = new Reponsefeedback();
+            $reponsefeedback->nom = $reponseData['nom'];
+            $reponsefeedback->user_id = $user->id;
+            $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
+            $reponsefeedback->save();
     
-        foreach ($request->input('nom') as $nom) {
-            $reponsefeedback[] = Reponsefeedback::create([
-                'nom' => $nom,
-                'user_id' => $userId,
-                'questionsfeedbacks_id' => $questionsfeedbacksId,
-            ]);
+            $reponses[] = $reponsefeedback;
         }
     
         return response()->json([
-            'message' => 'reponsefeedback créé avec succès',
-            'reponsefeedback' => $reponsefeedback,
+            'message' => 'Réponses créées avec succès',
+            'reponses' => $reponses,
         ], 200);
     }
-
+    
     /**
      * Store a newly created resource in storage.
      */
