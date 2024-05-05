@@ -27,12 +27,14 @@ class ReponsefeedbackController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request){
-
+    public function create(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'questionsfeedbacks_id' => ['required', 'numeric'], // Assurez-vous que evenement_id est numérique
-            'nom' => ['required', 'string', 'max:255'],
+            'reponses' => 'required|array', // Assurez-vous que "reponses" est un tableau
+            'reponses.*.questionsfeedbacks_id' => 'required|numeric', // Assurez-vous que chaque élément du tableau a un ID de question valide
+            'reponses.*.nom' => 'required|string|max:255', // Assurez-vous que chaque élément du tableau a un nom valide
         ]);
+    
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator->errors(),
@@ -40,22 +42,27 @@ class ReponsefeedbackController extends Controller
             ], 400);
         }
     
-        $user = Auth::user(); // Utilisez la méthode statique auth() de la classe Auth pour récupérer l'utilisateur authentifié
+        $user = Auth::user(); // Récupérer l'utilisateur authentifié
     
         $validatedData = $validator->validated();
-        $reponsefeedback = new Reponsefeedback();
-        $reponsefeedback->nom = $validatedData['nom'];
-        $reponsefeedback->user_id= $user->id; // Assurez-vous d'accéder à l'attribut id de l'utilisateur
-        $reponsefeedback->questionsfeedbacks_id = $validatedData['questionsfeedbacks_id'];
     
-        $reponsefeedback->save();
+        // Créer chaque réponse
+        $reponses = [];
+        foreach ($validatedData['reponses'] as $reponseData) {
+            $reponsefeedback = new Reponsefeedback();
+            $reponsefeedback->nom = $reponseData['nom'];
+            $reponsefeedback->user_id = $user->id;
+            $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
+            $reponsefeedback->save();
+    
+            $reponses[] = $reponsefeedback;
+        }
     
         return response()->json([
-            'message' => 'reponsefeedback créé avec succès',
-            'reponsefeedback' => $reponsefeedback,
+            'message' => 'Réponses créées avec succès',
+            'reponses' => $reponses,
         ], 200);
     }
-
 
     /**
      * Store a newly created resource in storage.
