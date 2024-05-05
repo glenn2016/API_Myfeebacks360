@@ -30,9 +30,8 @@ class ReponsefeedbackController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'reponses' => 'required|array', // Assurez-vous que "reponses" est un tableau
-            'reponses.*.questionsfeedbacks_id' => 'required|numeric', // Assurez-vous que chaque élément du tableau a un ID de question valide
-            'reponses.*.nom' => 'required|string|max:255', // Assurez-vous que chaque élément du tableau a un nom valide
+            'questionsfeedbacks_id' => ['required', 'numeric'],
+            'nom' => ['required', 'string', 'max:255'],
         ]);
     
         if ($validator->fails()) {
@@ -42,25 +41,24 @@ class ReponsefeedbackController extends Controller
             ], 400);
         }
     
-        $user = Auth::user(); // Récupérer l'utilisateur authentifié
+        $user = Auth::user();
+        $userId = $user->id;
     
-        $validatedData = $validator->validated();
+        $questionsfeedbacksId = $request->input('questionsfeedbacks_id'); // Récupérez l'ID des questionsfeedbacks depuis la requête
     
-        // Créer chaque réponse
-        $reponses = [];
-        foreach ($validatedData['reponses'] as $reponseData) {
-            $reponsefeedback = new Reponsefeedback();
-            $reponsefeedback->nom = $reponseData['nom'];
-            $reponsefeedback->user_id = $user->id;
-            $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
-            $reponsefeedback->save();
+        $reponsefeedback = []; // Définissez la variable $reponsefeedback
     
-            $reponses[] = $reponsefeedback;
+        foreach ($request->input('nom') as $nom) {
+            $reponsefeedback[] = Reponsefeedback::create([
+                'nom' => $nom,
+                'user_id' => $userId,
+                'questionsfeedbacks_id' => $questionsfeedbacksId,
+            ]);
         }
     
         return response()->json([
-            'message' => 'Réponses créées avec succès',
-            'reponses' => $reponses,
+            'message' => 'reponsefeedback créé avec succès',
+            'reponsefeedback' => $reponsefeedback,
         ], 200);
     }
 
