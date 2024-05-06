@@ -67,7 +67,7 @@ class ReponsefeedbackController extends Controller
     */
 
     public function create(Request $request)
-    {
+    {   
 
         $validator = Validator::make($request->all(), [
             'reponses.*.questionsfeedbacks_id' => 'required|numeric',
@@ -77,8 +77,8 @@ class ReponsefeedbackController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator->errors(),
-                'status' => 400
-            ], 400);
+                'status' => 417
+            ], 417);
         }
 
         $user = Auth::user(); // Récupérer l'utilisateur authentifié
@@ -88,7 +88,7 @@ class ReponsefeedbackController extends Controller
         // Créer chaque réponse
         $reponses = [];
 
-        foreach ( $reponses as $reponseData) {
+        foreach ($validatedData['reponses'] as $reponseData) {
             $reponsefeedback = new Reponsefeedback();
             $reponsefeedback->nom = $reponseData['nom'];
             $reponsefeedback->user_id = $user->id;
