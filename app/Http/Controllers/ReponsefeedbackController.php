@@ -28,6 +28,7 @@ class ReponsefeedbackController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    /*
 
      public function create(Request $request) {
         // Valider les données de la requête
@@ -35,14 +36,21 @@ class ReponsefeedbackController extends Controller
             '*.nom' => ['required', 'string', 'max:255'],
             '*.questionsfeedbacks_id' => ['required', 'numeric'],
         ]);
+
+        if (empty($reponsesFeedback)) {
+            // Le tableau est vide
+            echo "Le tableau \$reponsesFeedback est vide.";
+        } else {
+            // Le tableau n'est pas vide
+            echo "Le tableau \$reponsesFeedback n'est pas vide.";
+        }
     
         // Récupérer l'utilisateur authentifié
         $user = Auth::user();
     
         // Initialiser un tableau pour stocker les réponses créées
         $reponsesFeedback = [];
-
-    
+        
     
         // Boucler à travers chaque élément du tableau de réponses
         foreach ($validatedData as $data) {
@@ -61,9 +69,9 @@ class ReponsefeedbackController extends Controller
             'reponsesFeedback' => $reponsesFeedback,
             'status'=>200,
         ], 200);
-    }
+    }*/
 
-     /*
+     
      public function create(Request $request)
     {
         // Debugging: Log the request data
@@ -119,7 +127,7 @@ class ReponsefeedbackController extends Controller
             'reponses' => $reponses,
         ], 200);
     }
-    */
+    
 
     
    
