@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 
 class ReponsefeedbackController extends Controller
@@ -27,38 +28,92 @@ class ReponsefeedbackController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    /*
-    public function create(Request $request)
+
+     public function create(Request $request) {
+        // Valider les données de la requête
+        $validatedData = $request->validate([
+            '*.nom' => ['required', 'string', 'max:255'],
+            '*.questionsfeedbacks_id' => ['required', 'numeric'],
+        ]);
+    
+        // Récupérer l'utilisateur authentifié
+        $user = Auth::user();
+    
+        // Initialiser un tableau pour stocker les réponses créées
+        $reponsesFeedback = [];
+
+    
+    
+        // Boucler à travers chaque élément du tableau de réponses
+        foreach ($validatedData as $data) {
+            $reponsefeedback = new Reponsefeedback();
+            $reponsefeedback->nom = $data['nom'];
+            $reponsefeedback->user_id = $user->id;
+            $reponsefeedback->questionsfeedbacks_id = $data['questionsfeedbacks_id'];
+            $reponsefeedback->save();
+            
+            // Ajouter la réponse créée au tableau
+            $reponsesFeedback[] = $reponsefeedback;
+        }
+    
+        return response()->json([
+            'message' => 'Réponses créées avec succès',
+            'reponsesFeedback' => $reponsesFeedback,
+            'status'=>200,
+        ], 200);
+    }
+
+     /*
+     public function create(Request $request)
     {
+        // Debugging: Log the request data
+        Log::info('Request Data:', $request->all());
+
+        // Validate the request data
         $validator = Validator::make($request->all(), [
             'reponses.*.questionsfeedbacks_id' => 'required|numeric',
             'reponses.*.nom' => 'required|string|max:255',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
+                'message' => 'Erreur de validation',
                 'errors' => $validator->errors(),
                 'status' => 400
             ], 400);
         }
-    
-        $user = Auth::user(); // Récupérer l'utilisateur authentifié
-    
+
+        $user = Auth::user(); // Retrieve the authenticated user
+
         $validatedData = $validator->validated();
-    
-        // Créer chaque réponse
+
+        // Debugging: Log the validated data
+        Log::info('Validated Data:', $validatedData);
+
+        // Check if 'reponses' array exists and is not empty
+        if (!isset($validatedData['reponses']) || empty($validatedData['reponses'])) {
+            return response()->json([
+                'message' => 'Aucune réponse fournie',
+                'status' => 400
+            ], 400);
+        }
+
+        // Create each response
         $reponses = [];
-        
+
         foreach ($validatedData['reponses'] as $reponseData) {
+            // Debugging: Log the current $reponseData
+            Log::info('Current Response Data:', $reponseData);
+
             $reponsefeedback = new Reponsefeedback();
             $reponsefeedback->nom = $reponseData['nom'];
             $reponsefeedback->user_id = $user->id;
             $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
             $reponsefeedback->save();
-    
+
             $reponses[] = $reponsefeedback;
         }
-    
+
         return response()->json([
             'message' => 'Réponses créées avec succès',
             'reponses' => $reponses,
@@ -66,52 +121,9 @@ class ReponsefeedbackController extends Controller
     }
     */
 
-    public function create(Request $request)
-    {   
-
-        $validator = Validator::make($request->all(), [
-            'reponses.*.questionsfeedbacks_id' => 'required|numeric',
-            'reponses.*.nom' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-                'status' => 417
-            ], 417);
-        }
-
-        $user = Auth::user(); // Récupérer l'utilisateur authentifié
-
-        $validatedData = $validator->validated();
-
-        // Créer chaque réponse
-        $reponses = [];
-
-        foreach ($validatedData['reponses'] as $reponseData) {
-            $reponsefeedback = new Reponsefeedback();
-            $reponsefeedback->nom = $reponseData['nom'];
-            $reponsefeedback->user_id = $user->id;
-            $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
-            $reponsefeedback->save();
-
-            $reponses[] = $reponsefeedback;
-        }
-
-        // Vérifier si la clé "reponses" est présente dans la requête
-        if (!isset($request->reponses)) {
-            return response()->json([
-                'message' => 'La clé "reponses" est manquante dans la requête',
-                'status' => 400
-            ], 400);
-        }
-        
-        return response()->json([
-            'message' => 'Réponses créées avec succès',
-            'reponses' => $reponses,
-        ],200);
-    }
-    /**
+    
+   
+        /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
