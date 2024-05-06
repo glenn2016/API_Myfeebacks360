@@ -68,13 +68,6 @@ class ReponsefeedbackController extends Controller
 
     public function create(Request $request)
     {
-        // Vérifier si la clé "reponses" est présente dans la requête
-        if (!isset($request->reponses)) {
-            return response()->json([
-                'message' => 'La clé "reponses" est manquante dans la requête',
-                'status' => 400
-            ], 400);
-        }
 
         $validator = Validator::make($request->all(), [
             'reponses.*.questionsfeedbacks_id' => 'required|numeric',
@@ -104,6 +97,15 @@ class ReponsefeedbackController extends Controller
 
             $reponses[] = $reponsefeedback;
         }
+
+        // Vérifier si la clé "reponses" est présente dans la requête
+        if (!isset($request->reponses)) {
+            return response()->json([
+                'message' => 'La clé "reponses" est manquante dans la requête',
+                'status' => 400
+            ], 400);
+        }
+        
 
         return response()->json([
             'message' => 'Réponses créées avec succès',
