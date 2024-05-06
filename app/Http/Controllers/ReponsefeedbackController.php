@@ -88,7 +88,7 @@ class ReponsefeedbackController extends Controller
         // Créer chaque réponse
         $reponses = [];
 
-        foreach ($validatedData['reponses'] as $reponseData) {
+        foreach ( $reponses as $reponseData) {
             $reponsefeedback = new Reponsefeedback();
             $reponsefeedback->nom = $reponseData['nom'];
             $reponsefeedback->user_id = $user->id;
@@ -106,7 +106,6 @@ class ReponsefeedbackController extends Controller
             ], 400);
         }
         
-
         return response()->json([
             'message' => 'Réponses créées avec succès',
             'reponses' => $reponses,
