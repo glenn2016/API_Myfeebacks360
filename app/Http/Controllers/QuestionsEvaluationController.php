@@ -29,11 +29,13 @@ class QuestionsEvaluationController extends Controller
      */
     public function create(Request $request)
     {
-        // Validation des données pour les questions et les catégories
+        // Validation des données pour l'évaluation
         $validatedData = $request->validate([
-            'nom.*' => 'required|string|max:255',
             'titre' => 'required|string|max:255',
-            'categories.*' => 'required|numeric', // Assurez-vous que chaque catégorie est un ID numérique
+            'questions' => 'required|array',
+            'questions.*.nom' => 'required|string|max:255',
+            'questions.*.categorie_id' => 'required|integer|exists:categories,id',
+            'questions.*.reponses' => 'array',
         ]);
     
         // Créer une nouvelle évaluation
@@ -41,57 +43,32 @@ class QuestionsEvaluationController extends Controller
             'titre' => $validatedData['titre'],
         ]);
     
+        // Récupérer l'ID de l'évaluation créée
         $evaluationId = $evaluation->id;
     
-        // Initialiser un tableau pour stocker les questions et les réponses avec les catégories
-        $questionsWithReponsesAndCategories = [];
-    
-        // Initialiser un compteur pour l'index des questions
-        $questionIndex = 0;
-    
-        // Créer les questions associées à l'évaluation et les réponses avec les catégories
-        foreach ($validatedData['nom'] as $nom) {
+        // Créer les questions associées à l'évaluation et les réponses
+        foreach ($validatedData['questions'] as $questionData) {
+            // Créer la question
             $question = QuestionsEvaluation::create([
-                'nom' => $nom,
+                'nom' => $questionData['nom'],
                 'evaluation_id' => $evaluationId,
-                'categorie_id' => $validatedData['categories'][$questionIndex], // Associer la catégorie à la question
+                'categorie_id' => $questionData['categorie_id'],
             ]);
     
-            $questionData = [
-                'question' => $question,
-                'reponses' => [],
-                'categorie_id' => $validatedData['categories'][$questionIndex], // Ajouter l'ID de la catégorie
-            ];
-    
-            // Vérifier si des réponses ont été fournies pour cette question
-            if ($request->has("reponse.$questionIndex")) {
-                // Récupérer les réponses associées à cette question
-                $reponses = $request->input("reponse.$questionIndex");
-    
+            // Vérifier s'il y a des réponses pour cette question
+            if (isset($questionData['reponses'])) {
                 // Créer chaque réponse et les associer à la question
-                foreach ($reponses as $reponse) {
-                    $reponseEvaluation = ReponsesEvaluation::create([
+                foreach ($questionData['reponses'] as $reponse) {
+                    ReponsesEvaluation::create([
                         'reponse' => $reponse,
                         'questions_evaluations_id' => $question->id,
                     ]);
-    
-                    $questionData['reponses'][] = $reponseEvaluation;
                 }
             }
-    
-            // Ajouter les données de la question, des réponses et de la catégorie au tableau
-            $questionsWithReponsesAndCategories[] = $questionData;
-    
-            // Incrémenter le compteur de l'index des questions
-            $questionIndex++;
         }
     
-        // Retourner les données des questions, des réponses et des catégories créées
-        return response()->json([
-            'message' => 'Évaluation créée avec succès',
-            'evaluation' => $evaluation,
-            'questions_with_reponses_and_categories' => $questionsWithReponsesAndCategories,
-        ], 201);
+        // Retourner une réponse indiquant que l'évaluation a été créée avec succès
+        return response()->json(['message' => 'Evaluation créée avec succès'], 201);
     }
     
 

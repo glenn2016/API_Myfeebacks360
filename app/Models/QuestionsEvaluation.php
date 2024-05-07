@@ -11,6 +11,8 @@ class QuestionsEvaluation extends Model
 
     protected $fillable = [
         'nom',
+        'evaluation_id',
+        'categorie_id'
     ];
 
 
@@ -26,7 +28,7 @@ class QuestionsEvaluation extends Model
 
     public function categorie()
     {
-        return $this->belongsTo(Categorie::class);
+        return $this->belongsTo(Categorie::class, 'categorie_id');
     }
 
 

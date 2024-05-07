@@ -127,9 +127,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evenement/create',[EvenementController::class,'create'])->middleware('auth:api');
     Route::post('/evenement/update/{id}', [EvenementController::class, 'update'])->middleware('auth:api');
     Route::delete('/evenements/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
-
     Route::get('/evenement/questions-reponses/{evenement_id}', [ReponsefeedbackController::class, 'evenementquestionreponse']);
-
     //Feddback
     Route::post('/fedddback/create',[FeddbackController::class,'create'])->middleware('auth:api');
     Route::post('/fedddback/update/{id}', [FeddbackController::class, 'update'])->middleware('auth:api');
