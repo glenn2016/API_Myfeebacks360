@@ -9,6 +9,10 @@ class Evaluation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'titre',
+    ];
+
     public function questionsEvaluation()
     {
         return $this->hasMany(QuestionsEvaluation::class);

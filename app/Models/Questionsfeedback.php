@@ -23,5 +23,10 @@ class Questionsfeedback extends Model
     {
         return $this->belongsTo(Evenement::class);
     }
+
+    public function reponsefeedbacks()
+    {
+        return $this->hasMany(Reponsefeedback::class, 'questionsfeedbacks_id', 'id');
+    }
   
 }

@@ -13,16 +13,12 @@ return new class extends Migration
     {
         Schema::create('reponses_evaluations', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
+            $table->string('reponse');
             
             $table->unsignedBigInteger('questions_evaluations_id')->nullable();
             $table->foreign('questions_evaluations_id')->references('id')->on('questions_evaluations')->onDelete('cascade')->nullable();
 
-            $table->unsignedBigInteger('evaluatuer_id')->nullable();
-            $table->foreign('evaluatuer_id')->references('id')->on('users')->onDelete('cascade');
-
-            $table->unsignedBigInteger('evaluer_id')->nullable();
-            $table->foreign('evaluer_id')->references('id')->on('users')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('evaluations', function (Blueprint $table) {
             $table->id();
             $table->string('titre')->nullable();
-            $table->string('description')->nullable();
             $table->integer('etat')->default(1)->nullable();
-            $table->string('niveau')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

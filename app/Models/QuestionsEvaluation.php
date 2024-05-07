@@ -9,6 +9,11 @@ class QuestionsEvaluation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nom',
+    ];
+
+
     public function reponsesEvaluation()
     {
         return $this->hasMany(ReponsesEvaluation::class);
@@ -17,6 +22,11 @@ class QuestionsEvaluation extends Model
     public function evaluation()
     {
         return $this->belongsTo(Evaluation::class, 'evaluation_id');
+    }
+
+    public function categorie()
+    {
+        return $this->belongsTo(Categorie::class);
     }
 
 

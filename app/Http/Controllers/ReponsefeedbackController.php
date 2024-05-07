@@ -6,6 +6,7 @@ use App\Models\Reponsefeedback;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Questionsfeedback;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -24,6 +25,21 @@ class ReponsefeedbackController extends Controller
             'status' => 200
         ]);
     }
+
+    public function evenementquestionreponse($evenement_id)
+    {
+        // Récupérer toutes les questions liées à l'événement spécifié
+        $questions = Questionsfeedback::where('evenement_id', $evenement_id)
+            ->with(['reponsefeedbacks.user'])
+            ->get();
+
+        return response()->json([
+            'questions' => $questions,
+            'status' => 200
+        ]);
+    }
+
+
     
     /**
      * Show the form for creating a new resource.

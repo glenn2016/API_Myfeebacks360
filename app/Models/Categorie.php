@@ -17,4 +17,9 @@ class Categorie extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function questionsEvaluation()
+    {
+        return $this->hasMany(QuestionsEvaluation::class);
+    }
 }

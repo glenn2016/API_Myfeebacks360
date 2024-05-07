@@ -28,7 +28,6 @@ class EvaluationController extends Controller
 
         $validator = Validator::make($request->all(), [
             'titre' => ['required', 'string', 'max:55'],
-            'description' => ['required', 'string', 'max:455'],
         ]);
     
         if ($validator->fails()) {
@@ -42,7 +41,6 @@ class EvaluationController extends Controller
     
         $Evaluation = new Evaluation();
         $Evaluation->titre = $validatedData['titre'];
-        $Evaluation->description = $validatedData['description'];
 
         $Evaluation->save();
         return response()->json([
@@ -83,10 +81,7 @@ class EvaluationController extends Controller
      */
     public function update(Request $request, $id){
         $validator = Validator::make($request->all(), [
-            'evaluer_id' => ['required', 'numeric'],
-            'question_one' => ['required', 'string', 'max:55'],
-            'question_deux' => ['required', 'string', 'max:455'],
-            'question_trois' => ['required', 'string', 'max:455'],
+            'titre' => ['required', 'string', 'max:455'],
         ]);
     
         if ($validator->fails()) {
@@ -98,13 +93,8 @@ class EvaluationController extends Controller
     
         $validatedData = $validator->validated();
     
-        $user_id = Auth::id();
         $evaluation = Evaluation::find($id);
-        $evaluation->evaluateur_id = $user_id;
-        $evaluation->evaluer_id = $validatedData['evaluer_id'];
-        $evaluation->question_one = $validatedData['question_one'];
-        $evaluation->question_deux = $validatedData['question_deux'];
-        $evaluation->question_trois = $validatedData['question_trois'];
+        $evaluation->titre = $validatedData['titre'];
         $evaluation->save();
     
         return response()->json([

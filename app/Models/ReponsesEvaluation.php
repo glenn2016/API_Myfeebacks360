@@ -9,6 +9,9 @@ class ReponsesEvaluation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'reponse',
+    ];
 
     public function questionsEvaluation()
     {

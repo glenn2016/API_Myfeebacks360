@@ -16,7 +16,12 @@ return new class extends Migration
             $table->string('nom');
             $table->unsignedBigInteger('evaluation_id')->nullable();
             $table->foreign('evaluation_id')->references('id')->on('evaluations')->onDelete('cascade')->nullable();
-            $table->timestamps();
+
+            $table->unsignedBigInteger('categorie_id')->nullable();
+            $table->foreign('categorie_id')->references('id')->on('categories')->onDelete('cascade')->nullable();
+
+            $table->softDeletes();
+            $table->timestamps();   
         });
     }
 

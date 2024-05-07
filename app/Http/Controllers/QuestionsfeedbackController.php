@@ -28,10 +28,10 @@ class QuestionsfeedbackController extends Controller
     // Récupérer toutes les questions associées à l'événement spécifié
     $questions = Questionsfeedback::where('evenement_id', $evenement_id)->get();
 
-    return response()->json([
-        'questions' => $questions,
-        'status' => 200
-    ]);
+        return response()->json([
+            'questions' => $questions,
+            'status' => 200
+        ]);
     }
 
 
