@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ReponsesEvaluation;
+use App\Models\Categorie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,18 @@ class ReponsesEvaluationController extends Controller
             'reponsesEvaluation' => $reponsesEvaluation,
             'status' => 200
         ]);
+    }
+
+    public function questionsAndReponsesByCategory($categorieId)
+    {
+        // Récupérer la catégorie
+        $categorie = Categorie::findOrFail($categorieId);
+
+        // Récupérer les questions liées à cette catégorie avec leurs réponses
+        $questionsWithReponses = $categorie->questions()->with('reponses')->get();
+
+        // Retourner les données au format JSON
+        return response()->json($questionsWithReponses);
     }
 
     /**

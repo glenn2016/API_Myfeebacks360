@@ -38,56 +38,9 @@ class ReponsefeedbackController extends Controller
             'status' => 200
         ]);
     }
-
-
-    
     /**
      * Show the form for creating a new resource.
      */
-    /*
-
-     public function create(Request $request) {
-        // Valider les données de la requête
-        $validatedData = $request->validate([
-            '*.nom' => ['required', 'string', 'max:255'],
-            '*.questionsfeedbacks_id' => ['required', 'numeric'],
-        ]);
-
-        if (empty($reponsesFeedback)) {
-            // Le tableau est vide
-            echo "Le tableau \$reponsesFeedback est vide.";
-        } else {
-            // Le tableau n'est pas vide
-            echo "Le tableau \$reponsesFeedback n'est pas vide.";
-        }
-    
-        // Récupérer l'utilisateur authentifié
-        $user = Auth::user();
-    
-        // Initialiser un tableau pour stocker les réponses créées
-        $reponsesFeedback = [];
-        
-    
-        // Boucler à travers chaque élément du tableau de réponses
-        foreach ($validatedData as $data) {
-            $reponsefeedback = new Reponsefeedback();
-            $reponsefeedback->nom = $data['nom'];
-            $reponsefeedback->user_id = $user->id;
-            $reponsefeedback->questionsfeedbacks_id = $data['questionsfeedbacks_id'];
-            $reponsefeedback->save();
-            
-            // Ajouter la réponse créée au tableau
-            $reponsesFeedback[] = $reponsefeedback;
-        }
-    
-        return response()->json([
-            'message' => 'Réponses créées avec succès',
-            'reponsesFeedback' => $reponsesFeedback,
-            'status'=>200,
-        ], 200);
-    }*/
-
-     
      public function create(Request $request)
     {
         // Debugging: Log the request data
@@ -106,14 +59,10 @@ class ReponsefeedbackController extends Controller
                 'status' => 400
             ], 400);
         }
-
         $user = Auth::user(); // Retrieve the authenticated user
-
         $validatedData = $validator->validated();
-
         // Debugging: Log the validated data
         Log::info('Validated Data:', $validatedData);
-
         // Check if 'reponses' array exists and is not empty
         if (!isset($validatedData['reponses']) || empty($validatedData['reponses'])) {
             return response()->json([
@@ -121,60 +70,47 @@ class ReponsefeedbackController extends Controller
                 'status' => 400
             ], 400);
         }
-
         // Create each response
         $reponses = [];
-
         foreach ($validatedData['reponses'] as $reponseData) {
             // Debugging: Log the current $reponseData
             Log::info('Current Response Data:', $reponseData);
-
             $reponsefeedback = new Reponsefeedback();
             $reponsefeedback->nom = $reponseData['nom'];
             $reponsefeedback->user_id = $user->id;
             $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
             $reponsefeedback->save();
-
             $reponses[] = $reponsefeedback;
         }
-
         return response()->json([
             'message' => 'Réponses créées avec succès',
             'reponses' => $reponses,
         ], 200);
     }
-    
-
-    
-   
-        /**
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         //
     }
-
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
         $reponsefeedback = Reponsefeedback::with(['questionsfeedback.feedback','users'])->find($id);
-    
         if (!$reponsefeedback) {
             return response()->json([
                 'message' => 'Reponsefeedback non trouvé',
                 'status' => 404
             ], 404);
         }
-    
         return response()->json([
             'reponsefeedback' => $reponsefeedback,
             'status' => 200
         ]);
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -182,7 +118,6 @@ class ReponsefeedbackController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -199,11 +134,8 @@ class ReponsefeedbackController extends Controller
                 'status' => 400
             ], 400);
         }
-
         $user = Auth::user(); // Utilisez la méthode statique auth() de la classe Auth pour récupérer l'utilisateur authentifié
-    
         $validatedData = $validator->validated();
-    
         $validatedData = $validator->validated();
         $reponsefeedback = new Reponsefeedback();
         $reponsefeedback->nom = $validatedData['nom'];

@@ -145,6 +145,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
 
+    Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
+
+
 });
 
 Route::middleware(['auth', 'role:participant'])->group(function () {

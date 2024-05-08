@@ -18,12 +18,12 @@ class ReponsesEvaluation extends Model
     {
         return $this->belongsTo(QuestionsEvaluation::class, 'questions_evaluations_id');
     }
-
+    
     public function question()
     {
         return $this->belongsTo(QuestionsEvaluation::class, 'questions_evaluations_id');
     }
-    
+
     public function evaluateur()
     {
         return $this->belongsTo(User::class,'evaluatuer_id');

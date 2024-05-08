@@ -18,7 +18,7 @@ class QuestionsEvaluation extends Model
 
     public function reponsesEvaluation()
     {
-        return $this->hasMany(ReponsesEvaluation::class);
+        return $this->hasMany(ReponsesEvaluation::class,'questions_evaluations_id');
     }
 
     public function evaluation()
@@ -29,6 +29,11 @@ class QuestionsEvaluation extends Model
     public function categorie()
     {
         return $this->belongsTo(Categorie::class, 'categorie_id');
+    }
+
+    public function reponses()
+    {
+        return $this->hasMany(ReponsesEvaluation::class, 'questions_evaluations_id');
     }
 
 

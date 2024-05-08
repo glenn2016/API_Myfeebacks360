@@ -18,8 +18,18 @@ class Categorie extends Model
         return $this->hasMany(User::class);
     }
 
-    public function questionsEvaluation()
+    public function questionsEvaluations()
     {
-        return $this->hasMany(QuestionsEvaluation::class);
+        return $this->hasMany(QuestionsEvaluation::class, 'categorie_id');
+    }
+
+    public function relatedQuestionsEvaluations() // Renommez cette méthode
+    {
+        return $this->belongsTo(QuestionsEvaluation::class, 'questions_evaluations_id');
+    
+    }
+    public function questions()
+    {
+        return $this->hasMany(QuestionsEvaluation::class, 'categorie_id');
     }
 }
