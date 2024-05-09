@@ -28,7 +28,6 @@ class EvenementController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    c
     /**
      * Update the specified resource in storage.
      */
