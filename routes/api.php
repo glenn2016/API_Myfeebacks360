@@ -81,6 +81,8 @@ Route::get('/Questionsevaluation/{id}',[QuestionsEvaluationController::class,'sh
 Route::get('/reponseevaluation', [ReponsesEvaluationController::class, 'index']);
 Route::get('/reponseevaluation/{id}',[ReponsesEvaluationController::class,'show']);
 Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::class,'evenementquestion']);
+//evaluation
+Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //Newsletter
     Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
@@ -134,7 +136,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
-    Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
 });
 
 Route::middleware(['auth', 'role:participant'])->group(function () {
@@ -150,6 +151,5 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::delete('/reponseevaluation/{id}/soft-delete', [ReponsesEvaluationController::class, 'softDelete'])->middleware('auth:api');
     //evaluation
     Route::post('/evaluation/create',[EvaluationQuestionReponseEvaluationController::class,'create'])->middleware('auth:api');
-
 
 });
