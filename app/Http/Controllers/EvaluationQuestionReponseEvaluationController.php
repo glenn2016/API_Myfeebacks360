@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EvaluationQuestionReponseEvaluation;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class EvaluationQuestionReponseEvaluationController extends Controller
 {
@@ -36,9 +37,41 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'evaluation.*.reponse_id' => 'required|numeric',
+                'evaluation.*.evaluer_id' => 'required|string|max:255',
+                'niveau' => 'required|string|max:255',
+                'commentaire' => 'required|string|max:255',
+            ]);
+
+            $user = Auth::user();
+            $validatedData = $validator->validated();
+            $evaluations = [];
+
+            foreach ($validatedData['evaluation'] as $evaluationData) {
+                $evaluation = new EvaluationQuestionReponseEvaluation();
+                $evaluation->reponse_id = $evaluationData['reponse_id'];
+                $evaluation->evaluatuer_id = $user->id;
+                $evaluation->evaluer_id = $evaluationData['evaluer_id'];
+                $evaluation->niveau = $validatedData['niveau'];
+                $evaluation->commentaire = $validatedData['commentaire'];
+                $evaluation->save();
+                $evaluations[] = $evaluation;
+            }
+
+            return response()->json([
+                'message' => 'Évaluations créées avec succès',
+                'evaluations' => $evaluations,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la création d\'une évaluation ',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
     /**
      * Store a newly created resource in storage.

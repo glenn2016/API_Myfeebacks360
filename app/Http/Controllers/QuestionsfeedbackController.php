@@ -44,7 +44,6 @@ class QuestionsfeedbackController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    /*
     public function create(Request $request)
     {
         try {
@@ -67,7 +66,6 @@ class QuestionsfeedbackController extends Controller
             ], 500);
         }
     }
-    */
     /**
      * Display the specified resource.
      */

@@ -148,4 +148,8 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::post('/reponseevaluation/create',[ReponsesEvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/reponseevaluation/update/{id}', [ReponsesEvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/reponseevaluation/{id}/soft-delete', [ReponsesEvaluationController::class, 'softDelete'])->middleware('auth:api');
+    //evaluation
+    Route::post('/evaluation/create',[EvaluationQuestionReponseEvaluationController::class,'create'])->middleware('auth:api');
+
+
 });

@@ -13,26 +13,17 @@ class ReponsesEvaluation extends Model
         'reponse',  
         'questions_evaluations_id',
     ];
-
     public function questionsEvaluation()
     {
         return $this->belongsTo(QuestionsEvaluation::class, 'questions_evaluations_id');
     }
-    
     public function question()
     {
         return $this->belongsTo(QuestionsEvaluation::class, 'questions_evaluations_id');
     }
-
-    public function evaluateur()
+    public function evaluation()
     {
-        return $this->belongsTo(User::class,'evaluatuer_id');
+        return $this->hasMany(EvaluationQuestionReponseEvaluation::class,'reponse_id');
     }
 
-    public function evaluer()
-    {
-        return $this->belongsTo(User::class,'evaluer_id');
-    }
-
-    
 }
