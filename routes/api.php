@@ -6,7 +6,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\FeddbackController;
-use App\Http\Controllers\ContactesContoller;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\EvenementController;
@@ -16,12 +15,8 @@ use App\Http\Controllers\QuestionsfeedbackController;
 use App\Http\Controllers\ReponsefeedbackController;
 use App\Http\Controllers\QuestionsEvaluationController;
 use App\Http\Controllers\ReponsesEvaluationController;
-
-
-
-
-
-
+use App\Http\Controllers\EvaluationQuestionReponseEvaluationController;
+use App\Http\Controllers\ContactAbonementController;
 
 
 /*
@@ -36,21 +31,15 @@ use App\Http\Controllers\ReponsesEvaluationController;
 */
 
 Route::group([
-
     'middleware' => 'api',
     'prefix' => 'auth'
 
 ], function ($router) {
-
-
 });
-
 Route::post('login', [AuthController::class ,'login']);
 Route::post('logout', [AuthController::class ,'logout']);
 Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
-
-
 //Participant
 Route::get('/users_participants',[Authcontroller::class,'index']);
 //Entreprise
@@ -75,6 +64,8 @@ Route::get('/entreprises',[EntrepriseController::class,'index']);
 Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 //Contacte
 Route::post('/contacte/create',[ContacteController::class,'create']);
+//ContactAbonementC
+Route::post('/ContactAbonementC/create',[ContactAbonementController::class,'create']);
 //Newsletter
 Route::post('/newsletter/create',[NewsletterController::class,'create']);
 //Questionsfeedback
@@ -89,18 +80,17 @@ Route::get('/Questionsevaluation/{id}',[QuestionsEvaluationController::class,'sh
 //reponseevaluations
 Route::get('/reponseevaluation', [ReponsesEvaluationController::class, 'index']);
 Route::get('/reponseevaluation/{id}',[ReponsesEvaluationController::class,'show']);
-
-
 Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::class,'evenementquestion']);
-
- 
-
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //Newsletter
     Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
     Route::delete('/newsletter/{id}/soft-delete', [NewsletterController::class, 'softDelete'])->middleware('auth:api');
     //ADmin_Authentifie
     Route::get('/user_admin',[Authcontroller::class,'user'])->middleware('auth:api');
+    //ContactAbonement
+    Route::get('/ContactAbonement/{id}',[ContactAbonementController::class,'show'])->middleware('auth:api');
+    Route::get('/ContactAbonementCs',[ContactAbonementController::class,'index'])->middleware('auth:api');
+    Route::delete('/ContactAbonements/{id}/soft-delete', [ContactAbonementController::class, 'softDelete'])->middleware('auth:api');
     //Contacte
     Route::get('/contacte/{id}',[ContacteController::class,'show'])->middleware('auth:api');
     Route::get('/contactes',[ContacteController::class,'index'])->middleware('auth:api');
@@ -144,14 +134,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
-
     Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
-
-
 });
 
 Route::middleware(['auth', 'role:participant'])->group(function () {
-    Route::get('/user_participant',[Authcontroller::class,'user'])->middleware('auth:api');
+
+    Route::get('/participant/entreprse',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntreprise'])->middleware('auth:api');
     //ReponseFeddback
     Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
     Route::post('/reponsefeedback/update/{id}', [reponsefeedbackController::class, 'update'])->middleware('auth:api');

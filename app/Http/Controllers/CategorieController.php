@@ -12,96 +12,99 @@ class CategorieController extends Controller
      */
     public function index()
     {
-        $categories = Categorie::all();
-    
-        return response()->json([
-            'categories' => $categories,
-            'status' => 200
-        ]);
+        try {
+            return response()->json([
+                'categories' => Categorie::all(),
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des catégories',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
     }
     /**
      * Show the form for creating a new resource.
      */
     public function create(Request $request){
-        $validatedData = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-        ]);
-        $Categorie = new Categorie();
-        $Categorie->nom = $validatedData['nom'];
-        $Categorie->save();
-        return response()->json([
-            'message' => 'Categorie créé avec succès',
-            'Categorie' => $Categorie,
-        ], 200);
+        try {
+            $validatedData = $request->validate([
+                'nom' => ['required', 'string', 'max:255'],
+            ]);
+            return response()->json([
+                'message' => Categorie::create($validatedData),
+                'satus'=>2020
+            ],);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Echec de creation catégorie',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        //
-        return response()->json([
-            'Categorie' => Categorie::find($id),
-            'message' => 'Categorie recuperer',
-            'status' => 200
-        ]);
+        try {
+            return response()->json([
+                'Categorie' => Categorie::find($id),
+                'message' => 'Categorie recuperer',
+                'status' => 200
+            ]);
+            } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'La catégorie non trouvée',
+                'error' => $e->getMessage(),
+                'status' => 404
+                ], 404);
+            }
     }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Categorie $categorie)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-        ]);
-
-        $Categorie = Categorie::findOrFail($id);
-
-        $Categorie->nom = $validatedData['nom'];
+        try {
+            $validatedData = $request->validate([
+                'nom' => ['required', 'string', 'max:255'],
+            ]);
     
-        $Categorie->save();
-
-        return response()->json([
-            'message' => 'Categorie mise à jour avec succès',
-            'Categorie' => $Categorie,
-            'status'=>200
-        ]);
+            $categorie = Categorie::findOrFail($id);
+            $categorie->update($validatedData);
+    
+            return response()->json([
+                'message' => 'Catégorie mise à jour avec succès',
+                'categorie' => $categorie,
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la mise à jour de la catégorie',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
     }
     /**
      * Remove the specified resource from storage.
      */
     public function softDelete($id)
     {
-        $categorie = Categorie::find($id);
+        try {
+            $categorie = Categorie::findOrFail($id);
+            $categorie->delete();
     
-        if ($categorie) {
-            $categorie->delete(); // Utilise la suppression douce
             return response()->json([
-                'message' => 'categorie soft deleted successfully',
+                'message' => 'Catégorie supprimée avec succès',
                 'status' => 200
             ]);
-        } else {
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'categorie not found',
-                'status' => 404
-            ], 404);
+                'message' => 'Une erreur est survenue lors de la suppression de la catégorie',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ],);
         }
-    }
-
-    
+    }  
 }

@@ -12,84 +12,91 @@ class EntrepriseController extends Controller
      */
     function index()
     {
-        $entreprises = Entreprise::all();
-        return response()->json([
-            'entreprises' => $entreprises,
-            'status' => 200
-        ]);
+        try {
+            return response()->json([
+                'entreprises' => Entreprise::all(),
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des entreprises',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
     }
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request){
-        $validatedData = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-        ]);
-        $Entreprise = new Entreprise();
-        $Entreprise->nom = $validatedData['nom'];
-        $Entreprise->save();
-        return response()->json([
-            'message' => 'Entreprise créé avec succès',
-            'Entreprise' => $Entreprise,
-        ], 200);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        //
+        try {
+            $validatedData = $request->validate([
+                'nom' => ['required', 'string', 'max:255'],
+            ]);
+            return response()->json([
+                'entreprise' => Entreprise::create($validatedData),
+                'message' => 'Entreprise créée avec succès',
+                'stauts'=>200
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la création de l\'entreprise',
+                'error' => $e->getMessage(),
+                'status'=>500
+            ], );
+        }
     }
-
+    
     /**
      * Display the specified resource.
      */
-    public function show($id){
-        return response()->json([
-            'Entreprise' => Entreprise::find($id),
-            'message' => 'Entreprise recuperer',
-            'status' => 200
-        ]);
-    } 
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Entreprise $entreprise)
+    public function show($id)
     {
-        //
+        try {
+            return response()->json([
+                'entreprise' =>  Entreprise::findOrFail($id),
+                'message' => 'Entreprise récupérée avec succès',
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'L\'entreprise demandée n\'a pas été trouvée',
+                'error' => $e->getMessage(),
+                'status' => 404
+            ], 404);
+        }
     }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-        ]);
-
-        $entreprise = Entreprise::findOrFail($id);
-
-        $entreprise->nom = $validatedData['nom'];
-    
-        $entreprise->save();
-
-        return response()->json([
-            'message' => 'Entreprise mise à jour avec succès',
-            'entreprise' => $entreprise,
-            'status'=>200
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'nom' => ['required', 'string', 'max:255'],
+            ]);
+            $entreprise = Entreprise::findOrFail($id);
+            $entreprise->update($validatedData);
+            return response()->json([
+                'message' => 'Entreprise mise à jour avec succès',
+                'entreprise' => $entreprise,
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la mise à jour de l\'entreprise',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function softDelete($id)
     {
         $entreprise = Entreprise::find($id);
-    
         if ($entreprise) {
             $entreprise->delete(); // Utilise la suppression douce
             return response()->json([
@@ -103,5 +110,4 @@ class EntrepriseController extends Controller
             ], 404);
         }
     }
-
 }

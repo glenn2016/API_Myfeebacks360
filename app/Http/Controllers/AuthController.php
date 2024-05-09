@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +14,6 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     //
-
         /**
      * Create a new AuthController instance.
      *
@@ -25,7 +23,6 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login']]);
     }
-
     /**
      * Get a JWT via given credentials.
      *
@@ -35,23 +32,18 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
-
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
         $user = Auth::user();
-
         if ($user->etat === 0) {
             return response()->json([
                 'error' => 'Votre compte est bloqué',
                 'status'=>402
             ]);
         }
-    
         $user = User::find(Auth::user()->id);
         $user_roles = $user->roles()->pluck('nom');
-
         return response()->json([
             'success' => true,
             'token' => $token,  
@@ -78,10 +70,8 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-
         return response()->json(['message' => 'Successfully logged out']);
     }
-
     public function create(Request $request){
         $validations = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
@@ -89,7 +79,6 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => 'required|string|min:8',
         ]);
-    
         if ($validations->fails()) {
             $errors = $validations->errors();
             return response()->json([
@@ -97,7 +86,6 @@ class AuthController extends Controller
                 'status' => 401
             ]);
         }
-
         if ($validations->passes()) {
             $user = User::create([
                 'nom' => $request->nom,
@@ -128,7 +116,6 @@ class AuthController extends Controller
     {
         return $this->respondWithToken(auth()->refresh());
     }
-
     /**
      * Get the token array structure.
      *
@@ -144,10 +131,7 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
-
     //listes empoloyer
-
-
     public function index()
     {
         $users = User::whereHas('roles', function ($query) {
@@ -156,13 +140,11 @@ class AuthController extends Controller
         ->where('etat', 1) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
         ->with('categorie', 'entreprise', 'roles')
         ->get();    
-    
         return response()->json([
             'participants' => $users,   
             'status' => 200
         ]);
     }
-
     public function indexs()
     {
         $users = User::whereHas('roles', function ($query) {
@@ -171,14 +153,11 @@ class AuthController extends Controller
         ->where('etat', 0) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
         ->with('categorie', 'entreprise', 'roles')
         ->get();
-
         return response()->json([
             'participants' => $users,
             'status' => 200
         ]);
     }
-
-
     public function update(Request $request, $id)
     {
         // Validation des données de la requête
@@ -218,7 +197,6 @@ class AuthController extends Controller
             'status' => 200
         ], 200);
     }
-    
     public function show($id)
     {
         $participant = User::with('categorie', 'entreprise', 'roles')->find($id);
@@ -228,18 +206,15 @@ class AuthController extends Controller
                 'status' => 404
             ], 404);
         }
-
         return response()->json([
             'participant' => $participant,
             'message' => 'Contact récupéré',
             'status' => 200
         ]);
     }
-
     public function bloquer($id)
     {
         $user = User::find($id);
-
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
@@ -248,7 +223,6 @@ class AuthController extends Controller
         return response()->json(
             ['message' => 'Utilisateur bloqué avec succès','User'=>$user], 200);
     }
-
     public function debloquer($id)
     {
         $user = User::find($id);
@@ -257,13 +231,7 @@ class AuthController extends Controller
         }
         $user->etat = 1;
         $user->save();
-
         return response()->json(['message' => 'Utilisateur débloqué avec succès','User'=>$user], 200);
-    }
-
-
-
-
-    
+    } 
 }
     
