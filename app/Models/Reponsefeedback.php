@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reponsefeedback extends Model
 {
+    protected $fillable = [
+        'questionsfeedbacks_id',
+        'nom',
+    ];
     use HasFactory;
     public function questionsfeedback()
     {

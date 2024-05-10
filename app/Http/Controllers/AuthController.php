@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +29,6 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function login()
     {
         $credentials = request(['email', 'password']);
@@ -51,7 +51,6 @@ class AuthController extends Controller
             'roles' => $user_roles,
         ]);
     }
-
     /**
      * Get the authenticated User.
      *
@@ -61,7 +60,6 @@ class AuthController extends Controller
     {
         return response()->json(auth()->user());
     }
-
     /**
      * Log the user out (Invalidate the token).
      *
@@ -95,7 +93,6 @@ class AuthController extends Controller
                 'entreprise_id' => $request->entreprise_id,
                 'password' => Hash::make($request->password),
             ]);
-    
             // Attache le rôle à l'utilisateur
             $user->roles()->attach(2);
             // Crée un jeton d'authentification pour l'utilisateur
@@ -106,7 +103,6 @@ class AuthController extends Controller
             ]);
         }
     }
-
     /**
      * Refresh a token.
      *
@@ -212,9 +208,11 @@ class AuthController extends Controller
             'status' => 200
         ]);
     }
+
     public function bloquer($id)
     {
         $user = User::find($id);
+
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
@@ -223,6 +221,7 @@ class AuthController extends Controller
         return response()->json(
             ['message' => 'Utilisateur bloqué avec succès','User'=>$user], 200);
     }
+
     public function debloquer($id)
     {
         $user = User::find($id);
@@ -231,7 +230,13 @@ class AuthController extends Controller
         }
         $user->etat = 1;
         $user->save();
+
         return response()->json(['message' => 'Utilisateur débloqué avec succès','User'=>$user], 200);
-    } 
+    }
+
+
+
+
+    
 }
     

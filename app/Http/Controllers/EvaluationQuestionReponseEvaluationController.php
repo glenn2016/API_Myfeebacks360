@@ -42,7 +42,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'evaluation.*.reponse_id' => 'required|numeric',
-                'evaluation.*.evaluer_id' => 'required|string|max:255',
+                'evaluer_id' => 'required|numeric|max:255',
                 'niveau' => 'required|string|max:255',
                 'commentaire' => 'required|string|max:255',
             ]);
@@ -55,7 +55,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
                 $evaluation = new EvaluationQuestionReponseEvaluation();
                 $evaluation->reponse_id = $evaluationData['reponse_id'];
                 $evaluation->evaluatuer_id = $user->id;
-                $evaluation->evaluer_id = $evaluationData['evaluer_id'];
+                $evaluation->evaluer_id = $validatedData['evaluer_id'];
                 $evaluation->niveau = $validatedData['niveau'];
                 $evaluation->commentaire = $validatedData['commentaire'];
                 $evaluation->save();

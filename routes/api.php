@@ -28,7 +28,7 @@ use App\Http\Controllers\ContactAbonementController;
 |
 */
 Route::group([
-    'middleware' => 'api',
+    'middleware' => 'a  pi',
     'prefix' => 'auth'
 
 ], function ($router) {
