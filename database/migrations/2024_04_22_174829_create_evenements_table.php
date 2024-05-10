@@ -17,11 +17,11 @@ return new class extends Migration
             $table->string("description");
             $table->date('date_debut');
             $table->date('date_fin');
+            $table->integer('etat')->default(1)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

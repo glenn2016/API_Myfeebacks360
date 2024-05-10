@@ -117,6 +117,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evenement/update/{id}', [EvenementController::class, 'update'])->middleware('auth:api');
     Route::delete('/evenements/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
     Route::get('/evenement/questions-reponses/{evenement_id}', [ReponsefeedbackController::class, 'evenementquestionreponse']);
+    Route::post('/archiver/evenement/{id}',[EvenementController::class,'archiver'])->middleware('auth:api');
+    Route::get('/listes/evenements/archives',[EvenementController::class,'indexarchiver'])->middleware('auth:api');
     //Feddback
     Route::post('/fedddback/create',[FeddbackController::class,'create'])->middleware('auth:api');
     Route::post('/fedddback/update/{id}', [FeddbackController::class, 'update'])->middleware('auth:api');
@@ -132,7 +134,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //Evaluations
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
-    Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
+    Route::delete('/evaluations/{id}/soft-delete', [EvaluationController::class, 'softDelete'])->middleware('auth:api');
+    Route::post('/archiver/evaluation/{id}',[EvaluationController::class,'archiver'])->middleware('auth:api');
+    Route::get('/listes/evaluation/archives',[EvaluationController::class,'indexarchiver'])->middleware('auth:api');
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/participant/entreprse',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntreprise'])->middleware('auth:api');

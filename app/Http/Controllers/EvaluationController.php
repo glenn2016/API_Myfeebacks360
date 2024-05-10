@@ -15,12 +15,46 @@ class EvaluationController extends Controller
     {
         try {
             return response()->json([
-                'evaluations' => Evaluation::all(),
+                'evaluations' => Evaluation::where('etat', 1)->get(),
                 'status' => 200
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la récupération des évaluations',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+
+    function indexarchiver()
+    {
+        try {
+            return response()->json([
+                'evaluations' => Evaluation::where('etat', 0)->get(),
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des évaluations',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+    public function archiver($id)
+    {
+        try {
+            $evenement = Evaluation::findOrFail($id);
+            $evenement->etat = 0;
+            $evenement->save();
+            return response()->json([
+                'message' => 'L\'événement a été archivé avec succès',
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de l\'archivage de l\'événement',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);

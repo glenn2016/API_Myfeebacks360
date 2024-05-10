@@ -13,6 +13,8 @@ class EvaluationQuestionReponseEvaluation extends Model
         'reponse_id',
         'evaluatuer_id',
         'evaluer_id',
+        'commentaire',
+        'niveau',
     ];
 
     public function evaluateur()

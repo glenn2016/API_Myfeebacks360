@@ -14,12 +14,45 @@ class EvenementController extends Controller
     {
         try {
             return response()->json([
-                'evenements' => Evenement::all(),
+                'evenements' =>Evenement::where('etat', 1)->get(),
                 'status' => 200
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la récupération des événements',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+    public function indexarchiver()
+    {
+        try {
+            return response()->json([
+                'evenements' =>Evenement::where('etat', 0)->get(),
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des événements',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+    public function archiver($id)
+    {
+        try {
+            $evenement = Evenement::findOrFail($id);
+            $evenement->etat = 0;
+            $evenement->save();
+            return response()->json([
+                'message' => 'L\'événement a été archivé avec succès',
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de l\'archivage de l\'événement',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);
