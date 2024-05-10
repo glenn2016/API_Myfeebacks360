@@ -25,9 +25,34 @@ class EvenementController extends Controller
             ], 500);
         }
     }
+
+    public function create(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'titre' => ['required', 'string', 'max:255'],
+                'description' => ['required', 'string', 'max:355'],
+                'date_debut' => ['required', 'date'],
+                'date_fin' => ['required', 'date'],
+            ]);
+            return response()->json([
+                'Evenement' => Evenement::create($validatedData),
+                'message' => 'Evenement créée avec succès',
+                'stauts'=>200
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la création de l\'Evenement',
+                'error' => $e->getMessage(),
+                'status'=>500
+            ], );
+        }
+    }
+    
     /**
      * Show the form for creating a new resource.
      */
+    
     /**
      * Update the specified resource in storage.
      */

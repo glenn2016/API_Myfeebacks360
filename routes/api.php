@@ -17,8 +17,6 @@ use App\Http\Controllers\QuestionsEvaluationController;
 use App\Http\Controllers\ReponsesEvaluationController;
 use App\Http\Controllers\EvaluationQuestionReponseEvaluationController;
 use App\Http\Controllers\ContactAbonementController;
-
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,7 +27,6 @@ use App\Http\Controllers\ContactAbonementController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -137,9 +134,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
 });
-
 Route::middleware(['auth', 'role:participant'])->group(function () {
-
     Route::get('/participant/entreprse',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntreprise'])->middleware('auth:api');
     //ReponseFeddback
     Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
@@ -151,5 +146,4 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::delete('/reponseevaluation/{id}/soft-delete', [ReponsesEvaluationController::class, 'softDelete'])->middleware('auth:api');
     //evaluation
     Route::post('/evaluation/create',[EvaluationQuestionReponseEvaluationController::class,'create'])->middleware('auth:api');
-
 });

@@ -9,6 +9,11 @@ class Questionsfeedback extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nom',
+        'evenement_id',
+    ];
+
     public function reponsefeedback()
     {
         return $this->hasMany(Reponsefeedback::class);
