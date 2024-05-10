@@ -49,12 +49,12 @@ class EvaluationController extends Controller
             $evenement->etat = 0;
             $evenement->save();
             return response()->json([
-                'message' => 'L\'événement a été archivé avec succès',
+                'message' => 'L\'evaluation a été archivé avec succès',
                 'status' => 200
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Une erreur est survenue lors de l\'archivage de l\'événement',
+                'message' => 'Une erreur est survenue lors de l\'archivage de l\'evaluation',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);
