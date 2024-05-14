@@ -46,15 +46,15 @@ class EvaluationController extends Controller
     {
         try {
             $evenement = Evaluation::findOrFail($id);
-            $evenement->etat = 0;
-            $evenement->save();
+            $evenement->update(['etat' => 0]);
+            
             return response()->json([
-                'message' => 'L\'evaluation a été archivé avec succès',
+                'message' => 'L\'évaluation a été mise à jour avec succès',
                 'status' => 200
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Une erreur est survenue lors de l\'archivage de l\'evaluation',
+                'message' => 'Une erreur est survenue lors de la mise à jour de l\'évaluation',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);

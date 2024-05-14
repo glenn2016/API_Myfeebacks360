@@ -37,6 +37,8 @@ Route::post('login', [AuthController::class ,'login']);
 Route::post('logout', [AuthController::class ,'logout']);
 Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
+Route::post('/forgot-password', [AuthController::class ,'sendResetLinkEmail']);
+
 //Participant
 Route::get('/users_participants',[Authcontroller::class,'index']);
 //Entreprise
@@ -62,7 +64,7 @@ Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 //Contacte
 Route::post('/contacte/create',[ContacteController::class,'create']);
 //ContactAbonementC
-Route::post('/ContactAbonementC/create',[ContactAbonementController::class,'create']);
+Route::post('/ContactAbonementCcreate/',[ContactAbonementController::class,'c+reate']);
 //Newsletter
 Route::post('/newsletter/create',[NewsletterController::class,'create']);
 //Questionsfeedback
@@ -135,7 +137,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvaluationController::class, 'softDelete'])->middleware('auth:api');
-    Route::post('/archiver/evaluation/{id}',[EvaluationController::class,'archiver'])->middleware('auth:api');
+    Route::put('/archiver/evaluation/{id}',[EvaluationController::class,'archiver'])->middleware('auth:api');
     Route::get('/listes/evaluation/archives',[EvaluationController::class,'indexarchiver'])->middleware('auth:api');
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {

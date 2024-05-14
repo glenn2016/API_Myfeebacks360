@@ -9,12 +9,16 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordEmail; 
 
 
 
 class AuthController extends Controller
 {
     //
+
         /**
      * Create a new AuthController instance.
      *
@@ -24,24 +28,30 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login']]);
     }
+
     /**
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
      */
+
     public function login()
     {
         $credentials = request(['email', 'password']);
+
         if (! $token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+
         $user = Auth::user();
+
         if ($user->etat === 0) {
             return response()->json([
                 'error' => 'Votre compte est bloqué',
                 'status'=>402
             ]);
         }
+    
         $user = User::find(Auth::user()->id);
         $user_roles = $user->roles()->pluck('nom');
         return response()->json([
@@ -51,6 +61,7 @@ class AuthController extends Controller
             'roles' => $user_roles,
         ]);
     }
+
     /**
      * Get the authenticated User.
      *
@@ -234,9 +245,27 @@ class AuthController extends Controller
         return response()->json(['message' => 'Utilisateur débloqué avec succès','User'=>$user], 200);
     }
 
-
-
-
+    /*
+     * Password forgot 
+     * 
+     * 
+     */
     
+     public function sendResetLinkEmail(Request $request)
+     {
+         $request->validate(['email' => 'required|email']);
+ 
+         $status = Password::sendResetLink(
+             $request->only('email')
+         );
+ 
+         if ($status === Password::RESET_LINK_SENT) {
+             Mail::to($request->email)->send(new ResetPasswordEmail); // Envoyer l'e-mail de réinitialisation
+             return response()->json(['message' => 'Email envoyé avec succès'], 200);
+         } else {
+             return response()->json(['error' => 'Impossible d\'envoyer l\'email de réinitialisation'], 500);
+         }
+     }
+ 
 }
     
