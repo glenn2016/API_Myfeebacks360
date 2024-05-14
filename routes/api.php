@@ -39,6 +39,11 @@ Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
 Route::post('/forgot-password', [AuthController::class ,'sendResetLinkEmail']);
 
+
+Route::post('password/email', [AuthController::class, 'sendResetLinkEmail']);
+Route::post('password/reset', [AuthController::class, 'reset']);
+
+
 //Participant
 Route::get('/users_participants',[Authcontroller::class,'index']);
 //Entreprise
@@ -83,24 +88,13 @@ Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::c
 //evaluation
 Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    //Newsletter
-    Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
-    Route::delete('/newsletter/{id}/soft-delete', [NewsletterController::class, 'softDelete'])->middleware('auth:api');
     //ADmin_Authentifie
     Route::get('/user_admin',[Authcontroller::class,'user'])->middleware('auth:api');
-    //ContactAbonement
-    Route::get('/ContactAbonement/{id}',[ContactAbonementController::class,'show'])->middleware('auth:api');
-    Route::get('/ContactAbonementCs',[ContactAbonementController::class,'index'])->middleware('auth:api');
-    Route::delete('/ContactAbonements/{id}/soft-delete', [ContactAbonementController::class, 'softDelete'])->middleware('auth:api');
-    //Contacte
-    Route::get('/contacte/{id}',[ContacteController::class,'show'])->middleware('auth:api');
-    Route::get('/contactes',[ContacteController::class,'index'])->middleware('auth:api');
-    Route::delete('/contacte/{id}/soft-delete', [ContacteController::class, 'softDelete'])->middleware('auth:api');
     //Participant
     Route::post('/participant/create',[Authcontroller::class,'create'])->middleware('auth:api');
     Route::post('/participant/update/{id}',[Authcontroller::class,'update'])->middleware('auth:api');
     Route::get('/participants',[Authcontroller::class,'index'])->middleware('auth:api'); 
-    Route::get('/participants/bloquer',[Authcontroller::class,'indexs'])->middleware('auth:api'); 
+    Route::get('/liste/participants/bloquer',[Authcontroller::class,'indexParticipantsBolquer'])->middleware('auth:api'); 
     Route::get('/participants/{id}',[Authcontroller::class,'show'])->middleware('auth:api');
     Route::post('/participant/{id}/bloquer',[Authcontroller::class,'bloquer'])->middleware('auth:api');
     Route::post('/participant/{id}/debloquer',[Authcontroller::class,'debloquer'])->middleware('auth:api');
@@ -152,4 +146,26 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::delete('/reponseevaluation/{id}/soft-delete', [ReponsesEvaluationController::class, 'softDelete'])->middleware('auth:api');
     //evaluation
     Route::post('/evaluation/create',[EvaluationQuestionReponseEvaluationController::class,'create'])->middleware('auth:api');
+});
+
+Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
+    //Newsletter
+    Route::get('/newsletters',[NewsletterController::class,'index'])->middleware('auth:api');
+    Route::delete('/newsletter/{id}/soft-delete', [NewsletterController::class, 'softDelete'])->middleware('auth:api');
+    //ContactAbonement
+    Route::get('/ContactAbonement/{id}',[ContactAbonementController::class,'show'])->middleware('auth:api');
+    Route::get('/ContactAbonementCs',[ContactAbonementController::class,'index'])->middleware('auth:api');
+    Route::delete('/ContactAbonements/{id}/soft-delete', [ContactAbonementController::class, 'softDelete'])->middleware('auth:api');
+    //Contacte
+    Route::get('/contacte/{id}',[ContacteController::class,'show'])->middleware('auth:api');
+    Route::get('/contactes',[ContacteController::class,'index'])->middleware('auth:api');
+    Route::delete('/contacte/{id}/soft-delete', [ContacteController::class, 'softDelete'])->middleware('auth:api');
+    //Admin
+    Route::post('/admin/create',[Authcontroller::class,'createAdmin'])->middleware('auth:api');
+    Route::post('/admin/update/{id}',[Authcontroller::class,'update'])->middleware('auth:api');
+    Route::get('/listes/admins',[Authcontroller::class,'indexAdmin'])->middleware('auth:api'); 
+    Route::get('/listes/admin/bloquer',[Authcontroller::class,'indexAdminBloquer'])->middleware('auth:api'); 
+    Route::get('/admins/{id}',[Authcontroller::class,'show'])->middleware('auth:api');
+    Route::post('/admin/{id}/bloquer',[Authcontroller::class,'bloquer'])->middleware('auth:api');
+    Route::post('/admin/{id}/debloquer',[Authcontroller::class,'debloquer'])->middleware('auth:api');
 });

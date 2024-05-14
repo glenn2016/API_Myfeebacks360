@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('titre')->nullable();
             $table->integer('etat')->default(1)->nullable();
+            $table->integer('usercreate')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
     }
-
-    
 
     /**
      * Reverse the migrations.

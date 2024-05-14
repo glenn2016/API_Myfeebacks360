@@ -81,7 +81,11 @@ class AuthController extends Controller
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
-    public function create(Request $request){
+     /*
+     * Creation Admin 
+     * 
+     */
+    public function createAdmin(Request $request){
         $validations = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
@@ -114,6 +118,43 @@ class AuthController extends Controller
             ]);
         }
     }
+    /*
+     * Creation Participant 
+     * 
+     */
+    public function create(Request $request){
+        $validations = Validator::make($request->all(), [
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => 'required|string|min:8',
+        ]);
+        if ($validations->fails()) {
+            $errors = $validations->errors();
+            return response()->json([
+                'errors' => $errors,
+                'status' => 401
+            ]);
+        }
+        if ($validations->passes()) {
+            $user = User::create([
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'email' => $request->email,
+                'categorie_id' => $request->categorie_id,
+                'entreprise_id' => $request->entreprise_id,
+                'password' => Hash::make($request->password),
+            ]);
+            // Attache le rôle à l'utilisateur
+            $user->roles()->attach(3);
+            // Crée un jeton d'authentification pour l'utilisateur
+            $token = $user->createToken('auth_token')->accessToken;
+            return response()->json([
+                'token' => $token,      
+                'type' => 'Bearer'
+            ]);
+        }
+    }
     /**
      * Refresh a token.
      *
@@ -138,7 +179,27 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
-    //listes empoloyer
+    /*
+     * Liste Admin 
+     * 
+     */
+    public function indexAdmin()
+    {
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('nom', 'Admin');
+        })
+        ->where('etat', 1) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
+        ->with('categorie', 'entreprise', 'roles')
+        ->get();    
+        return response()->json([
+            'Admins' => $users,   
+            'status' => 200
+        ]);
+    }
+    /*
+     * Liste Participants 
+     * 
+     */
     public function index()
     {
         $users = User::whereHas('roles', function ($query) {
@@ -152,7 +213,28 @@ class AuthController extends Controller
             'status' => 200
         ]);
     }
-    public function indexs()
+    /*
+     * Liste Admin bloquer
+     * 
+     */
+    public function indexAdminBloquer()
+    {
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('nom', 'Admin');
+        })
+        ->where('etat', 0) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
+        ->with('categorie', 'entreprise', 'roles')
+        ->get();
+        return response()->json([
+            'Admin' => $users,
+            'status' => 200
+        ]);
+    }
+    /*
+     * Liste Participants bloquer
+     * 
+     */
+    public function indexParticipantsBolquer()
     {
         $users = User::whereHas('roles', function ($query) {
             $query->where('nom', 'Participant');
@@ -165,6 +247,10 @@ class AuthController extends Controller
             'status' => 200
         ]);
     }
+    /*
+     * Modification d'un utilisateur
+     * 
+     */
     public function update(Request $request, $id)
     {
         // Validation des données de la requête
@@ -204,6 +290,11 @@ class AuthController extends Controller
             'status' => 200
         ], 200);
     }
+    /*
+     * Details d'un utilisateur
+     * 
+     * 
+     */
     public function show($id)
     {
         $participant = User::with('categorie', 'entreprise', 'roles')->find($id);
@@ -219,7 +310,10 @@ class AuthController extends Controller
             'status' => 200
         ]);
     }
-
+    /*
+     * Bloquer un utilisateur
+     * 
+     */
     public function bloquer($id)
     {
         $user = User::find($id);
@@ -232,7 +326,13 @@ class AuthController extends Controller
         return response()->json(
             ['message' => 'Utilisateur bloqué avec succès','User'=>$user], 200);
     }
-
+    /*
+    *
+     * Debloquer un utilisateur
+     * 
+     * 
+     * 
+     */
     public function debloquer($id)
     {
         $user = User::find($id);
@@ -250,7 +350,6 @@ class AuthController extends Controller
      * 
      * 
      */
-    
      public function sendResetLinkEmail(Request $request)
      {
          $request->validate(['email' => 'required|email']);
@@ -266,6 +365,9 @@ class AuthController extends Controller
              return response()->json(['error' => 'Impossible d\'envoyer l\'email de réinitialisation'], 500);
          }
      }
- 
+
+
+
+    
 }
     

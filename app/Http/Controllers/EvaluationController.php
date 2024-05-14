@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Evaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 
 class EvaluationController extends Controller
 {
@@ -14,8 +16,9 @@ class EvaluationController extends Controller
     function index()
     {
         try {
+            $user = Auth::user();
             return response()->json([
-                'evaluations' => Evaluation::where('etat', 1)->get(),
+                'evaluations' => Evaluation::where('usercreate', $user->id)->get(),
                 'status' => 200
             ]);
         } catch (\Exception $e) {

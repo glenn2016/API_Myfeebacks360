@@ -4,17 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Categorie;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class CategorieController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         try {
+            $user = Auth::user();
             return response()->json([
-                'categories' => Categorie::all(),
+                'categories' => Categorie::where('usercreate', $user->id)->get(),
                 'status' => 200
             ]);
         } catch (\Exception $e) {
@@ -30,13 +34,20 @@ class CategorieController extends Controller
      */
     public function create(Request $request){
         try {
+            $user = Auth::user();
             $validatedData = $request->validate([
                 'nom' => ['required', 'string', 'max:255'],
             ]);
+    
+            // Instanciation d'un nouvel objet Categorie
+            $categorie = new Categorie();
+            $categorie->usercreate = $user->id;
+    
+            // Enregistrement de la catégorie et retour de la réponse JSON
             return response()->json([
                 'message' => Categorie::create($validatedData),
-                'satus'=>2020
-            ],);
+                'status' => 2020 // Correction de la virgule ici
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Echec de creation catégorie',
@@ -44,6 +55,7 @@ class CategorieController extends Controller
             ], 500);
         }
     }
+    
     public function show($id)
     {
         try {

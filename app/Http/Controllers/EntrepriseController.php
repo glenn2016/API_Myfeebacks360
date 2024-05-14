@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Entreprise;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EntrepriseController extends Controller
 {
@@ -13,8 +14,9 @@ class EntrepriseController extends Controller
     function index()
     {
         try {
+            $user = Auth::user();
             return response()->json([
-                'entreprises' => Entreprise::all(),
+                'entreprises' => Entreprise::where('usercreate', $user->id)->get(),
                 'status' => 200
             ]);
         } catch (\Exception $e) {
@@ -31,9 +33,14 @@ class EntrepriseController extends Controller
     public function create(Request $request)
     {
         try {
+            $user = Auth::user();
             $validatedData = $request->validate([
                 'nom' => ['required', 'string', 'max:255'],
             ]);
+
+            $Entreprise = new Entreprise();
+            $Entreprise->usercreate = $user->id;
+
             return response()->json([
                 'entreprise' => Entreprise::create($validatedData),
                 'message' => 'Entreprise créée avec succès',

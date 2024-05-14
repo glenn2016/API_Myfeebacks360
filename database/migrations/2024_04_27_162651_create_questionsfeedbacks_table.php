@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('evenement_id')->nullable();
             $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade')->nullable();            
             $table->integer('etat')->default(1)->nullable();
+            $table->integer('usercreate')->nullable();
             $table->timestamps();
         });
     }

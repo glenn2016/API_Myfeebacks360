@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Evenement;
 use Illuminate\Http\Request;
 
@@ -13,8 +14,9 @@ class EvenementController extends Controller
     public function index()
     {
         try {
+            $user = Auth::user();   
             return response()->json([
-                'evenements' =>Evenement::where('etat', 1)->get(),
+                'evenements' =>Evenement::where('etat', 1,'usercreate', $user->id)->get(),
                 'status' => 200
             ]);
         } catch (\Exception $e) {
@@ -62,12 +64,17 @@ class EvenementController extends Controller
     public function create(Request $request)
     {
         try {
+            $user = Auth::user();
             $validatedData = $request->validate([
                 'titre' => ['required', 'string', 'max:255'],
                 'description' => ['required', 'string', 'max:355'],
                 'date_debut' => ['required', 'date'],
                 'date_fin' => ['required', 'date'],
             ]);
+
+            $Entreprise = new Evenement();
+            $Entreprise->usercreate = $user->id;
+            
             return response()->json([
                 'Evenement' => Evenement::create($validatedData),
                 'message' => 'Evenement créée avec succès',
