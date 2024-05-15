@@ -86,6 +86,8 @@ class AuthController extends Controller
      * 
      */
     public function createAdmin(Request $request){
+        
+        $userId = Auth::id(); 
         $validations = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
@@ -106,7 +108,11 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'entreprise_abonements_id' => $request->entreprise_abonements_id,
                 'password' => Hash::make($request->password),
-            ]);
+                'usercreate'=> $userId
+
+            ]
+        
+        );
             // Attache le rôle à l'utilisateur
             $user->roles()->attach(2);
             // Crée un jeton d'authentification pour l'utilisateur
@@ -122,6 +128,7 @@ class AuthController extends Controller
      * 
      */
     public function create(Request $request){
+        $userId = Auth::id(); 
         $validations = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
@@ -143,6 +150,7 @@ class AuthController extends Controller
                 'categorie_id' => $request->categorie_id,
                 'entreprise_id' => $request->entreprise_id,
                 'password' => Hash::make($request->password),
+                'usercreate'=> $userId
             ]);
             // Attache le rôle à l'utilisateur
             $user->roles()->attach(3);
