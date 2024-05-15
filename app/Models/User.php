@@ -30,6 +30,7 @@ class User extends Authenticatable implements JWTSubject
         'entreprise_id',
         'entreprise_id',
         'usercreate',
+        'entreprise_abonements_id',
     ];
 
     /**
@@ -102,9 +103,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Entreprise::class);
     }
-    public function entreprEntrepriseAbonementise()
+    public function entrepriseAbonement()
     {
-        return $this->belongsTo(EntrepriseAbonement::class);
+        return $this->belongsTo(EntrepriseAbonement::class,'entreprise_abonements_id');
     }
     public function reponsefeedback()
     {

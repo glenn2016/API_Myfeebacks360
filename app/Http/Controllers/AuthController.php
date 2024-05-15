@@ -196,7 +196,7 @@ class AuthController extends Controller
             $query->where('nom', 'Admin');
         })
         ->where('etat', 1) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
-        ->with('categorie', 'entreprise', 'roles')
+        ->with('entrepriseAbonement',)
         ->get();    
         return response()->json([
             'Admins' => $users,   
