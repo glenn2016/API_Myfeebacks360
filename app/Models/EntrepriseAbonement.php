@@ -12,8 +12,8 @@ class EntrepriseAbonement extends Model
     protected $fillable = [
         'nom',
         'email',
-        'numeorTeelUn',
-        'numeorTeelDeux',
+        'numeroTelDeux',
+        'numeroTelUn',
         'pays',
         'ville',
         'adresse',
