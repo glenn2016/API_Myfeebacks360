@@ -177,8 +177,7 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::post('/entrepriseAbonement/update/{id}', [EntrepriseAbonementController::class, 'update'])->middleware('auth:api');
     Route::delete('/entrepriseAbonements/{id}/soft-delete', [EntrepriseAbonementController::class, 'softDelete'])->middleware('auth:api');
 
-    //Entreprise
     Route::get('/listes/entrepriseAbonement',[EntrepriseAbonementController::class,'index'])->middleware('auth:api');
-    Route::get('/entreprise/{id}',[EntrepriseAbonementController::class,'show'])->middleware('auth:api');
+    Route::get('/entrepriseAbonement/{id}',[EntrepriseAbonementController::class,'show'])->middleware('auth:api');
 
 });

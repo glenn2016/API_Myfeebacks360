@@ -36,6 +36,7 @@ class EntrepriseAbonementController extends Controller
     {
         //
         try {
+            $userId = Auth::id(); 
             $validatedData = $request->validate([
                 'nom' => 'required|string',
                 'email' => 'required|email|unique:entreprise_abonements',
@@ -45,14 +46,27 @@ class EntrepriseAbonementController extends Controller
                 'ville' => 'required|string',
                 'adresse' => 'required|string',
             ]);
-            $user = Auth::user();
 
+        
             $entrepriseAbonement = new EntrepriseAbonement();
-            $entrepriseAbonement->usercreate = $user->id;
+
+            $entrepriseAbonement->nom = $validatedData['nom'];
+            $entrepriseAbonement->email = $validatedData['email'];
+            $entrepriseAbonement->numeroTelUn = $validatedData['numeroTelUn'];
+            $entrepriseAbonement->numeroTelDeux = $validatedData['numeroTelDeux'];
+            $entrepriseAbonement->pays = $validatedData['pays'];
+            $entrepriseAbonement->ville = $validatedData['ville'];
+            $entrepriseAbonement->adresse = $validatedData['adresse'];
+
+            $entrepriseAbonement->usercreate = $userId;
+
+   
+            // Enregistrez l'entreprise
+            $entrepriseAbonement->save();
 
             return response()->json([
                 'message' => 'EntrepriseAbonement créé avec succès',
-                'EntrepriseAbonemente' => EntrepriseAbonement::create($validatedData),
+                'EntrepriseAbonemente' =>  $entrepriseAbonement,
                 'status'=>200
             ], );
         } catch (\Exception $e) {
@@ -80,8 +94,8 @@ class EntrepriseAbonementController extends Controller
         //
         try {
             return response()->json([
-                'contacte' => EntrepriseAbonement::find($id),
-                'message' => 'contacte recuperer',
+                'entrepriseAbonement' => EntrepriseAbonement::find($id),
+                'message' => 'entrepriseAbonement recuperer',
                 'status' => 200
             ]);
             } catch (\Exception $e) {

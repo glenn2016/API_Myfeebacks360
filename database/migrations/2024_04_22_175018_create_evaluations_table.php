@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('titre')->nullable();
             $table->integer('etat')->default(1)->nullable();
-            $table->integer('usercreate')->nullable();
+            $table->unsignedBigInteger('usercreate')->nullable();
+            $table->foreign('usercreate')->references('id')->on('users')->onDelete('cascade')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

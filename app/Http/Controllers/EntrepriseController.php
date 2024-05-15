@@ -33,25 +33,30 @@ class EntrepriseController extends Controller
     public function create(Request $request)
     {
         try {
-            $user = Auth::user();
+            $userId = Auth::id(); // Récupérer l'ID de l'utilisateur authentifié
             $validatedData = $request->validate([
                 'nom' => ['required', 'string', 'max:255'],
             ]);
-
-            $Entreprise = new Entreprise();
-            $Entreprise->usercreate = $user->id;
-
+    
+            // Créez une nouvelle instance de Entreprise et attribuez l'ID de l'utilisateur à la propriété usercreate
+            $entreprise = new Entreprise();
+            $entreprise->nom = $validatedData['nom'];
+            $entreprise->usercreate = $userId;
+    
+            // Enregistrez l'entreprise
+            $entreprise->save();
+    
             return response()->json([
-                'entreprise' => Entreprise::create($validatedData),
+                'entreprise' => $entreprise,
                 'message' => 'Entreprise créée avec succès',
-                'stauts'=>200
+                'status' => 200
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la création de l\'entreprise',
                 'error' => $e->getMessage(),
-                'status'=>500
-            ], );
+                'status' => 500
+            ], 500);
         }
     }
     
