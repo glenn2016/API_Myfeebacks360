@@ -39,8 +39,8 @@ class EntrepriseAbonementController extends Controller
             $validatedData = $request->validate([
                 'nom' => 'required|string',
                 'email' => 'required|email|unique:entreprise_abonements',
-                'numeorTeelUn' => 'required|string|unique:entreprise_abonements',
-                'numeorTeelDeux' => 'nullable|string|unique:entreprise_abonements',
+                'numeroTelUn' => 'required|string|unique:entreprise_abonements',
+                'numeroTelDeux' => 'nullable|string|unique:entreprise_abonements',
                 'pays' => 'required|string',
                 'ville' => 'required|string',
                 'adresse' => 'required|string',
@@ -111,8 +111,8 @@ class EntrepriseAbonementController extends Controller
             $validatedData = $request->validate([
                 'nom' => 'required|string',
                 'email' => 'required|email|unique:entreprise_abonements',
-                'numeorTeelUn' => 'required|string|unique:entreprise_abonements',
-                'numeorTeelDeux' => 'nullable|string|unique:entreprise_abonements',
+                'numeroTelUn' => 'required|string|unique:entreprise_abonements',
+                'numeroTelDeux' => 'nullable|string|unique:entreprise_abonements',
                 'pays' => 'required|string',
                 'ville' => 'required|string',
                 'adresse' => 'required|string',
