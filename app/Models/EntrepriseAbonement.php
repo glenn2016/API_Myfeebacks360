@@ -17,6 +17,7 @@ class EntrepriseAbonement extends Model
         'pays',
         'ville',
         'adresse',
+        'usercreate',
     ];
 
     public function users()

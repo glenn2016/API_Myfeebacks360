@@ -11,6 +11,7 @@ class Entreprise extends Model
 
     protected $fillable = [
         'nom',
+        'usercreate',
     ];
 
 

@@ -90,7 +90,6 @@ class AuthController extends Controller
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'entreprise_abonements_id' => 'required|numeric',
             'password' => 'required|string|min:8',
         ]);
         if ($validations->fails()) {

@@ -11,8 +11,9 @@ class Categorie extends Model
 
     protected $fillable = [
         'nom',
+        'usercreate',
     ];
-
+    
     public function users()
     {
         return $this->hasMany(User::class);
