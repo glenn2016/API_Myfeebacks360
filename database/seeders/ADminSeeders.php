@@ -16,7 +16,7 @@ class ADminSeeders extends Seeder
     {
         //
         // Créez un rôle d'administrateur s'il n'existe pas
-        $adminRole = Role::firstOrCreate(['nom' => 'SuperAdmin']);
+        $adminRole = Role::firstOrCreate(['nom' => 'Admin']);
 
         // Créez un utilisateur administrateur
         $admin = User::create([
