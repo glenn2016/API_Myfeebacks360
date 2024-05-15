@@ -17,6 +17,9 @@ use App\Http\Controllers\QuestionsEvaluationController;
 use App\Http\Controllers\ReponsesEvaluationController;
 use App\Http\Controllers\EvaluationQuestionReponseEvaluationController;
 use App\Http\Controllers\ContactAbonementController;
+use App\Http\Controllers\EntrepriseAbonementController;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -168,4 +171,14 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::get('/admins/{id}',[Authcontroller::class,'show'])->middleware('auth:api');
     Route::post('/admin/{id}/bloquer',[Authcontroller::class,'bloquer'])->middleware('auth:api');
     Route::post('/admin/{id}/debloquer',[Authcontroller::class,'debloquer'])->middleware('auth:api');
+
+    //EntrepriseAbanement
+    Route::post('/entrepriseAbonement/create',[EntrepriseAbonementController::class,'create'])->middleware('auth:api');
+    Route::post('/entrepriseAbonement/update/{id}', [EntrepriseAbonementController::class, 'update'])->middleware('auth:api');
+    Route::delete('/entrepriseAbonements/{id}/soft-delete', [EntrepriseAbonementController::class, 'softDelete'])->middleware('auth:api');
+
+    //Entreprise
+    Route::get('/listes/entrepriseAbonement',[EntrepriseAbonementController::class,'index'])->middleware('auth:api');
+    Route::get('/entreprise/{id}',[EntrepriseAbonementController::class,'show'])->middleware('auth:api');
+
 });

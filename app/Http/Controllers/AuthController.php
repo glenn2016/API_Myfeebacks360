@@ -90,6 +90,7 @@ class AuthController extends Controller
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'entreprise_abonements_id' => 'required|numeric',
             'password' => 'required|string|min:8',
         ]);
         if ($validations->fails()) {
@@ -104,8 +105,7 @@ class AuthController extends Controller
                 'nom' => $request->nom,
                 'prenom' => $request->prenom,
                 'email' => $request->email,
-                'categorie_id' => $request->categorie_id,
-                'entreprise_id' => $request->entreprise_id,
+                'entreprise_abonements_id' => $request->entreprise_abonements_id,
                 'password' => Hash::make($request->password),
             ]);
             // Attache le rôle à l'utilisateur
