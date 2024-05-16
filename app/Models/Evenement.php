@@ -20,4 +20,9 @@ class Evenement extends Model
     {
         return $this->hasMany(Questionsfeedback::class);
     }
+
+    public function usercreate()
+    {
+        return $this->hasMany(User::class,'usercreate');
+    }
 }

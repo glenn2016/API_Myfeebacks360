@@ -58,6 +58,7 @@ Route::get('/categorie/{id}',[CategorieController::class,'show']);
 Route::get('/entreprises',[EntrepriseController::class,'index']);
 //Evenement
 Route::get('/evenements',[EvenementController::class,'index']);
+Route::get('/evenements/admin',[EvenementController::class,'indexevenement']);
 Route::get('/evenement/{id}',[EvenementController::class,'show']);
 //Feddback
 Route::get('/fedddback/{id}',[FeddbackController::class,'show']);

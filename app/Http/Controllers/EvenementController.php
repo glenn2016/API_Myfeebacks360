@@ -32,6 +32,32 @@ class EvenementController extends Controller
             ], 500);
         }
     }
+
+    public function indexevenement()
+    {
+        try {
+            $user = Auth::user();   
+            // Utilisez la méthode with pour charger la relation usercreate avec les événements
+            $evenements = Evenement::where('etat', 1)
+                                    ->whereHas('usercreate', function ($query) use ($user) {
+                                        $query->where('id', $user->id);
+                                    })
+                                    ->with('usercreate') // Charger les informations de l'utilisateur qui a créé l'événement
+                                    ->get();
+            
+            return response()->json([
+                'evenements' => $evenements,
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des événements',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+
     
     public function indexarchiver()
     {
