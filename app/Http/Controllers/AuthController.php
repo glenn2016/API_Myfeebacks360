@@ -206,11 +206,14 @@ class AuthController extends Controller
      */
     public function index()
     {
+        // Récupérez l'ID de l'utilisateur authentifié
+        $userId = Auth::id();
         $users = User::whereHas('roles', function ($query) {
             $query->where('nom', 'Participant');
         })
         ->where('etat', 1) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
         ->with('categorie', 'entreprise', 'roles')
+        ->with('usercreate', $userId)
         ->get();    
         return response()->json([
             'participants' => $users,   
@@ -240,11 +243,13 @@ class AuthController extends Controller
      */
     public function indexParticipantsBolquer()
     {
+        $userId = Auth::id();
         $users = User::whereHas('roles', function ($query) {
             $query->where('nom', 'Participant');
         })
         ->where('etat', 0) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
         ->with('categorie', 'entreprise', 'roles')
+        ->with('usercreate', $userId)
         ->get();
         return response()->json([
             'participants' => $users,
@@ -321,7 +326,6 @@ class AuthController extends Controller
     public function bloquer($id)
     {
         $user = User::find($id);
-
         if (!$user) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);
         }
@@ -345,7 +349,6 @@ class AuthController extends Controller
         }
         $user->etat = 1;
         $user->save();
-
         return response()->json(['message' => 'Utilisateur débloqué avec succès','User'=>$user], 200);
     }
 
@@ -357,21 +360,14 @@ class AuthController extends Controller
      public function sendResetLinkEmail(Request $request)
      {
          $request->validate(['email' => 'required|email']);
- 
          $status = Password::sendResetLink(
              $request->only('email')
          );
- 
          if ($status === Password::RESET_LINK_SENT) {
              Mail::to($request->email)->send(new ResetPasswordEmail); // Envoyer l'e-mail de réinitialisation
              return response()->json(['message' => 'Email envoyé avec succès'], 200);
          } else {
              return response()->json(['error' => 'Impossible d\'envoyer l\'email de réinitialisation'], 500);
          }
-     }
-
-
-
-    
+     }  
 }
-    
