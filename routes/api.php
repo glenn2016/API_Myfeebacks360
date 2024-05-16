@@ -45,6 +45,7 @@ Route::post('/forgot-password', [AuthController::class ,'sendResetLinkEmail']);
 Route::post('password/email', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('password/reset', [AuthController::class, 'reset']);
 
+
 //Participant
 Route::get('/users_participants',[Authcontroller::class,'index']);
 //Entreprise

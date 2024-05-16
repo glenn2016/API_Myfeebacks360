@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Questionsfeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 
 class QuestionsfeedbackController extends Controller
@@ -46,6 +47,7 @@ class QuestionsfeedbackController extends Controller
      */
     public function create(Request $request)
     {
+        $userId = Auth::id();
         try {
             $validatedData = $request->validate([
                 'nom' => ['required', 'string', 'max:255'],
@@ -54,6 +56,7 @@ class QuestionsfeedbackController extends Controller
             $questionsFeedback = Questionsfeedback::create([
                 'nom' => $validatedData['nom'],
                 'evenement_id' => $validatedData['evenement_id'],
+                'usercreate'=> $userId
             ]);
             return response()->json([
                 'message' => 'Question de feedback créée avec succès',
