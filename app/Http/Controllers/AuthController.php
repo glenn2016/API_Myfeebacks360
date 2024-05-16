@@ -51,7 +51,6 @@ class AuthController extends Controller
                 'status'=>402
             ]);
         }
-    
         $user = User::find(Auth::user()->id);
         $user_roles = $user->roles()->pluck('nom');
         return response()->json([
@@ -98,7 +97,7 @@ class AuthController extends Controller
             $errors = $validations->errors();
             return response()->json([
                 'errors' => $errors,
-                'status' => 401
+                'status' => 420
             ]);
         }
         if ($validations->passes()) {
@@ -109,9 +108,7 @@ class AuthController extends Controller
                 'entreprise_abonements_id' => $request->entreprise_abonements_id,
                 'password' => Hash::make($request->password),
                 'usercreate'=> $userId
-
             ]
-        
         );
             // Attache le rôle à l'utilisateur
             $user->roles()->attach(2);
@@ -139,7 +136,7 @@ class AuthController extends Controller
             $errors = $validations->errors();
             return response()->json([
                 'errors' => $errors,
-                'status' => 401
+                'status' => 420
             ]);
         }
         if ($validations->passes()) {

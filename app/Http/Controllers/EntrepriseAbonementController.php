@@ -47,6 +47,34 @@ class EntrepriseAbonementController extends Controller
                 'adresse' => 'required|string',
             ]);
 
+            // Vérifier si l'email existe déjà
+            $existingEmail = EntrepriseAbonement::where('email', $validatedData['email'])->first();
+            if ($existingEmail) {
+                return response()->json([
+                    'message' => 'L\'email existe déjà.',
+                    'status' => 420
+                ], 420);
+            }
+
+            // Vérifier si le numéro de téléphone un existe déjà
+            $existingNumeroTelUn = EntrepriseAbonement::where('numeroTelUn', $validatedData['numeroTelUn'])->first();
+            if ($existingNumeroTelUn) {
+                return response()->json([
+                    'message' => 'Le numéro de téléphone un existe déjà.',
+                    'status' => 421
+                ], 421);
+            }
+                // Vérifier si le numéro de téléphone deux existe déjà
+            if ($validatedData['numeroTelDeux']) {
+                $existingNumeroTelDeux = EntrepriseAbonement::where('numeroTelDeux', $validatedData['numeroTelDeux'])->first();
+                if ($existingNumeroTelDeux) {
+                    return response()->json([
+                        'message' => 'Le numéro de téléphone deux existe déjà.',
+                        'status' => 421
+                    ], 421);
+                }
+            }
+
         
             $entrepriseAbonement = new EntrepriseAbonement();
 
@@ -60,7 +88,6 @@ class EntrepriseAbonementController extends Controller
 
             $entrepriseAbonement->usercreate = $userId;
 
-   
             // Enregistrez l'entreprise
             $entrepriseAbonement->save();
 
@@ -78,13 +105,6 @@ class EntrepriseAbonementController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -105,14 +125,6 @@ class EntrepriseAbonementController extends Controller
                     'status' => 404
                 ], 404);
             }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EntrepriseAbonement $entrepriseAbonement)
-    {
-        //
     }
 
     /**
