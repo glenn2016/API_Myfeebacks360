@@ -11,7 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::table('questionsfeedbacks', function (Blueprint $table) {
+            //
+            $table->dropColumn('usercreate');
+        });
     }
 
     /**
@@ -19,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('questionsfeedbacks', function (Blueprint $table) {
+            //
+        });
     }
 };
