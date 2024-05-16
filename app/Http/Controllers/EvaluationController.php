@@ -17,8 +17,11 @@ class EvaluationController extends Controller
     {
         try {
             $user = Auth::user();
+
             return response()->json([
-                'evaluations' => Evaluation::where('usercreate', $user->id)->get(),
+                'evaluations' => Evaluation::where('etat', 1)
+                                            ->where('usercreate', $user->id)
+                                            ->get(),
                 'status' => 200
             ]);
         } catch (\Exception $e) {
