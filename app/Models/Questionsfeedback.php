@@ -12,6 +12,7 @@ class Questionsfeedback extends Model
     protected $fillable = [
         'nom',
         'evenement_id',
+        'usercreate',
     ];
 
     public function reponsefeedback()
