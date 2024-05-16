@@ -91,7 +91,7 @@ class QuestionsfeedbackController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    /*
+    
     public function update(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
