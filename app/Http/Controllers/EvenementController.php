@@ -37,11 +37,10 @@ class EvenementController extends Controller
     {
         try {
             $user = Auth::user();   
-            // Utilisez la méthode with pour charger la relation usercreate avec les événements
+            
+            // Récupérer les événements où le créateur de l'utilisateur est égal au créateur de l'événement
             $evenements = Evenement::where('etat', 1)
-                                    ->whereHas('usercreate', function ($query) use ($user) {
-                                        $query->where('id', $user->id);
-                                    })
+                                    ->where('usercreate', $user->id) // Assurez-vous que 'usercreate_id' est le nom correct de la colonne dans la table Evenement
                                     ->with('usercreate') // Charger les informations de l'utilisateur qui a créé l'événement
                                     ->get();
             
@@ -58,7 +57,6 @@ class EvenementController extends Controller
         }
     }
 
-    
     public function indexarchiver()
     {
         try {

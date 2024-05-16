@@ -12,6 +12,7 @@ class Evaluation extends Model
     protected $fillable = [
         'titre',
         'etat',
+        'usercreate',
     ];
 
     public function questionsEvaluation()

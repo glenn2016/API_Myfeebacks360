@@ -6,6 +6,8 @@ use App\Models\QuestionsEvaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ReponsesEvaluation;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\Evaluation;
 
 class QuestionsEvaluationController extends Controller
@@ -32,6 +34,8 @@ class QuestionsEvaluationController extends Controller
      */
     public function create(Request $request)
     {
+        $userId = Auth::user();   
+
         // Validation des données pour l'évaluation
         $validatedData = $request->validate([
             'titre' => 'required|string|max:255',
@@ -43,6 +47,8 @@ class QuestionsEvaluationController extends Controller
         // Créer une nouvelle évaluation
         $evaluation = Evaluation::create([
             'titre' => $validatedData['titre'],
+            'usercreate'=> $userId,
+
         ]);
         // Récupérer l'ID de l'évaluation créée
         $evaluationId = $evaluation->id;
