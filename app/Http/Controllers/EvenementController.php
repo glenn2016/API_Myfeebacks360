@@ -15,8 +15,13 @@ class EvenementController extends Controller
     {
         try {
             $user = Auth::user();   
+            // Utilisez where pour spécifier chaque condition séparément
+            $evenements = Evenement::where('etat', 1)
+                                    ->where('usercreate', $user->id)
+                                    ->get();
+            
             return response()->json([
-                'evenements' =>Evenement::where('etat', 1,'usercreate', $user->id)->get(),
+                'evenements' => $evenements,
                 'status' => 200
             ]);
         } catch (\Exception $e) {
@@ -27,6 +32,7 @@ class EvenementController extends Controller
             ], 500);
         }
     }
+    
     public function indexarchiver()
     {
         try {
@@ -71,21 +77,31 @@ class EvenementController extends Controller
                 'date_debut' => ['required', 'date'],
                 'date_fin' => ['required', 'date'],
             ]);
-
-            $Entreprise = new Evenement();
-            $Entreprise->usercreate = $user->id;
+    
+            // Créez une nouvelle instance d'Evenement et attribuez-lui les données validées
+            $evenement = new Evenement();
+            $evenement->titre = $validatedData['titre'];
+            $evenement->description = $validatedData['description'];
+            $evenement->date_debut = $validatedData['date_debut'];
+            $evenement->date_fin = $validatedData['date_fin'];
+            $evenement->usercreate = $user->id;
+    
+            // Enregistrez l'événement
+            $evenement->save();
             
+            // Retournez une réponse JSON avec l'événement créé
             return response()->json([
-                'Evenement' => Evenement::create($validatedData),
-                'message' => 'Evenement créée avec succès',
-                'stauts'=>200
-            ], 200);
+                'Evenement' => $evenement,
+                'message' => 'Evenement créé avec succès',
+                'status' => 200
+            ]);
         } catch (\Exception $e) {
+            // En cas d'erreur, renvoyez une réponse JSON avec un message d'erreur
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la création de l\'Evenement',
                 'error' => $e->getMessage(),
-                'status'=>500
-            ], );
+                'status' => 500
+            ]);
         }
     }
     
