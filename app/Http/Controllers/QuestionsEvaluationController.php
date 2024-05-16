@@ -34,8 +34,9 @@ class QuestionsEvaluationController extends Controller
      */
     public function create(Request $request)
     {
-        $userId = Auth::user();   
-
+        // Récupérer l'ID de l'utilisateur connecté
+        $userId = Auth::id();   
+    
         // Validation des données pour l'évaluation
         $validatedData = $request->validate([
             'titre' => 'required|string|max:255',
@@ -44,14 +45,16 @@ class QuestionsEvaluationController extends Controller
             'questions.*.categorie_id' => 'required|integer|exists:categories,id',
             'questions.*.reponses' => 'array',
         ]);
-        // Créer une nouvelle évaluation
+    
+        // Créer une nouvelle évaluation avec l'ID de l'utilisateur connecté
         $evaluation = Evaluation::create([
             'titre' => $validatedData['titre'],
             'usercreate'=> $userId,
-
         ]);
+    
         // Récupérer l'ID de l'évaluation créée
         $evaluationId = $evaluation->id;
+    
         // Créer les questions associées à l'évaluation et les réponses
         foreach ($validatedData['questions'] as $questionData) {
             // Créer la question
@@ -60,8 +63,9 @@ class QuestionsEvaluationController extends Controller
                 'evaluation_id' => $evaluationId,
                 'categorie_id' => $questionData['categorie_id'],
             ]);
+    
             // Vérifier s'il y a des réponses pour cette question
-            if (isset($questionData['reponses'])) {
+            if (is_array($questionData['reponses']) && count($questionData['reponses']) > 0) {
                 // Créer chaque réponse et les associer à la question
                 foreach ($questionData['reponses'] as $reponse) {
                     ReponsesEvaluation::create([
@@ -71,8 +75,12 @@ class QuestionsEvaluationController extends Controller
                 }
             }
         }
-        // Retourner une réponse indiquant que l'évaluation a été créée avec succès
-        return response()->json(['message' => 'Evaluation créée avec succès'], 201);
+    
+        // Retourner une réponse indiquant que l'évaluation a été créée avec succès et l'ID de l'évaluation créée
+        return response()->json([
+            'message' => 'Evaluation créée avec succès',
+            'evaluation_id' => $evaluationId
+        ], 201);
     }
     /**
      * Display the specified resource.

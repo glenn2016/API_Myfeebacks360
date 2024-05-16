@@ -20,4 +20,9 @@ class Evaluation extends Model
         return $this->hasMany(QuestionsEvaluation::class);
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
 }
