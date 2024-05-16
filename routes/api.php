@@ -70,7 +70,7 @@ Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 //Contacte
 Route::post('/contacte/create',[ContacteController::class,'create']);
 //ContactAbonementC
-Route::post('/ContactAbonementC/create/',[ContactAbonementController::class,'c+reate']);
+Route::post('/ContactAbonementC/create/',[ContactAbonementController::class,'create']);
 //Newsletter
 Route::post('/newsletter/create',[NewsletterController::class,'create']);
 //Questionsfeedback
