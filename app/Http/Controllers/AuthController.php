@@ -213,7 +213,7 @@ class AuthController extends Controller
         })
         ->where('etat', 1) // Ajoutez cette condition pour filtrer les utilisateurs bloqués
         ->with('categorie', 'entreprise', 'roles')
-        ->with('usercreate', $userId)
+        ->where('usercreate', $userId)
         ->get();    
         return response()->json([
             'participants' => $users,   
@@ -249,7 +249,7 @@ class AuthController extends Controller
         })
         ->where('etat', 0) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
         ->with('categorie', 'entreprise', 'roles')
-        ->with('usercreate', $userId)
+        ->where('usercreate', $userId)
         ->get();
         return response()->json([
             'participants' => $users,
