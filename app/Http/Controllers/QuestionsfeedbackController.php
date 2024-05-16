@@ -61,7 +61,7 @@ class QuestionsfeedbackController extends Controller
             return response()->json([
                 'message' => 'Question de feedback créée avec succès',
                 'questionsFeedback' => $questionsFeedback,
-            ], 201);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la création de la question de feedback',
