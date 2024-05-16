@@ -34,28 +34,36 @@ class CategorieController extends Controller
      */
     public function create(Request $request){
         try {
-            $user = Auth::user();
+            // Récupérez l'ID de l'utilisateur authentifié
+            $userId = Auth::id();
             $validatedData = $request->validate([
                 'nom' => ['required', 'string', 'max:255'],
             ]);
     
             // Instanciation d'un nouvel objet Categorie
             $categorie = new Categorie();
-            $categorie->usercreate = $user->id;
+            $categorie->nom = $validatedData['nom'];
     
-            // Enregistrement de la catégorie et retour de la réponse JSON
+            // Assurez-vous que la colonne usercreate dans la table est configurée pour accepter les ID numériques
+            $categorie->usercreate = $userId;
+    
+            // Enregistrez la catégorie
+            $categorie->save();
+    
+            // Retournez la réponse JSON avec un message de succès et la catégorie créée
             return response()->json([
-                'message' => Categorie::create($validatedData),
-                'status' => 2020 // Correction de la virgule ici
+                'message' => 'Catégorie créée avec succès',
+                'categorie' => $categorie,
+                'status' => 2020
             ]);
         } catch (\Exception $e) {
+            // En cas d'erreur, renvoyez une réponse JSON avec un message d'erreur
             return response()->json([
-                'message' => 'Echec de creation catégorie',
+                'message' => 'Échec de la création de la catégorie',
                 'error' => $e->getMessage(),
             ], 500);
         }
     }
-    
     public function show($id)
     {
         try {
