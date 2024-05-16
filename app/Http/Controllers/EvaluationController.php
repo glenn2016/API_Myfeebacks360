@@ -55,7 +55,7 @@ class EvaluationController extends Controller
             $evenement->update(['etat' => 0]);
             
             return response()->json([
-                'message' => 'L\'évaluation a été mise à jour avec succès',
+                'message' => 'L\'évaluation a été archiver avec succès',
                 'status' => 200
             ]);
         } catch (\Exception $e) {
