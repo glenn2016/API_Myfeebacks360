@@ -51,21 +51,25 @@ class EvaluationController extends Controller
     public function archiver($id)
     {
         try {
+            // Trouvez l'évaluation existante par son ID
             $evenement = Evaluation::findOrFail($id);
+            
+            // Mettez à jour l'attribut 'etat' de l'évaluation existante à 0
             $evenement->update(['etat' => 0]);
             
             return response()->json([
-                'message' => 'L\'évaluation a été archiver avec succès',
+                'message' => 'L\'évaluation a été archivée avec succès',
                 'status' => 200
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Une erreur est survenue lors de la mise à jour de l\'évaluation',
+                'message' => 'Une erreur est survenue lors de l\'archivage de l\'évaluation',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);
         }
     }
+    
     /**
      * Show the form for creating a new resource.
      */
