@@ -42,10 +42,8 @@ Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
 Route::post('/forgot-password', [AuthController::class ,'sendResetLinkEmail']);
 
-
 Route::post('password/email', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('password/reset', [AuthController::class, 'reset']);
-
 
 //Participant
 Route::get('/users_participants',[Authcontroller::class,'index']);
@@ -171,7 +169,6 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::get('/admins/{id}',[Authcontroller::class,'show'])->middleware('auth:api');
     Route::post('/admin/{id}/bloquer',[Authcontroller::class,'bloquer'])->middleware('auth:api');
     Route::post('/admin/{id}/debloquer',[Authcontroller::class,'debloquer'])->middleware('auth:api');
-
     //EntrepriseAbanement
     Route::post('/entrepriseAbonement/create',[EntrepriseAbonementController::class,'create'])->middleware('auth:api');
     Route::post('/entrepriseAbonement/update/{id}', [EntrepriseAbonementController::class, 'update'])->middleware('auth:api');

@@ -230,7 +230,7 @@ class AuthController extends Controller
             $query->where('nom', 'Admin');
         })
         ->where('etat', 0) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
-        ->with('categorie', 'entreprise', 'roles')
+        ->with('entrepriseAbonement','roles')
         ->get();
         return response()->json([
             'Admin' => $users,

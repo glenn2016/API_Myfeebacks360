@@ -120,13 +120,12 @@ class EntrepriseAbonementController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
         try {
             $validatedData = $request->validate([
                 'nom' => 'required|string',
-                'email' => 'required|email|unique:entreprise_abonements',
-                'numeroTelUn' => 'required|string|unique:entreprise_abonements',
-                'numeroTelDeux' => 'nullable|string|unique:entreprise_abonements',
+                'email' => 'required|email|unique:entreprise_abonements,email,' . $id,
+                'numeroTelUn' => 'required|string|unique:entreprise_abonements,numeroTelUn,' . $id,
+                'numeroTelDeux' => 'nullable|string|unique:entreprise_abonements,numeroTelDeux,' . $id,
                 'pays' => 'required|string',
                 'ville' => 'required|string',
                 'adresse' => 'required|string',
