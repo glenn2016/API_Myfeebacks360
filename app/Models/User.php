@@ -96,7 +96,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function categorie()
     {
-        return $this->belongsTo(Categorie::class,'usercreate');
+        return $this->belongsTo(Categorie::class,);
     }
 
     public function entreprise()
