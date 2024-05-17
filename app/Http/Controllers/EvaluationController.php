@@ -67,7 +67,7 @@ class EvaluationController extends Controller
                                     ->get();
   
             return response()->json([
-                'Categoriehe' => $Categorie,
+                'Categorie' => $Categorie,
                 'status' => 200
             ]);
         } catch (\Exception $e) {
