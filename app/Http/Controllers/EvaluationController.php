@@ -39,12 +39,12 @@ class EvaluationController extends Controller
             $user = Auth::user();   
             
             // Récupérer les événements où le créateur de l'utilisateur est égal au créateur de l'événement
-            $valuation = Evaluation::where('etat', 1)
+            $evaluation = Evaluation::where('etat', 1)
                                     ->where('usercreate', $user->usercreate)
                                     ->get();
             
             return response()->json([
-                'valuation' => $valuation,
+                'valuation' => $evaluation,
                 'status' => 200
             ]);
         } catch (\Exception $e) {
