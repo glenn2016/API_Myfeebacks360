@@ -33,6 +33,29 @@ class EvaluationController extends Controller
         }
     }
 
+    public function indexevaluation()
+    {
+        try {
+            $user = Auth::user();   
+            
+            // Récupérer les événements où le créateur de l'utilisateur est égal au créateur de l'événement
+            $valuation = Evaluation::where('etat', 1)
+                                    ->where('usercreate', $user->usercreate)
+                                    ->get();
+            
+            return response()->json([
+                'valuation' => $valuation,
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des evaluation',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+
     function indexarchiver()
     {
         try {
@@ -51,25 +74,21 @@ class EvaluationController extends Controller
     public function archiver($id)
     {
         try {
-            // Trouvez l'évaluation existante par son ID
             $evenement = Evaluation::findOrFail($id);
-            
-            // Mettez à jour l'attribut 'etat' de l'évaluation existante à 0
             $evenement->update(['etat' => 0]);
             
             return response()->json([
-                'message' => 'L\'évaluation a été archivée avec succès',
+                'message' => 'L\'évaluation a été archiver avec succès',
                 'status' => 200
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Une erreur est survenue lors de l\'archivage de l\'évaluation',
+                'message' => 'Une erreur est survenue lors de la mise à jour de l\'évaluation',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);
         }
     }
-    
     /**
      * Show the form for creating a new resource.
      */

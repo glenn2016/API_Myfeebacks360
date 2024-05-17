@@ -16,3 +16,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-email', function () {
+    Mail::raw('Test email', function ($message) {
+        $message->to('matuanahirina@gmail.com        ')
+                ->subject('Test Email')
+                ->from('glennleo242@gmail.com', 'Your App Name');
+    });
+
+    return 'Email sent';
+});

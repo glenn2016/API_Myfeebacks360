@@ -18,6 +18,7 @@ use App\Http\Controllers\ReponsesEvaluationController;
 use App\Http\Controllers\EvaluationQuestionReponseEvaluationController;
 use App\Http\Controllers\ContactAbonementController;
 use App\Http\Controllers\EntrepriseAbonementController;
+use App\Http\Controllers\ForgotPasswordController;
 
 
 /*
@@ -40,10 +41,17 @@ Route::post('login', [AuthController::class ,'login']);
 Route::post('logout', [AuthController::class ,'logout']);
 Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
-Route::post('/forgot-password', [AuthController::class ,'sendResetLinkEmail']);
 
-Route::post('password/email', [AuthController::class, 'sendResetLinkEmail']);
-Route::post('password/reset', [AuthController::class, 'reset']);
+
+
+
+
+Route::post('email/verification-notification', [ForgotPasswordController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
+Route::get('verify-email/{id}/{hash}', [ForgotPasswordController::class, 'verify'])->name('verification.verify')->middleware('auth:sanctum');
+
+Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
+Route::post('reset-password', [ForgotPasswordController::class, 'reset']);
+
 
 
 //Participant
@@ -149,7 +157,13 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     //evaluation
     Route::post('/evaluation/create',[EvaluationQuestionReponseEvaluationController::class,'create'])->middleware('auth:api');
 
+
     Route::get('/evenements/admin',[EvenementController::class,'indexevenement'])->middleware('auth:api');
+
+    Route::get('evaluation/evenements/admin',[EvaluationController::class,'indexevaluation'])->middleware('auth:api');
+
+    
+
 
 });
 
