@@ -160,7 +160,7 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
 
     Route::get('/evenements/admin',[EvenementController::class,'indexevenement'])->middleware('auth:api');
 
-    Route::get('evaluation/evenements/admin',[EvaluationController::class,'indexevaluation'])->middleware('auth:api');
+    Route::get('evaluation/admin',[EvaluationController::class,'indexevaluation'])->middleware('auth:api');
 
     
 
