@@ -6,6 +6,7 @@ use App\Models\Evaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Categorie;
 
 
 class EvaluationController extends Controller
@@ -55,6 +56,29 @@ class EvaluationController extends Controller
             ], 500);
         }
     }
+
+    public function indexcategorie()
+    {
+        try {
+            $user = Auth::user();   
+            
+            // Récupérer les événements où le créateur de l'utilisateur est égal au créateur de l'événement
+            $Categorie = Categorie::where('usercreate', $user->usercreate)
+                                    ->get();
+  
+            return response()->json([
+                'Categoriehe' => $Categorie,
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des Categorie',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+
 
     function indexarchiver()
     {

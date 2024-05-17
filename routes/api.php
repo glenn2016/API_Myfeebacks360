@@ -162,6 +162,9 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
 
     Route::get('evaluations/admin',[EvaluationController::class,'indexevaluation'])->middleware('auth:api');
 
+    Route::get('/categories/admin',[EvaluationController::class,'indexcategorie'])->middleware('auth:api');
+
+
     
 
 

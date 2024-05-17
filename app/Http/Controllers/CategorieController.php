@@ -17,6 +17,7 @@ class CategorieController extends Controller
     {
         try {
             $user = Auth::user();
+            
             return response()->json([
                 'categories' => Categorie::where('usercreate', $user->id)->get(),
                 'status' => 200
@@ -64,6 +65,8 @@ class CategorieController extends Controller
             ], 500);
         }
     }
+
+
     public function show($id)
     {
         try {
