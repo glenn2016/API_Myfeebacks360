@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Categorie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EvaluationQuestionReponseEvaluation;
@@ -17,7 +18,8 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     {
         try {
             // Récupérer l'entreprise de la personne connectée
-            $entrepriseDePersonneConnectee = Auth::user()->entreprise;
+            $user = Auth::user();
+            $entrepriseDePersonneConnectee = $user->entreprise;
     
             // Vérifier si l'utilisateur connecté a une entreprise
             if (!$entrepriseDePersonneConnectee) {
@@ -27,12 +29,24 @@ class EvaluationQuestionReponseEvaluationController extends Controller
                 ], 400);
             }
     
-            // Récupérer les utilisateurs avec les mêmes conditions d'entreprise et de catégorie
+            // Récupérer la catégorie
+            $categorie = Categorie::find($categoryId);
+    
+            // Vérifier si la catégorie existe
+            if (!$categorie) {
+                return response()->json([
+                    'message' => 'La catégorie spécifiée est introuvable.',
+                    'status' => '404'
+                ], 404);
+            }
+    
+            // Récupérer les utilisateurs avec les mêmes conditions d'entreprise, de catégorie et de usercreate
             $participants = User::whereHas('entreprise', function ($query) use ($entrepriseDePersonneConnectee) {
                     $query->where('nom', '=', $entrepriseDePersonneConnectee->nom);
                 })
-                ->where('id', '!=', Auth::id())
+                ->where('id', '!=', $user->id)
                 ->where('categorie_id', $categoryId) // Assurez-vous que 'categorie_id' est la colonne qui référence la catégorie dans la table users
+                ->where('usercreate', $user->usercreate)
                 ->get();
     
             return response()->json([
