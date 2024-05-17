@@ -43,9 +43,6 @@ Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
 
 
-
-
-
 Route::post('email/verification-notification', [ForgotPasswordController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
 Route::get('verify-email/{id}/{hash}', [ForgotPasswordController::class, 'verify'])->name('verification.verify')->middleware('auth:sanctum');
 
@@ -145,7 +142,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/listes/evaluation/archives',[EvaluationController::class,'indexarchiver'])->middleware('auth:api');
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
-    Route::get('/participant/entreprse',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntreprise'])->middleware('auth:api');
+    Route::get('/participant/entreprse/{categoryId}',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntrepriseAndCategory'])->middleware('auth:api');
     //ReponseFeddback
     Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
     Route::post('/reponsefeedback/update/{id}', [reponsefeedbackController::class, 'update'])->middleware('auth:api');

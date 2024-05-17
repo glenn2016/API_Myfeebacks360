@@ -13,15 +13,31 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function showUsersWithSimilarEntreprise()
+    public function showUsersWithSimilarEntrepriseAndCategory($categoryId)
     {
         try {
+            // Récupérer l'entreprise de la personne connectée
             $entrepriseDePersonneConnectee = Auth::user()->entreprise;
-            return response()->json([
-                'participants'=>User::whereHas('entreprise', function ($query) use ($entrepriseDePersonneConnectee) {
+    
+            // Vérifier si l'utilisateur connecté a une entreprise
+            if (!$entrepriseDePersonneConnectee) {
+                return response()->json([
+                    'message' => 'L\'utilisateur connecté n\'a pas d\'entreprise associée.',
+                    'status' => '400'
+                ], 400);
+            }
+    
+            // Récupérer les utilisateurs avec les mêmes conditions d'entreprise et de catégorie
+            $participants = User::whereHas('entreprise', function ($query) use ($entrepriseDePersonneConnectee) {
                     $query->where('nom', '=', $entrepriseDePersonneConnectee->nom);
-                })->where('id', '!=', Auth::id())->get(),
-                'status'=>'200'
+                })
+                ->where('id', '!=', Auth::id())
+                ->where('categorie_id', $categoryId) // Assurez-vous que 'categorie_id' est la colonne qui référence la catégorie dans la table users
+                ->get();
+    
+            return response()->json([
+                'participants' => $participants,
+                'status' => '200'
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -30,6 +46,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
+    
     public function index()
     {
         //
