@@ -127,7 +127,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/fedddback/update/{id}', [FeddbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/fedddbacks/{id}/soft-delete', [FeddbackController::class, 'softDelete'])->middleware('auth:api');
     //QuestionFeddback
+    //Creation d'evaluation des question et des reponses
     Route::post('/questionsfeedback/create',[QuestionsfeedbackController::class,'create'])->middleware('auth:api');
+    //
     Route::post('/questionsfeedback/update/{id}', [QuestionsfeedbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/questionsfeedbacks/{id}/soft-delete', [QuestionsfeedbackController::class, 'softDelete'])->middleware('auth:api');
     //QuestionEvaluation
@@ -140,6 +142,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/evaluations/{id}/soft-delete', [EvaluationController::class, 'softDelete'])->middleware('auth:api');
     Route::put('/archiver/evaluation/{id}',[EvaluationController::class,'archiver'])->middleware('auth:api');
     Route::get('/listes/evaluation/archives',[EvaluationController::class,'indexarchiver'])->middleware('auth:api');
+
+
+    Route::get('/users/evaluations/{id}', [EvaluationQuestionReponseEvaluationController::class, 'getUserEvaluations']);
+
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/participant/entreprse/{categoryId}',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntrepriseAndCategory'])->middleware('auth:api');
@@ -156,9 +162,7 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
 
 
     Route::get('/evenements/admin',[EvenementController::class,'indexevenement'])->middleware('auth:api');
-
     Route::get('evaluations/admin',[EvaluationController::class,'indexevaluation'])->middleware('auth:api');
-
     Route::get('/categories/admin',[EvaluationController::class,'indexcategorie'])->middleware('auth:api');
 
 

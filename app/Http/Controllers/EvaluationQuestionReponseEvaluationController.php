@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Categorie;
+use App\Models\Evaluation;
+use App\Models\QuestionsEvaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EvaluationQuestionReponseEvaluation;
@@ -107,10 +109,49 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
+
+
+     public function getUserEvaluations($id)
+     {
+         // Récupérer toutes les évaluations de l'utilisateur
+         $evaluationReponses = EvaluationQuestionReponseEvaluation::where('evaluatuer_id', $id)->get();
+     
+         // Créer un tableau pour stocker les évaluations groupées par "evaluation_id"
+         $groupedEvaluations = [];
+     
+         // Parcourir toutes les évaluations de l'utilisateur
+         foreach ($evaluationReponses as $evaluationReponse) {
+             // Récupérer l'évaluation associée à la réponse
+             $evaluation = Evaluation::find($evaluationReponse->reponse->questionsEvaluation->evaluation_id);
+     
+             // Vérifier si l'évaluateur ID existe déjà dans le tableau groupé
+             if (!isset($groupedEvaluations[$evaluationReponse->evaluer_id][$evaluation->id])) {
+                 // Si ce n'est pas le cas, ajouter une nouvelle entrée au tableau groupé
+                 $groupedEvaluations[$evaluationReponse->evaluer_id][$evaluation->id] = [
+                     'evaluer_id' => $evaluationReponse->evaluer_id,
+                     'evaluation' => $evaluation,
+                     'commentaire' => $evaluationReponse->commentaire,
+                     'niveau' => $evaluationReponse->niveau,
+                     'questions_reponses' => []
+                 ];
+             }
+     
+             // Récupérer la question associée à la réponse
+             $question = QuestionsEvaluation::find($evaluationReponse->reponse->questions_evaluations_id);
+     
+             // Ajouter la question et la réponse à la liste des questions et réponses pour cet évaluateur ID
+             $groupedEvaluations[$evaluationReponse->evaluer_id][$evaluation->id]['questions_reponses'][] = [
+                 'reponse' => $evaluationReponse->reponse
+             ];
+         }
+     
+         // Retourner les évaluations groupées au format JSON
+         return response()->json([
+             'user' => array_values($groupedEvaluations),
+             'status' => 200
+         ]);
+     }
+     
     /**
      * Display the specified resource.
      */

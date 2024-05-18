@@ -26,5 +26,11 @@ class EvaluationQuestionReponseEvaluation extends Model
         return $this->belongsTo(User::class,'evaluer_id');
     }
 
+    public function reponse()
+    {
+        return $this->belongsTo(ReponsesEvaluation::class, 'reponse_id');
+    }
+
+
 
 }
