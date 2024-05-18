@@ -116,22 +116,22 @@ class EvaluationQuestionReponseEvaluationController extends Controller
          // Récupérer toutes les évaluations de l'utilisateur
          $evaluationReponses = EvaluationQuestionReponseEvaluation::where('evaluatuer_id', $id)->get();
      
-         // Créer un tableau pour stocker les évaluations groupées par "evaluer_id"
+         // Créer un tableau pour stocker les évaluations groupées par "evaluation_id"
          $groupedEvaluations = [];
      
          // Parcourir toutes les évaluations de l'utilisateur
          foreach ($evaluationReponses as $evaluationReponse) {
-             // Récupérer l'utilisateur correspondant à l'ID de l'évaluateur
-             $user = User::find($evaluationReponse->evaluer_id);
+             // Récupérer l'utilisateur associé à l'évaluateur
+             $user = User::find($evaluationReponse->evaluatuer_id);
      
              // Récupérer l'évaluation associée à la réponse
              $evaluation = Evaluation::find($evaluationReponse->reponse->questionsEvaluation->evaluation_id);
      
              // Vérifier si l'évaluateur ID existe déjà dans le tableau groupé
-             if (!isset($groupedEvaluations[$evaluationReponse->evaluer_id])) {
+             if (!isset($groupedEvaluations[$user->id][$evaluation->id])) {
                  // Si ce n'est pas le cas, ajouter une nouvelle entrée au tableau groupé
-                 $groupedEvaluations[$evaluationReponse->evaluer_id] = [
-                     'evaluer_id' => $user, // Remplacer evaluer_id par les détails de l'utilisateur
+                 $groupedEvaluations[$user->id][$evaluation->id] = [
+                     'user' => $user,
                      'evaluation' => $evaluation,
                      'commentaire' => $evaluationReponse->commentaire,
                      'niveau' => $evaluationReponse->niveau,
@@ -142,8 +142,8 @@ class EvaluationQuestionReponseEvaluationController extends Controller
              // Récupérer la question associée à la réponse
              $question = QuestionsEvaluation::find($evaluationReponse->reponse->questions_evaluations_id);
      
-             // Ajouter la question et la réponse à la liste des questions et réponses pour cet évaluateur ID
-             $groupedEvaluations[$evaluationReponse->evaluer_id]['questions_reponses'][] = [
+             // Ajouter la question et la réponse à la liste des questions et réponses pour cet utilisateur et cette évaluation
+             $groupedEvaluations[$user->id][$evaluation->id]['questions_reponses'][] = [
                  'reponse' => $evaluationReponse->reponse
              ];
          }
@@ -154,7 +154,6 @@ class EvaluationQuestionReponseEvaluationController extends Controller
              'status' => 200
          ]);
      }
-     
      
     /**
      * Display the specified resource.
