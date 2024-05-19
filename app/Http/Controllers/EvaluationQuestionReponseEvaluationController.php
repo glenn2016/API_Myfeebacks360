@@ -114,7 +114,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
      public function getUserEvaluations($id)
      {
          // Récupérer toutes les évaluations de l'utilisateur
-         $evaluationReponses = EvaluationQuestionReponseEvaluation::where('evaluatuer_id', $id)->get();
+         $evaluationReponses = EvaluationQuestionReponseEvaluation::where('evaluer_id', $id)->get();
      
          // Créer un tableau pour stocker les évaluations groupées par "evaluation_id"
          $groupedEvaluations = [];
@@ -158,10 +158,112 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(EvaluationQuestionReponseEvaluation $evaluationQuestionReponseEvaluation)
+    public function getEvaluatorsList()
     {
-        //
+        // Obtenir l'ID de l'utilisateur connecté
+        $currentUserId = Auth::id();
+        // Récupérer les IDs des utilisateurs évalués par l'utilisateur connecté
+        $evaluatedUserIDs = EvaluationQuestionReponseEvaluation::select('evaluatuer_id')
+                            ->where('evaluer_id', $currentUserId)
+                            ->distinct()
+                            ->get()
+                            ->pluck('evaluatuer_id');
+
+        // Récupérer les utilisateurs évalués
+        $evaluatedUsers = User::whereIn('id', $evaluatedUserIDs)->get();
+
+        // Retourner les utilisateurs évalués au format JSON
+        return response()->json([
+            'evaluatedUsers' => $evaluatedUsers,
+            'status' => 200
+        ]);
     }
+
+    /**
+     * Display the specified resource.
+     */
+
+    public function getEvaluerrsList()
+    {
+        // Obtenir l'ID de l'utilisateur connecté
+        $currentUserId = Auth::id();
+
+        // Récupérer les IDs des utilisateurs évalués par l'utilisateur connecté
+        $evaluatedUserIDs = EvaluationQuestionReponseEvaluation::select('evaluer_id')
+                            ->where('evaluatuer_id', $currentUserId)
+                            ->distinct()
+                            ->get()
+                            ->pluck('evaluer_id');
+
+        // Récupérer les utilisateurs évalués
+        $evaluatedUsers = User::whereIn('id', $evaluatedUserIDs)->get();
+
+        // Retourner les utilisateurs évalués au format JSON
+        return response()->json([
+            'evaluatedUsers' => $evaluatedUsers,
+            'status' => 200
+        ]);
+    }
+
+
+
+    public function getEvaluatorsParticipants($userId)
+    {
+        // Récupérer les IDs des utilisateurs évalués par l'utilisateur spécifié
+        $evaluatedUserIDs = EvaluationQuestionReponseEvaluation::select('evaluatuer_id')
+                            ->where('evaluer_id', $userId)
+                            ->distinct()
+                            ->get()
+                            ->pluck('evaluatuer_id');
+        
+        // Récupérer les utilisateurs évalués
+        $evaluatedUsers = User::whereIn('id', $evaluatedUserIDs)->get();
+        
+        $result = [];
+        
+        foreach ($evaluatedUsers as $user) {
+            // Récupérer les évaluations de l'utilisateur évalué
+            $evaluations = EvaluationQuestionReponseEvaluation::where('evaluatuer_id', $user->id)
+                                ->with('reponse.questionsEvaluation.evaluation')
+                                ->get();
+            
+            $evaluationsGrouped = [];
+            
+            foreach ($evaluations as $evaluationResponse) {
+                $evaluation = $evaluationResponse->reponse->questionsEvaluation->evaluation;
+                $evaluationId = $evaluation->id;
+                
+                // Initialiser l'entrée pour cette évaluation s'il n'existe pas encore
+                if (!isset($evaluationsGrouped[$evaluationId])) {
+                    $evaluationsGrouped[$evaluationId] = [
+                        'evaluation' => $evaluation,
+                        'commentaire' => $evaluationResponse->commentaire,
+                        'niveau' => $evaluationResponse->niveau,
+                        'questions_reponses' => []
+                    ];
+                }
+                
+                // Ajouter la réponse à la liste des questions et réponses
+                $evaluationsGrouped[$evaluationId]['questions_reponses'][] = [
+                    'reponse' => $evaluationResponse->reponse
+                ];
+            }
+            
+            $result[] = [
+                'user' => $user,
+                'evaluations' => array_values($evaluationsGrouped)
+            ];
+        }
+        
+        // Retourner les utilisateurs évalués et leurs évaluations au format JSON
+        return response()->json([
+            'evaluatedUsers' => $result,
+            'status' => 200
+        ]);
+    }
+
+
+
     /**
      * Show the form for editing the specified resource.
      */

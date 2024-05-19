@@ -127,12 +127,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/fedddback/update/{id}', [FeddbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/fedddbacks/{id}/soft-delete', [FeddbackController::class, 'softDelete'])->middleware('auth:api');
     //QuestionFeddback
-    //Creation d'evaluation des question et des reponses
     Route::post('/questionsfeedback/create',[QuestionsfeedbackController::class,'create'])->middleware('auth:api');
     //
     Route::post('/questionsfeedback/update/{id}', [QuestionsfeedbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/questionsfeedbacks/{id}/soft-delete', [QuestionsfeedbackController::class, 'softDelete'])->middleware('auth:api');
     //QuestionEvaluation
+    //Creation d'evaluation des question et des reponses
     Route::post('/Questionsevaluation/create',[QuestionsEvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/Questionsevaluation/update/{id}', [QuestionsEvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/Questionsevaluations/{id}/soft-delete', [QuestionsEvaluationController::class, 'softDelete'])->middleware('auth:api');
@@ -166,9 +166,12 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/categories/admin',[EvaluationController::class,'indexcategorie'])->middleware('auth:api');
 
 
-    
+    //Listes participants evaluateurs
+    Route::get('/user/evaluateur', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsList']);
+    //Listes  participants evaluer
+    Route::get('/user/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsList']);
 
-
+    Route::get('/listes/particpants/evaluateur/{userId}', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsParticipants']);
 
 });
 
