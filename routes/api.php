@@ -19,6 +19,7 @@ use App\Http\Controllers\EvaluationQuestionReponseEvaluationController;
 use App\Http\Controllers\ContactAbonementController;
 use App\Http\Controllers\EntrepriseAbonementController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ImportUserController;
 
 
 /*
@@ -144,7 +145,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/listes/evaluation/archives',[EvaluationController::class,'indexarchiver'])->middleware('auth:api');
 
 
-    Route::get('/users/evaluations/{id}', [EvaluationQuestionReponseEvaluationController::class, 'getUserEvaluations']);
+    Route::get('/users/evaluations/{id}', [EvaluationQuestionReponseEvaluationController::class, 'getUserEvaluations'])->middleware('auth:api');
+
+    //importation des participants
+    Route::post('/import/participants', [ImportUserController::class, 'import'])->middleware('auth:api');
+
 
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
