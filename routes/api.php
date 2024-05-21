@@ -94,7 +94,10 @@ Route::get('/reponseevaluation', [ReponsesEvaluationController::class, 'index'])
 Route::get('/reponseevaluation/{id}',[ReponsesEvaluationController::class,'show']);
 Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::class,'evenementquestion']);
 //evaluation
-Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
+//Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
+
+Route::get('/categories/questions-and-reponses/{CategorieId}/{evaluationId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategoryAndEvaluation']);
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //ADmin_Authentifie
     Route::get('/user_admin',[Authcontroller::class,'user'])->middleware('auth:api');

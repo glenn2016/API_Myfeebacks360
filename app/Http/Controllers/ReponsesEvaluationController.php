@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ReponsesEvaluation;
 use App\Models\Categorie;
+use App\Models\Evaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -29,31 +30,29 @@ class ReponsesEvaluationController extends Controller
     }
     public function questionsAndReponsesByCategory($categorieId)
     {
-        try {
-            // Récupérer la catégorie
-            $categorie = Categorie::findOrFail($categorieId);
-            
-            // Récupérer les questions liées à cette catégorie avec leurs réponses
-            // et inclure les évaluations
-            $questionsAvecReponsesEtEvaluations = $categorie->questionsEvaluations()
-                ->with(['reponsesEvaluation', 'evaluation'])
-                ->get();
-            
-            // Retourner les données au format JSON
-            return response()->json([
-                'category' => $categorie,
-                'questions' => $questionsAvecReponsesEtEvaluations,
-                'status' => 200
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Une erreur est survenue lors de la récupération des questions et réponses',
-                'error' => $e->getMessage(),
-                'status' => 500
-            ], 500);
-        }
+        // Récupérer la catégorie
+        $categorie = Categorie::findOrFail($categorieId);
+        // Récupérer les questions liées à cette catégorie avec leurs réponses
+        // Retourner les données au format JSON
+        return response()->json($categorie->questions()->with('reponses')->get());
+    }
+
+    public function questionsAndReponsesByCategoryAndEvaluation($categorieId, $evaluationId)
+    {
+        // Récupérer la catégorie
+        $categorie = Categorie::findOrFail($categorieId);
+
+        // Récupérer les questions liées à cette catégorie et à cette évaluation avec leurs réponses
+        $questions = $categorie->questionsEvaluations()
+                                ->where('evaluation_id', $evaluationId)
+                                ->with('reponsesEvaluation')
+                                ->get();
+
+        // Retourner les données au format JSON
+        return response()->json($questions);
     }
     
+
     /**
      * Show the form for creating a new resource.
      */

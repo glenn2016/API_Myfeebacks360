@@ -4,8 +4,9 @@ namespace App\Imports;
 
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class UsersImport implements ToModel
+class UsersImport implements ToModel,WithHeadingRow
 {
     /**
     * @param array $row
@@ -14,12 +15,17 @@ class UsersImport implements ToModel
     */
     public function model(array $row)
     {
-        dd($row);
         return new User([
-            //
-            'name' => $row[0],
-            'email' => $row[1],
-            'password' => bcrypt($row[2]), // Assurez-vous de ne pas stocker de mots de passe en clair
+            'nom' => $row['nom'],
+            'prenom' => $row['prenom'],
+            'email' => $row['email'],
+            'password' => bcrypt($row['password']), // Assurez-vous de ne pas stocker de mots de passe en clair
+            'categorie_id' => $row['categorie_id'],
+            'entreprise_id' => $row['entreprise_id'],
         ]);
+    }
+    public function headingRow(): int
+    {
+        return 1; // Si votre en-tête est sur la première ligne
     }
 }
