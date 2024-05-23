@@ -173,13 +173,14 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('evaluations/admin',[EvaluationController::class,'indexevaluation'])->middleware('auth:api');
     Route::get('/categories/admin',[EvaluationController::class,'indexcategorie'])->middleware('auth:api');
 
-
-    //Listes participants evaluateurs
-    Route::get('/user/evaluateur', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsList']);
+    //Listes evaluation recu
+    Route::get('/liste/evaluation/recu', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsList']);
     //Listes  participants evaluer
     Route::get('/liste/user/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsList']);
 
     Route::get('/listes/particpants/evaluateur/{userId}', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsParticipants']);
+
+    
 
 });
 

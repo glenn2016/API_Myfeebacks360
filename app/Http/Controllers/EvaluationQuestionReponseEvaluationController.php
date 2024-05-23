@@ -160,23 +160,42 @@ class EvaluationQuestionReponseEvaluationController extends Controller
      */
     public function getEvaluatorsList()
     {
-        // Obtenir l'ID de l'utilisateur connecté
-        $currentUserId = Auth::id();
-        // Récupérer les IDs des utilisateurs évalués par l'utilisateur connecté
-        $evaluatedUserIDs = EvaluationQuestionReponseEvaluation::select('evaluatuer_id')
-                            ->where('evaluer_id', $currentUserId)
-                            ->distinct()
-                            ->get()
-                            ->pluck('evaluatuer_id');
+    // Get the ID of the authenticated user (evaluated user)
+    $userId = auth()->id();
 
-        // Récupérer les utilisateurs évalués
-        $evaluatedUsers = User::whereIn('id', $evaluatedUserIDs)->get();
+    // Fetch all evaluation responses where the authenticated user is the evaluated user
+    $evaluationReponses = EvaluationQuestionReponseEvaluation::where('evaluer_id', $userId)->get();
 
-        // Retourner les utilisateurs évalués au format JSON
-        return response()->json([
-            'evaluatedUsers' => $evaluatedUsers,
-            'status' => 200
-        ]);
+    // Initialize an array to store grouped evaluations
+    $groupedEvaluations = [];
+
+    // Iterate through the fetched evaluation responses
+    foreach ($evaluationReponses as $evaluationReponse) {
+        // Fetch the related evaluation through the response's question's evaluation
+        $evaluation = Evaluation::find($evaluationReponse->reponse->questionsEvaluation->evaluation_id);
+
+        // Check if the evaluation ID is already in the grouped evaluations array
+        if (!isset($groupedEvaluations[$evaluation->id])) {
+            // If not, initialize a new entry for this evaluation
+            $groupedEvaluations[$evaluation->id] = [
+                'evaluation' => $evaluation,
+                'commentaire' => $evaluationReponse->commentaire,
+                'niveau' => $evaluationReponse->niveau,
+                'questions_reponses' => []
+            ];
+        }
+
+        // Add the response to the questions_reponses array for this evaluation
+        $groupedEvaluations[$evaluation->id]['questions_reponses'][] = [
+            'reponse' => $evaluationReponse->reponse
+        ];
+    }
+
+    // Return the grouped evaluations as a JSON response
+    return response()->json([
+        'evaluations' => array_values($groupedEvaluations),
+        'status' => 200
+    ]);
     }
 
     /**
@@ -206,64 +225,47 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     }
 
 
-
-    public function getEvaluatorsParticipants($userId)
+    public function getEvaluatorsParticipants($evaluatedUserId)
     {
-        // Récupérer les IDs des utilisateurs évalués par l'utilisateur spécifié
-        $evaluatedUserIDs = EvaluationQuestionReponseEvaluation::select('evaluatuer_id')
-                            ->where('evaluer_id', $userId)
-                            ->distinct()
-                            ->get()
-                            ->pluck('evaluatuer_id');
-        
-        // Récupérer les utilisateurs évalués
-        $evaluatedUsers = User::whereIn('id', $evaluatedUserIDs)->get();
-        
-        $result = [];
-        
-        foreach ($evaluatedUsers as $user) {
-            // Récupérer les évaluations de l'utilisateur évalué
-            $evaluations = EvaluationQuestionReponseEvaluation::where('evaluatuer_id', $user->id)
-                                ->with('reponse.questionsEvaluation.evaluation')
-                                ->get();
-            
-            $evaluationsGrouped = [];
-            
-            foreach ($evaluations as $evaluationResponse) {
-                $evaluation = $evaluationResponse->reponse->questionsEvaluation->evaluation;
-                $evaluationId = $evaluation->id;
-                
-                // Initialiser l'entrée pour cette évaluation s'il n'existe pas encore
-                if (!isset($evaluationsGrouped[$evaluationId])) {
-                    $evaluationsGrouped[$evaluationId] = [
-                        'evaluation' => $evaluation,
-                        'commentaire' => $evaluationResponse->commentaire,
-                        'niveau' => $evaluationResponse->niveau,
-                        'questions_reponses' => []
-                    ];
-                }
-                
-                // Ajouter la réponse à la liste des questions et réponses
-                $evaluationsGrouped[$evaluationId]['questions_reponses'][] = [
-                    'reponse' => $evaluationResponse->reponse
+        // Get the ID of the authenticated user (evaluator)
+        $evaluatorId = auth()->id();
+    
+        // Fetch all evaluation responses where the authenticated user is the evaluator and the specified user is the evaluated user
+        $evaluationReponses = EvaluationQuestionReponseEvaluation::where('evaluatuer_id', $evaluatorId)
+            ->where('evaluer_id', $evaluatedUserId)
+            ->get();
+    
+        // Initialize an array to store grouped evaluations
+        $groupedEvaluations = [];
+    
+        // Iterate through the fetched evaluation responses
+        foreach ($evaluationReponses as $evaluationReponse) {
+            // Fetch the related evaluation through the response's question's evaluation
+            $evaluation = Evaluation::find($evaluationReponse->reponse->questionsEvaluation->evaluation_id);
+    
+            // Check if the evaluation ID is already in the grouped evaluations array
+            if (!isset($groupedEvaluations[$evaluation->id])) {
+                // If not, initialize a new entry for this evaluation
+                $groupedEvaluations[$evaluation->id] = [
+                    'evaluation' => $evaluation,
+                    'commentaire' => $evaluationReponse->commentaire,
+                    'niveau' => $evaluationReponse->niveau,
+                    'questions_reponses' => []
                 ];
             }
-            
-            $result[] = [
-                'user' => $user,
-                'evaluations' => array_values($evaluationsGrouped)
+    
+            // Add the response to the questions_reponses array for this evaluation
+            $groupedEvaluations[$evaluation->id]['questions_reponses'][] = [
+                'reponse' => $evaluationReponse->reponse
             ];
         }
-        
-        // Retourner les utilisateurs évalués et leurs évaluations au format JSON
+    
+        // Return the grouped evaluations as a JSON response
         return response()->json([
-            'evaluatedUsers' => $result,
+            'evaluations' => array_values($groupedEvaluations),
             'status' => 200
         ]);
     }
-
-
-
     /**
      * Show the form for editing the specified resource.
      */

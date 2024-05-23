@@ -48,6 +48,12 @@ class UsersImport implements ToCollection,WithHeadingRow
                     continue; // Skip this row
                 }
 
+                // Vérifier la longueur du mot de passe
+                if (strlen($row['password']) < 8) {
+                    $this->errors[] = 'Le mot de passe est trop court: ' . json_encode($row);
+                    continue;
+                }
+
                 // Vérifiez si la catégorie existe pour cet utilisateur, sinon créez-la
                 $categorie = Categorie::where('nom', $row['categorie'])
                     ->where('usercreate', $currentUserId)
@@ -101,7 +107,7 @@ class UsersImport implements ToCollection,WithHeadingRow
             'nom' => 'required|string',
             'prenom' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|string',
+            'password' => 'required|string|min:8',
             'categorie' => 'required|string',
             'entreprise' => 'required|string',
         ]);
