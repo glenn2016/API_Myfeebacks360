@@ -150,7 +150,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::get('/users/evaluations/{id}', [EvaluationQuestionReponseEvaluationController::class, 'getUserEvaluations'])->middleware('auth:api');
 
-    //importation des participants
+    //importation des participsants
     Route::post('/import/participants', [ImportUserController::class, 'import'])->middleware('auth:api');
 
 
@@ -177,7 +177,7 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     //Listes participants evaluateurs
     Route::get('/user/evaluateur', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsList']);
     //Listes  participants evaluer
-    Route::get('/user/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsList']);
+    Route::get('/liste/user/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsList']);
 
     Route::get('/listes/particpants/evaluateur/{userId}', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsParticipants']);
 
