@@ -180,10 +180,10 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
 
     Route::get('/listes/particpants/evaluateur/{userId}', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsParticipants'])->middleware('auth');
 
-    
-
+    //Evenement ou vous avez donner aavis
     Route::get('/listes/evenements/evaluer', [EvenementController::class, 'getEvenementsForCurrentUser'])->middleware('auth');
 
+    Route::get('/evenement/feedback/{id}', [EvenementController::class, 'getFeedbackForEvent'])->middleware('auth');
 
 });
 

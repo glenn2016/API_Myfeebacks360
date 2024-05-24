@@ -197,4 +197,50 @@ class EvenementController extends Controller
         // Retourner les événements en réponse JSON
         return response()->json($evenements);
     }
+
+
+    public function getFeedbackForEvent($evenementId)
+    {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+
+        // Vérifier si l'utilisateur est connecté
+        if (!$user) {
+            return response()->json(['message' => 'Non autorisé'], 401);
+        }
+
+        // Récupérer l'événement spécifié
+        $evenement = Evenement::find($evenementId);
+
+        // Vérifier si l'événement existe
+        if (!$evenement) {
+            return response()->json(['message' => 'Événement non trouvé'], 404);
+        }
+
+        // Récupérer les questions de feedback et les réponses de l'utilisateur pour cet événement
+        $questionsFeedbacks = $evenement->questionsfeedback()
+            ->with(['reponsefeedbacks' => function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }])
+            ->get();
+
+        // Préparer le résultat avec les questions et leurs réponses associées
+        $result = [];
+        foreach ($questionsFeedbacks as $question) {
+            foreach ($question->reponsefeedbacks as $reponse) {
+                $result[] = [
+                    'id' => $reponse->id,
+                    'nom' => $reponse->nom,
+                    'questionsfeedbacks_id' => $reponse->questionsfeedbacks_id,
+                    'user_id' => $reponse->user_id,
+                    'question' => $question->nom,
+                    'created_at' => $reponse->created_at,
+                    'updated_at' => $reponse->updated_at,
+                ];
+            }
+        }
+
+        // Retourner les réponses de feedback avec les questions associées en réponse JSON
+        return response()->json($result);
+    }
 }
