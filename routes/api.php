@@ -150,6 +150,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //importation des participsants
     Route::post('/import/participants', [ImportUserController::class, 'import'])->middleware('auth:api');
 
+    //listes totala des utlisateurs ayan passer une evaluation
+    Route::get('/listes/total/utlisateur/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getAllEvaluators'])->middleware('auth');
+
+
 
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {

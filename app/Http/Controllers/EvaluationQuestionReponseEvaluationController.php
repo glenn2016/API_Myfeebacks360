@@ -299,12 +299,42 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         ]);
     }
     
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, EvaluationQuestionReponseEvaluation $evaluationQuestionReponseEvaluation)
+    public function getAllEvaluators()
     {
-        //
+        // Get the ID of the authenticated user
+        $userId = auth()->id();
+    
+        // Fetch all evaluation responses
+        $evaluationReponses = EvaluationQuestionReponseEvaluation::all();
+    
+        // Initialize an array to store evaluators
+        $evaluators = [];
+    
+        // Iterate through the fetched evaluation responses
+        foreach ($evaluationReponses as $evaluationReponse) {
+            // Fetch the evaluator user ID
+            $evaluatorId = $evaluationReponse->evaluatuer_id;
+    
+            // Fetch the user create ID for the evaluated user
+            $evaluatedUserId = $evaluationReponse->evaluer->usercreate;
+    
+            // Check if the user create ID matches the authenticated user ID
+            if ($evaluatedUserId == $userId) {
+                // Add the evaluator to the list
+                if (!in_array($evaluatorId, $evaluators)) {
+                    $evaluators[] = $evaluatorId;
+                }
+            }
+        }
+    
+        // Fetch user details for each evaluator ID
+        $users = User::whereIn('id', $evaluators)->get();
+    
+        // Return the evaluators as a JSON response
+        return response()->json([
+            'evaluators' => $users,
+            'status' => 200
+        ]);
     }
     /**
      * Remove the specified resource from storage.
