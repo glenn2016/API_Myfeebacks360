@@ -266,13 +266,39 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             'status' => 200
         ]);
     }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EvaluationQuestionReponseEvaluation $evaluationQuestionReponseEvaluation)
+
+    public function getEvaluators()
     {
-        //
+        // Get the ID of the authenticated user (evaluated user)
+        $userId = auth()->id();
+
+        // Fetch all evaluation responses where the authenticated user is the evaluated user
+        $evaluationReponses = EvaluationQuestionReponseEvaluation::where('evaluer_id', $userId)->get();
+
+        // Initialize an array to store evaluators
+        $evaluators = [];
+
+        // Iterate through the fetched evaluation responses
+        foreach ($evaluationReponses as $evaluationReponse) {
+            // Fetch the evaluator user ID
+            $evaluatorId = $evaluationReponse->evaluatuer_id;
+
+            // Avoid duplicates
+            if (!in_array($evaluatorId, $evaluators)) {
+                $evaluators[] = $evaluatorId;
+            }
+        }
+
+        // Fetch user details for each evaluator ID
+        $users = User::whereIn('id', $evaluators)->get();
+
+        // Return the evaluators as a JSON response
+        return response()->json([
+            'evaluators' => $users,
+            'status' => 200
+        ]);
     }
+    
     /**
      * Update the specified resource in storage.
      */

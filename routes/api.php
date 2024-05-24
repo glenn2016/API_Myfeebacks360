@@ -44,11 +44,8 @@ Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
 
 
-Route::post('email/verification-notification', [ForgotPasswordController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
-Route::get('verify-email/{id}/{hash}', [ForgotPasswordController::class, 'verify'])->name('verification.verify')->middleware('auth:sanctum');
-
-Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
-Route::post('reset-password', [ForgotPasswordController::class, 'reset']);
+Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail']);
+Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 
 
 
@@ -184,6 +181,9 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/listes/evenements/evaluer', [EvenementController::class, 'getEvenementsForCurrentUser'])->middleware('auth');
 
     Route::get('/evenement/feedback/{id}', [EvenementController::class, 'getFeedbackForEvent'])->middleware('auth');
+
+    Route::get('/evaluated-users', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluators']);
+
 
 });
 

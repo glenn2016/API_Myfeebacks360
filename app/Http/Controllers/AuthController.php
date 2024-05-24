@@ -8,10 +8,11 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ResetPasswordEmail; 
+use App\Notifications\ResetPasswordNotification;
+
 
 
 
@@ -357,4 +358,53 @@ class AuthController extends Controller
      * 
      * 
      */
+
+     public function sendResetLinkEmail(Request $request)
+     {
+         $validator = Validator::make($request->all(), [
+             'email' => 'required|email',
+         ]);
+ 
+         if ($validator->fails()) {
+             return response()->json(['errors' => $validator->errors()], 422);
+         }
+ 
+         $user = User::where('email', $request->email)->first();
+ 
+         if (!$user) {
+             return response()->json(['message' => 'We can\'t find a user with that email address.'], 404);
+         }
+ 
+         $token = Password::createToken($user);
+         $user->notify(new ResetPasswordNotification($token));
+ 
+         return response()->json(['message' => 'Password reset link sent to your email.']);
+     }
+ 
+     public function resetPassword(Request $request)
+     {
+         $validator = Validator::make($request->all(), [
+             'token' => 'required',
+             'email' => 'required|email',
+             'password' => ['required', 'confirmed', PasswordRule::defaults()],
+         ]);
+ 
+         if ($validator->fails()) {
+             return response()->json(['errors' => $validator->errors()], 422);
+         }
+ 
+         $status = Password::reset(
+             $request->only('email', 'password', 'password_confirmation', 'token'),
+             function ($user, $password) {
+                 $user->password = bcrypt($password);
+                 $user->save();
+             }
+         );
+ 
+         if ($status == Password::PASSWORD_RESET) {
+             return response()->json(['message' => 'Password has been reset.']);
+         } else {
+             return response()->json(['message' => 'Failed to reset password.'], 400);
+         }
+    }
 }
