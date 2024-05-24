@@ -174,13 +174,16 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/categories/admin',[EvaluationController::class,'indexcategorie'])->middleware('auth:api');
 
     //Listes evaluation recu
-    Route::get('/liste/evaluation/recu', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsList']);
+    Route::get('/liste/evaluation/recu', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsList'])->middleware('auth');
     //Listes  participants evaluer
-    Route::get('/liste/user/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsList']);
+    Route::get('/liste/user/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsList'])->middleware('auth');
 
-    Route::get('/listes/particpants/evaluateur/{userId}', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsParticipants']);
+    Route::get('/listes/particpants/evaluateur/{userId}', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsParticipants'])->middleware('auth');
 
     
+
+    Route::get('/listes/evenements/evaluer', [EvenementController::class, 'getEvenementsForCurrentUser'])->middleware('auth');
+
 
 });
 

@@ -178,4 +178,23 @@ class EvenementController extends Controller
             ], 404);
         }
     }
+
+    public function getEvenementsForCurrentUser()
+    {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+
+        // Vérifier si l'utilisateur est connecté
+        if (!$user) {
+            return response()->json(['message' => 'Non autorisé'], 401);
+        }
+
+        // Récupérer tous les événements où l'ID de l'utilisateur se retrouve dans user_id de reponsefeedbacks
+        $evenements = Evenement::whereHas('questionsfeedback.reponsefeedbacks', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->get();
+
+        // Retourner les événements en réponse JSON
+        return response()->json($evenements);
+    }
 }
