@@ -44,8 +44,8 @@ Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
 
 
-Route::post('/password/email', [AuthController::class, 'sendResetLinkEmail']);
-Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/password/reset', [ForgotPasswordController::class, 'resetPassword']);
 
 
 

@@ -39,6 +39,10 @@ class ContactAbonementController extends Controller
                 'entreprise' => ['required', 'string', 'max:255'],
                 'numeroTelephone' => ['required', 'string', 'max:255'],
                 'poste' => ['required', 'string', 'max:255'],
+                'telephoneFixe' => ['required', 'string', 'max:255'],
+                'adressEntreprise' => ['required', 'string', 'max:255'],
+                'ville' => ['required', 'string', 'max:255'],
+                'pays' => ['required', 'string', 'max:255'],
             ]);
             return response()->json([
                 'message' => 'Contact créé avec succès',
