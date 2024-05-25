@@ -17,5 +17,9 @@ class ContactAbonement extends Model
         'entreprise',
         'poste',
         'message',
+        'telephoneFixe',
+        'adressEntreprise',
+        'ville',
+        'pays',
     ];
 }
