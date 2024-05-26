@@ -20,6 +20,9 @@ use App\Http\Controllers\ContactAbonementController;
 use App\Http\Controllers\EntrepriseAbonementController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ImportUserController;
+use App\Http\Controllers\AbonnementController;
+use App\Http\Controllers\AbonnementUtlisateursController;
+
 
 
 /*
@@ -42,13 +45,12 @@ Route::post('login', [AuthController::class ,'login']);
 Route::post('logout', [AuthController::class ,'logout']);
 Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
-
-
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [ForgotPasswordController::class, 'resetPassword']);
 
 
-
+//Abonement
+Route::get('/listes/abonements',[AbonnementController::class,'index']);
 //Participant
 Route::get('/users_participants',[Authcontroller::class,'index']);
 //Entreprise
@@ -219,4 +221,18 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::get('/listes/entrepriseAbonement',[EntrepriseAbonementController::class,'index'])->middleware('auth:api');
     Route::get('/entrepriseAbonement/{id}',[EntrepriseAbonementController::class,'show'])->middleware('auth:api');
 
+    //Abonement
+    Route::get('/abonment/{id}',[AbonnementController::class,'show'])->middleware('auth:api');
+    Route::delete('/abonements/{id}/soft-delete', [AbonnementController::class, 'softDelete'])->middleware('auth:api');
+    Route::post('/abonment/update/{id}',[AbonnementController::class,'update'])->middleware('auth:api');
+    Route::post('/abonment/create',[AbonnementController::class,'create'])->middleware('auth:api');
+
+    //AbonementUtilisateurs
+    Route::get('/abonnement-utilisateurs', [AbonnementUtlisateursController::class, 'index']);
+    Route::put('/abonnement-utilisateurs/update/{id}', [AbonnementUtlisateursController::class, 'update']);
+    Route::put('/abonnement-utilisateurs/create', [AbonnementUtlisateursController::class, 'create']);
+
+
+ 
+    
 });

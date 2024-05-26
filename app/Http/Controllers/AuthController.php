@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\AbonnementUtlisateurs;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -83,6 +84,7 @@ class AuthController extends Controller
      * Creation Admin 
      * 
      */
+    /*
     public function createAdmin(Request $request){
         
         $userId = Auth::id(); 
@@ -118,7 +120,60 @@ class AuthController extends Controller
                 'type' => 'Bearer'
             ]);
         }
+    }*/
+
+    public function createAdmin(Request $request)
+    {
+        $userId = Auth::id(); 
+        $validations = Validator::make($request->all(), [
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => 'required|string|min:8',
+            'abonnement_id' => ['required', 'exists:abonnements,id'],
+            'date_debut_abonnement' => ['required', 'date'],
+            'date_fin_abonnement' => ['required', 'date', 'after_or_equal:date_debut_abonnement'],
+        ]);
+
+        if ($validations->fails()) {
+            $errors = $validations->errors();
+            return response()->json([
+                'errors' => $errors,
+                'status' => 420
+            ]);
+        }
+
+        if ($validations->passes()) {
+            $user = User::create([
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'email' => $request->email,
+                'entreprise_abonements_id'=>$request->entreprise_abonements_id,
+                'password' => Hash::make($request->password),
+                'usercreate'=> $userId
+            ]);
+
+            // Attache le rôle à l'utilisateur
+            $user->roles()->attach(2);
+
+            // Crée un enregistrement d'abonnement utilisateur
+            AbonnementUtlisateurs::create([
+                'abonnement_id' => $request->abonnement_id,
+                'utlisateur_id' => $user->id,
+                'date_debut_abonement' => $request->date_debut_abonnement,
+                'date_fin_abonement' => $request->date_fin_abonnement,
+            ]);
+
+            // Crée un jeton d'authentification pour l'utilisateur
+            $token = $user->createToken('auth_token')->accessToken;
+
+            return response()->json([
+                'token' => $token,      
+                'type' => 'Bearer'
+            ]);
+        }
     }
+
     /*
      * Creation Participant 
      * 

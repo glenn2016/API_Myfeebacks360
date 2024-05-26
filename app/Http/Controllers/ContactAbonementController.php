@@ -43,6 +43,7 @@ class ContactAbonementController extends Controller
                 'adressEntreprise' => ['required', 'string', 'max:255'],
                 'ville' => ['required', 'string', 'max:255'],
                 'pays' => ['required', 'string', 'max:255'],
+                'Abonnement_id' => ['required', 'numeric'],
             ]);
             return response()->json([
                 'message' => 'Contact créé avec succès',

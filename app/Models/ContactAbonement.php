@@ -21,5 +21,11 @@ class ContactAbonement extends Model
         'adressEntreprise',
         'ville',
         'pays',
+        'Abonnement_id',
     ];
+
+    public function abonnement()
+    {
+        return $this->belongsTo(Abonnement::class);
+    }
 }
