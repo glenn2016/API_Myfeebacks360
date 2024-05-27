@@ -97,7 +97,11 @@ class QuestionsEvaluationController extends Controller
             'questions.*.categorie_id' => 'required|integer|exists:categories,id',
             'questions.*.reponses' => 'array',
             'questions.*.reponses.*.reponse' => 'required|string|max:255',
-            'questions.*.reponses.*.niveau' => 'nullable|integer', // Ajout de la validation pour le niveau
+            'questions.*.reponses.*.niveau' => [
+                'nullable',
+                'integer',
+                'between:1,100', // Limiter le niveau entre 1 et 100
+            ],
         ]);
 
         // Créer une nouvelle évaluation avec l'ID de l'utilisateur connecté
