@@ -201,6 +201,9 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::get('/ContactAbonement/{id}',[ContactAbonementController::class,'show'])->middleware('auth:api');
     Route::get('/ContactAbonementCs',[ContactAbonementController::class,'index'])->middleware('auth:api');
     Route::delete('/ContactAbonements/{id}/soft-delete', [ContactAbonementController::class, 'softDelete'])->middleware('auth:api');
+
+    Route::get('/contact-abonements/{id}', [ContactAbonementController::class, 'getAbonnementByContactAbonnementId'])->middleware('auth:api');
+
     //Contacte
     Route::get('/contacte/{id}',[ContacteController::class,'show'])->middleware('auth:api');
     Route::get('/contactes',[ContacteController::class,'index'])->middleware('auth:api');

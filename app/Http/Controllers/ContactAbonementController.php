@@ -104,4 +104,24 @@ class ContactAbonementController extends Controller
             ], );
         }
     }
-}
+
+    public function getAbonnementByContactAbonnementId($id)
+    {
+        try {
+            // Récupérer le contact abonnement avec les détails de l'abonnement associé
+            $contactAbonnement = ContactAbonement::with('abonnement')->findOrFail($id);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Détails de l\'abonnement récupérés avec succès',
+                'abonnement' => $contactAbonnement->abonnement
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Une erreur est survenue lors de la récupération de l\'abonnement',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+} 

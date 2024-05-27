@@ -131,10 +131,11 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => 'required|string|min:8',
             'abonnement_id' => ['required', 'exists:abonnements,id'],
+            'entreprise_abonements_id' => ['required', 'exists:entreprise_abonements,id'],
             'date_debut_abonnement' => ['required', 'date'],
             'date_fin_abonnement' => ['required', 'date', 'after_or_equal:date_debut_abonnement'],
         ]);
-
+        
         if ($validations->fails()) {
             $errors = $validations->errors();
             return response()->json([
