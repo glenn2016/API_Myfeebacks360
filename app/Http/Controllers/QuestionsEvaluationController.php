@@ -151,6 +151,7 @@ class QuestionsEvaluationController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    /*
     public function update(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'nom' => ['required', 'string', 'max:255'],
@@ -171,7 +172,67 @@ class QuestionsEvaluationController extends Controller
             'message' => 'questionsEvaluation mis à jour avec succès',
             'questionsEvaluation' => $questionsEvaluation,
         ], 200);
+    }*/
+
+    public function update(Request $request, $id)
+    {
+        try {
+            // Récupérer l'ID de l'utilisateur connecté
+            $userId = Auth::id();
+
+            // Récupérer l'évaluation à mettre à jour
+            $evaluation = Evaluation::findOrFail($id);
+
+            // Validation des données pour la mise à jour de l'évaluation
+            $validatedData = $request->validate([
+                'titre' => 'required|string|max:255',
+                'questions' => 'required|array',
+                'questions.*.id' => 'required|integer|exists:questions_evaluations,id',
+                'questions.*.nom' => 'required|string|max:255',
+                'questions.*.categorie_id' => 'required|integer|exists:categories,id',
+                'questions.*.reponses' => 'array',
+            ]);
+
+            // Mettre à jour les détails de l'évaluation
+            $evaluation->update([
+                'titre' => $validatedData['titre'],
+                'usercreate' => $userId,
+            ]);
+
+            // Parcourir les questions pour les mettre à jour ou les créer
+            foreach ($validatedData['questions'] as $questionData) {
+                $question = QuestionsEvaluation::findOrFail($questionData['id']);
+                $question->update([
+                    'nom' => $questionData['nom'],
+                    'evaluation_id' => $id,
+                    'categorie_id' => $questionData['categorie_id'],
+                ]);
+
+                // Vérifier s'il y a des réponses pour cette question
+                if (is_array($questionData['reponses']) && count($questionData['reponses']) > 0) {
+                    // Parcourir les réponses pour les mettre à jour ou les créer
+                    foreach ($questionData['reponses'] as $reponseData) {
+                        $reponse = ReponsesEvaluation::findOrFail($reponseData['id']);
+                        $reponse->update([
+                            'reponse' => $reponseData['reponse'],
+                            'niveau' => $reponseData['niveau'],
+                        ]);
+                    }
+                }
+            }
+
+            return response()->json([
+                'message' => 'Évaluation mise à jour avec succès',
+                'evaluation_id' => $id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la mise à jour de l\'évaluation',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
     /**
      * Remove the specified resource from storage.
      */

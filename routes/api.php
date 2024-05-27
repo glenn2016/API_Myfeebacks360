@@ -137,7 +137,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //QuestionEvaluation
     //Creation d'evaluation des question et des reponses
     Route::post('/Questionsevaluation/create',[QuestionsEvaluationController::class,'create'])->middleware('auth:api');
-    Route::post('/Questionsevaluation/update/{id}', [QuestionsEvaluationController::class, 'update'])->middleware('auth:api');
+    Route::post('/Questions/reponse/evaluation/update/{id}', [QuestionsEvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/Questionsevaluations/{id}/soft-delete', [QuestionsEvaluationController::class, 'softDelete'])->middleware('auth:api');
     //Evaluations
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
