@@ -13,8 +13,11 @@ class ContactAbonementController extends Controller
     public function index()
     {
         try {
+            // Récupérer tous les contacts abonnements avec les informations de l'abonnement associé
+            $contactsAbonnements = ContactAbonement::with('abonnement')->get();
+
             return response()->json([
-                'categories' => ContactAbonement::all(),
+                'categories' => $contactsAbonnements,
                 'status' => 200
             ]);
         } catch (\Exception $e) {

@@ -145,18 +145,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/evaluations/{id}/soft-delete', [EvaluationController::class, 'softDelete'])->middleware('auth:api');
     Route::put('/archiver/evaluation/{id}',[EvaluationController::class,'archiver'])->middleware('auth:api');
     Route::get('/listes/evaluation/archives',[EvaluationController::class,'indexarchiver'])->middleware('auth:api');
-
-
     Route::get('/users/evaluations/{id}', [EvaluationQuestionReponseEvaluationController::class, 'getUserEvaluations'])->middleware('auth:api');
-
     //importation des participsants
     Route::post('/import/participants', [ImportUserController::class, 'import'])->middleware('auth:api');
-
     //listes totala des utlisateurs ayan passer une evaluation
     Route::get('/listes/total/utlisateur/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getAllEvaluators'])->middleware('auth');
-
-
-
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/participant/entreprse/{categoryId}',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntrepriseAndCategory'])->middleware('auth:api');
@@ -170,24 +163,17 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::delete('/reponseevaluation/{id}/soft-delete', [ReponsesEvaluationController::class, 'softDelete'])->middleware('auth:api');
     //evaluation
     Route::post('/evaluation/create',[EvaluationQuestionReponseEvaluationController::class,'create'])->middleware('auth:api');
-
-
     Route::get('/evenements/admin',[EvenementController::class,'indexevenement'])->middleware('auth:api');
     Route::get('evaluations/admin',[EvaluationController::class,'indexevaluation'])->middleware('auth:api');
     Route::get('/categories/admin',[EvaluationController::class,'indexcategorie'])->middleware('auth:api');
-
     //Listes evaluation recu
     Route::get('/liste/evaluation/recu', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsList'])->middleware('auth');
     //Listes  participants evaluer
     Route::get('/liste/user/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsList'])->middleware('auth');
-
     Route::get('/listes/particpants/evaluateur/{userId}', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluatorsParticipants'])->middleware('auth');
-
     //Evenement ou vous avez donner aavis
     Route::get('/listes/evenements/evaluer', [EvenementController::class, 'getEvenementsForCurrentUser'])->middleware('auth');
-
     Route::get('/evenement/feedback/{id}', [EvenementController::class, 'getFeedbackForEvent'])->middleware('auth');
-
     Route::get('/evaluated-users', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluators']);
 
 
@@ -220,22 +206,15 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::post('/entrepriseAbonement/create',[EntrepriseAbonementController::class,'create'])->middleware('auth:api');
     Route::post('/entrepriseAbonement/update/{id}', [EntrepriseAbonementController::class, 'update'])->middleware('auth:api');
     Route::delete('/entrepriseAbonements/{id}/soft-delete', [EntrepriseAbonementController::class, 'softDelete'])->middleware('auth:api');
-
     Route::get('/listes/entrepriseAbonement',[EntrepriseAbonementController::class,'index'])->middleware('auth:api');
     Route::get('/entrepriseAbonement/{id}',[EntrepriseAbonementController::class,'show'])->middleware('auth:api');
-
     //Abonement
     Route::get('/abonment/{id}',[AbonnementController::class,'show'])->middleware('auth:api');
     Route::delete('/abonements/{id}/soft-delete', [AbonnementController::class, 'softDelete'])->middleware('auth:api');
     Route::post('/abonment/update/{id}',[AbonnementController::class,'update'])->middleware('auth:api');
     Route::post('/abonment/create',[AbonnementController::class,'create'])->middleware('auth:api');
-
     //AbonementUtilisateurs
     Route::get('/abonnement-utilisateurs', [AbonnementUtlisateursController::class, 'index']);
     Route::put('/abonnement-utilisateurs/update/{id}', [AbonnementUtlisateursController::class, 'update']);
-    Route::put('/abonnement-utilisateurs/create', [AbonnementUtlisateursController::class, 'create']);
-
-
- 
-    
+    Route::put('/abonnement-utilisateurs/create', [AbonnementUtlisateursController::class, 'create']); 
 });
