@@ -12,6 +12,7 @@ class ReponsesEvaluation extends Model
     protected $fillable = [
         'reponse',  
         'questions_evaluations_id',
+        'niveau',
     ];
     public function questionsEvaluation()
     {
