@@ -402,4 +402,46 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     {
         //
     }
+
+    public function indexs()
+    {
+        try {
+            $user = Auth::user();
+            // Récupérer toutes les évaluations
+            $evaluations = Evaluation::where('etat', 1)
+            ->where('usercreate', $user->id)
+            ->get();
+
+            // Initialiser un tableau pour stocker les données de toutes les évaluations avec leurs questions et réponses
+            $evaluationsData = [];
+
+            // Pour chaque évaluation, récupérer ses questions et réponses associées
+            foreach ($evaluations as $evaluation) {
+                // Récupérer les questions associées à cette évaluation
+                $questions = QuestionsEvaluation::where('evaluation_id', $evaluation->id)->get();
+
+                // Pour chaque question, récupérer les réponses associées
+                foreach ($questions as $question) {
+                    $question->reponses = ReponsesEvaluation::where('questions_evaluations_id', $question->id)->get();
+                }
+
+                // Stocker les données de l'évaluation avec ses questions et réponses associées dans le tableau
+                $evaluationsData[] = [
+                    'evaluation' => $evaluation,
+                    'questions' => $questions,
+                ];
+            }
+
+            // Retourner les données de toutes les évaluations avec leurs questions et réponses associées
+            return response()->json([
+                'evaluations' => $evaluationsData,
+            ], 200);
+        } catch (\Exception $e) {
+            // En cas d'erreur, retourner un message d'erreur
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des évaluations',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
