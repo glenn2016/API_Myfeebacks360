@@ -27,4 +27,9 @@ class ReponsesEvaluation extends Model
         return $this->hasMany(EvaluationQuestionReponseEvaluation::class,'reponse_id');
     }
 
+    public function evaluationQuestionReponseEvaluations()
+    {
+        return $this->hasMany(EvaluationQuestionReponseEvaluation::class, 'reponse_id');
+    }
+
 }

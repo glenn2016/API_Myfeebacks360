@@ -115,45 +115,46 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     public function create(Request $request)
     {
         try {
+            // Validation des données d'entrée
             $validator = Validator::make($request->all(), [
                 'evaluation.*.reponse_id' => 'required|numeric',
                 'evaluer_id' => 'required|numeric|max:255',
                 'commentaire' => 'required|string|max:255',
             ]);
     
+            // Vérification des erreurs de validation
             if ($validator->fails()) {
                 return response()->json(['message' => 'Validation failed', 'errors' => $validator->errors()], 422);
             }
     
-            $user = Auth::user();
+            $user = Auth::user();  // Récupération de l'utilisateur authentifié
             $validatedData = $validator->validated();
             $evaluations = [];
+            $totalNiveau = 0;
+            $countNiveau = 0;
     
             foreach ($validatedData['evaluation'] as $evaluationData) {
-                // Récupérer toutes les réponses associées à la question
+                // Récupérer la réponse associée
                 $reponse = ReponsesEvaluation::find($evaluationData['reponse_id']);
                 if ($reponse) {
-                    $niveaux = ReponsesEvaluation::where('questions_evaluations_id', $reponse->questions_evaluations_id)
-                        ->pluck('niveau')
-                        ->toArray();
-                    
-                    // Calculer la moyenne des niveaux
-                    $totalNiveau = array_sum($niveaux);
-                    $countNiveau = count($niveaux);
-                    $moyenneNiveau = $countNiveau > 0 ? ($totalNiveau / $countNiveau) : 0;
-    
-                    // Mettre à l'échelle la moyenne sur 100
-                    $niveau = ($moyenneNiveau / 100) * 100;
-    
-                    $evaluation = new EvaluationQuestionReponseEvaluation();
-                    $evaluation->reponse_id = $evaluationData['reponse_id'];
-                    $evaluation->evaluatuer_id = $user->id;
-                    $evaluation->evaluer_id = $validatedData['evaluer_id'];
-                    $evaluation->niveau = $niveau;
-                    $evaluation->commentaire = $validatedData['commentaire'];
-                    $evaluation->save();
-                    $evaluations[] = $evaluation;
+                    // Ajouter le niveau de cette réponse au total
+                    $totalNiveau += $reponse->niveau;
+                    $countNiveau++;
                 }
+            }
+    
+            // Calculer la moyenne des niveaux
+            $moyenneNiveau = $countNiveau > 0 ? ($totalNiveau / $countNiveau) : 0;
+    
+            foreach ($validatedData['evaluation'] as $evaluationData) {
+                $evaluation = new EvaluationQuestionReponseEvaluation();
+                $evaluation->reponse_id = $evaluationData['reponse_id'];
+                $evaluation->evaluatuer_id = $user->id;
+                $evaluation->evaluer_id = $validatedData['evaluer_id'];
+                $evaluation->niveau = $moyenneNiveau; // Appliquer la moyenne calculée
+                $evaluation->commentaire = $validatedData['commentaire'];
+                $evaluation->save();
+                $evaluations[] = $evaluation;
             }
     
             return response()->json([
@@ -167,6 +168,9 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
+    
+    
+
 
 
      public function getUserEvaluations($id)
