@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('evaluation_question_reponse_evaluations', function (Blueprint $table) {
             //
             $table->string('commentaire');
-            $table->string('niveau');
         });
     }
 

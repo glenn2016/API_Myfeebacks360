@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('evaluation_question_reponse_evaluations', function (Blueprint $table) {
             //
-            $table->dropColumn('niveau');
+            $table->integer('niveau')->nullable();
         });
     }
 
