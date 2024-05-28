@@ -69,7 +69,8 @@ Route::get('/fedddback/{id}',[FeddbackController::class,'show']);
 Route::get('/fedddbacks',[FeddbackController::class,'index']);
 //Evaluations
 Route::get('/evaluation/{id}',[EvaluationController::class,'show']);
-Route::get('/evaluations',[EvaluationQuestionReponseEvaluationController::class,'indexs']);
+Route::get('/evaluations',[EvaluationController::class,'index']);
+Route::get('/evaluations/question/reponse',[EvaluationQuestionReponseEvaluationController::class,'indexs']);
 //Entreprise
 Route::get('/entreprises',[EntrepriseController::class,'index']);
 Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
