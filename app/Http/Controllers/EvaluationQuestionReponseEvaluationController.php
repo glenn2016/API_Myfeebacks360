@@ -151,7 +151,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
                 $evaluation->reponse_id = $evaluationData['reponse_id'];
                 $evaluation->evaluatuer_id = $user->id;
                 $evaluation->evaluer_id = $validatedData['evaluer_id'];
-                $evaluation->niveau = $moyenneNiveau; // Appliquer la moyenne calculée
+                $evaluation->niveau = $moyenneNiveau.' %'; // Appliquer la moyenne calculée
                 $evaluation->commentaire = $validatedData['commentaire'];
                 $evaluation->save();
                 $evaluations[] = $evaluation;
@@ -170,9 +170,6 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     }
     
     
-
-
-
      public function getUserEvaluations($id)
      {
          // Récupérer toutes les évaluations de l'utilisateur
