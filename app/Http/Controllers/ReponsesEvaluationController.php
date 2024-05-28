@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\ReponsesEvaluation;
 use App\Models\Categorie;
-use App\Models\Evaluation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;

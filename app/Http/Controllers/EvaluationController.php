@@ -14,7 +14,7 @@ class EvaluationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    function index()
+    /*function index()
     {
         try {
             $user = Auth::user();
@@ -32,7 +32,7 @@ class EvaluationController extends Controller
                 'status' => 500
             ], 500);
         }
-    }
+    }*/
 
     public function indexevaluation()
     {
