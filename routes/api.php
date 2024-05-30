@@ -151,6 +151,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/import/participants', [ImportUserController::class, 'import'])->middleware('auth:api');
     //listes totala des utlisateurs ayan passer une evaluation
     Route::get('/listes/total/utlisateur/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getAllEvaluators'])->middleware('auth');
+
+
+    Route::get('/liste/user/evaluer/admin', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsListAdmin'])->middleware('auth');
+
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/participant/entreprse/{categoryId}',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntrepriseAndCategory'])->middleware('auth:api');

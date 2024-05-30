@@ -444,4 +444,81 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
+
+
+    public function getEvaluerrsListAdmin()
+    {
+        try {
+            // Obtenir l'ID de l'utilisateur connecté
+            $currentUserId = Auth::id();
+    
+            // Vérifier si l'utilisateur est authentifié
+            if (!$currentUserId) {
+                return response()->json([
+                    'message' => 'Utilisateur non authentifié',
+                    'status' => 401
+                ], 401);
+            }
+    
+            // Récupérer les enregistrements des utilisateurs évalués par l'utilisateur connecté
+            $evaluations = EvaluationQuestionReponseEvaluation::select('evaluer_id', 'niveau')
+                ->distinct()
+                ->get();
+    
+            // Récupérer les IDs des utilisateurs évalués
+            $evaluatedUserIDs = $evaluations->pluck('evaluer_id');
+    
+            // Récupérer les utilisateurs évalués dont le usercreate est égal à l'ID de l'utilisateur connecté
+            $evaluatedUsers = User::whereIn('id', $evaluatedUserIDs)
+                ->where('usercreate', $currentUserId)
+                ->get();
+    
+            // Associer les niveaux aux utilisateurs évalués
+            $usersWithLevels = $evaluatedUsers->map(function($user) use ($evaluations) {
+                $niveau = $evaluations->firstWhere('evaluer_id', $user->id)->niveau;
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'niveau' => $niveau
+                ];
+            });
+    
+            // Classifier les utilisateurs selon les niveaux
+            $classification = [
+                'insuffisant' => 0,
+                'moyen' => 0,
+                'bien' => 0,
+                'exellent' => 0
+            ];
+    
+            foreach ($usersWithLevels as $user) {
+                $niveau = intval(str_replace('%', '', $user['niveau']));
+                if ($niveau < 50) {
+                    $classification['insuffisant']++;
+                } elseif ($niveau < 60) {
+                    $classification['moyen']++;
+                } elseif ($niveau < 80) {
+                    $classification['bien']++;
+                } else {
+                    $classification['exellent']++;
+                }
+            }
+    
+            // Retourner les utilisateurs évalués avec leur classification au format JSON
+            return response()->json([
+                'classification' => $classification,
+                'evaluatedUsers' => $usersWithLevels,
+                'status' => 200
+            ]);
+    
+        } catch (\Exception $e) {
+            // Gérer les exceptions
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des utilisateurs évalués.',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
 }
