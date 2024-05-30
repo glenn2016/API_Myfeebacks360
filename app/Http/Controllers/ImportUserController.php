@@ -10,7 +10,6 @@ use Exception;
 
 class ImportUserController extends Controller
 {
-    //
     public function import(Request $request)
     {
         $request->validate([
@@ -24,7 +23,7 @@ class ImportUserController extends Controller
             $message = 'Importation réussie';
             $status = 200;
 
-            // Check if there are errors specifically related to short passwords
+            // Vérifiez les erreurs spécifiquement pour les mots de passe trop courts
             foreach ($import->errors as $error) {
                 if (strpos($error, 'Le mot de passe est trop court') !== false) {
                     return response()->json(['message' => 'Le mot de passe est trop court'], 423);

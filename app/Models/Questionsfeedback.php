@@ -20,11 +20,6 @@ class Questionsfeedback extends Model
         return $this->hasMany(Reponsefeedback::class);
     }
 
-    public function feedback()
-    {
-        return $this->belongsTo(Feddback::class, 'feddback_id');
-    }
-
     public function evenement()
     {
         return $this->belongsTo(Evenement::class);

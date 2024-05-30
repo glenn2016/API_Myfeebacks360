@@ -92,28 +92,44 @@ class QuestionsfeedbackController extends Controller
      * Update the specified resource in storage.
      */
     
-    public function update(Request $request, $id){
-        $validator = Validator::make($request->all(), [
-            'nom' => ['required', 'string', 'max:255'],
-            'evenement_id' => ['required', 'numeric'],
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-                'status' => 400
-            ], 400);
-        }
-        $validatedData = $validator->validated();
-        $questionsfeedback = new Questionsfeedback();
-        $questionsfeedback->nom = $validatedData['nom'];
-        $questionsfeedback->evenement_id = $validatedData['evenement_id'];
-        $questionsfeedback->save();
-        return response()->json([
-            'message' => 'questionsfeedback mis à jour avec succès',
-            'questionsfeedback' => $questionsfeedback,
-        ], 200);
-    }
+     public function update(Request $request, $id)
+     {
+         // Valider les données entrantes
+         $validator = Validator::make($request->all(), [
+             'nom' => ['required', 'string', 'max:255'],
+             'evenement_id' => ['required', 'numeric'],
+         ]);
+ 
+         // Retourner les erreurs de validation si elles existent
+         if ($validator->fails()) {
+             return response()->json([
+                 'errors' => $validator->errors(),
+                 'status' => 400
+             ], 400);
+         }
+ 
+         // Trouver l'instance existante de Questionsfeedback
+         $questionsfeedback = Questionsfeedback::find($id);
+ 
+         // Si l'instance n'est pas trouvée, retourner une erreur 404
+         if (!$questionsfeedback) {
+             return response()->json([
+                 'message' => 'Questionsfeedback non trouvé',
+                 'status' => 404
+             ], 404);
+         }
+ 
+         // Mettre à jour les propriétés avec les données validées
+         $validatedData = $validator->validated();
+         $questionsfeedback->update($validatedData);
+
+ 
+         // Retourner une réponse JSON avec succès
+         return response()->json([
+             'message' => 'Questionsfeedback mis à jour avec succès',
+             'questionsfeedback' => $questionsfeedback,
+         ], 200);
+     }
     /**
      * Remove the specified resource from storage.
      */
