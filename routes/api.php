@@ -22,7 +22,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ImportUserController;
 use App\Http\Controllers\AbonnementController;
 use App\Http\Controllers\AbonnementUtlisateursController;
-
+use App\Http\Controllers\NotificationController;
 
 
 /*
@@ -222,4 +222,10 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::get('/abonnement-utilisateurs', [AbonnementUtlisateursController::class, 'index']);
     Route::put('/abonnement-utilisateurs/update/{id}', [AbonnementUtlisateursController::class, 'update']);
     Route::put('/abonnement-utilisateurs/create', [AbonnementUtlisateursController::class, 'create']); 
+
+
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
+
 });
