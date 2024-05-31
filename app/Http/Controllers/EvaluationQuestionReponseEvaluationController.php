@@ -451,7 +451,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         try {
             // Obtenir l'ID de l'utilisateur connecté
             $currentUserId = Auth::id();
-    
+
             // Vérifier si l'utilisateur est authentifié
             if (!$currentUserId) {
                 return response()->json([
@@ -459,39 +459,41 @@ class EvaluationQuestionReponseEvaluationController extends Controller
                     'status' => 401
                 ], 401);
             }
-    
-            // Récupérer les enregistrements des utilisateurs évalués par l'utilisateur connecté
+
+            // Récupérer les enregistrements des utilisateurs évalués
             $evaluations = EvaluationQuestionReponseEvaluation::select('evaluer_id', 'niveau')
                 ->distinct()
                 ->get();
-    
-            // Récupérer les IDs des utilisateurs évalués
-            $evaluatedUserIDs = $evaluations->pluck('evaluer_id');
-    
-            // Récupérer les utilisateurs évalués dont le usercreate est égal à l'ID de l'utilisateur connecté
-            $evaluatedUsers = User::whereIn('id', $evaluatedUserIDs)
-                ->where('usercreate', $currentUserId)
-                ->get();
-    
-            // Associer les niveaux aux utilisateurs évalués
-            $usersWithLevels = $evaluatedUsers->map(function($user) use ($evaluations) {
-                $niveau = $evaluations->firstWhere('evaluer_id', $user->id)->niveau;
-                return [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'niveau' => $niveau
-                ];
+
+            // Filtrer les utilisateurs évalués dont le usercreate est égal à l'ID de l'utilisateur connecté
+            $evaluatedUsers = $evaluations->filter(function($evaluation) use ($currentUserId) {
+                $user = User::find($evaluation->evaluer_id);
+                return $user && $user->usercreate == $currentUserId;
             });
-    
-            // Classifier les utilisateurs selon les niveaux
+
+            // Initialiser les catégories
             $classification = [
                 'insuffisant' => 0,
                 'moyen' => 0,
                 'bien' => 0,
-                'exellent' => 0
+                'excellent' => 0
             ];
-    
+
+            // Récupérer les utilisateurs évalués et leur niveau
+            $usersWithLevels = $evaluatedUsers->map(function($evaluation) {
+                $user = User::find($evaluation->evaluer_id);
+                if ($user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'niveau' => $evaluation->niveau
+                    ];
+                }
+                return null;
+            })->filter();
+
+            // Classifier les utilisateurs selon les niveaux
             foreach ($usersWithLevels as $user) {
                 $niveau = intval(str_replace('%', '', $user['niveau']));
                 if ($niveau < 50) {
@@ -501,17 +503,17 @@ class EvaluationQuestionReponseEvaluationController extends Controller
                 } elseif ($niveau < 80) {
                     $classification['bien']++;
                 } else {
-                    $classification['exellent']++;
+                    $classification['excellent']++;
                 }
             }
-    
-            // Retourner les utilisateurs évalués avec leur classification au format JSON
+
+            // Retourner les données classifiées en JSON
             return response()->json([
                 'classification' => $classification,
                 'evaluatedUsers' => $usersWithLevels,
                 'status' => 200
             ]);
-    
+
         } catch (\Exception $e) {
             // Gérer les exceptions
             return response()->json([
@@ -521,4 +523,5 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
+
 }
