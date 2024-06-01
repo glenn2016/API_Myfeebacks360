@@ -179,8 +179,12 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     //Evenement ou vous avez donner aavis
     Route::get('/listes/evenements/evaluer', [EvenementController::class, 'getEvenementsForCurrentUser'])->middleware('auth');
     Route::get('/evenement/feedback/{id}', [EvenementController::class, 'getFeedbackForEvent'])->middleware('auth');
-    Route::get('/evaluated-users', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluators']);
+    Route::get('/evaluated-users', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluators'])->middleware('auth');
 
+
+
+    Route::get('/user/events', [EvenementController::class, 'getUserEvents'])->middleware('auth');
+    Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class, 'getEventQuestionsAndResponses'])->middleware('auth');
 
 });
 
