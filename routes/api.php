@@ -97,6 +97,8 @@ Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::c
 //Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
 
 Route::get('/categories/questions-and-reponses/{CategorieId}/{evaluationId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategoryAndEvaluation']);
+//
+Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class, 'getEventQuestionsAndResponses']);
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //ADmin_Authentifie
@@ -184,7 +186,6 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
 
 
     Route::get('/user/events', [EvenementController::class, 'getUserEvents'])->middleware('auth');
-    Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class, 'getEventQuestionsAndResponses'])->middleware('auth');
 
 });
 
@@ -225,10 +226,8 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     //AbonementUtilisateurs
     Route::get('/abonnement-utilisateurs', [AbonnementUtlisateursController::class, 'index']);
     Route::put('/abonnement-utilisateurs/update/{id}', [AbonnementUtlisateursController::class, 'update']);
-    Route::put('/abonnement-utilisateurs/create', [AbonnementUtlisateursController::class, 'create']); 
-
-
-
+    Route::put('/abonnement-utilisateurs/create', [AbonnementUtlisateursController::class, 'create']);
+    //NOtifications
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
 
