@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string("description");
             $table->date('date_debut');
             $table->date('date_fin');
-            $table->unsignedBigInteger('usercreate')->nullable();
-            $table->foreign('usercreate')->references('id')->on('users')->onDelete('cascade')->nullable();
+            $table->integer('usercreate')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

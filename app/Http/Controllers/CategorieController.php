@@ -55,7 +55,7 @@ class CategorieController extends Controller
             return response()->json([
                 'message' => 'Catégorie créée avec succès',
                 'categorie' => $categorie,
-                'status' => 2020
+                'status' => 200
             ]);
         } catch (\Exception $e) {
             // En cas d'erreur, renvoyez une réponse JSON avec un message d'erreur

@@ -56,11 +56,11 @@ Route::get('/users_participants',[Authcontroller::class,'index']);
 //Entreprise
 Route::get('/entreprise/{id}',[EntrepriseController::class,'detail']);
 Route::get('/entreprises',[EntrepriseController::class,'index']);
+Route::get('/entreprises',[EntrepriseController::class,'index']);
+Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 //Categorie
 Route::get('/categories',[CategorieController::class,'index']);
 Route::get('/categorie/{id}',[CategorieController::class,'show']);
-//Entreprise
-Route::get('/entreprises',[EntrepriseController::class,'index']);
 //Evenement
 Route::get('/evenements',[EvenementController::class,'index']);
 Route::get('/evenement/{id}',[EvenementController::class,'show']);
@@ -71,9 +71,6 @@ Route::get('/fedddbacks',[FeddbackController::class,'index']);
 Route::get('/evaluation/{id}',[EvaluationController::class,'show']);
 Route::get('/evaluations',[EvaluationController::class,'index']);
 Route::get('/evaluations/question/reponse',[EvaluationQuestionReponseEvaluationController::class,'indexs']);
-//Entreprise
-Route::get('/entreprises',[EntrepriseController::class,'index']);
-Route::get('/entreprise/{id}',[EntrepriseController::class,'show']);
 //Contacte
 Route::post('/contacte/create',[ContacteController::class,'create']);
 //ContactAbonementC
@@ -94,10 +91,9 @@ Route::get('/reponseevaluation', [ReponsesEvaluationController::class, 'index'])
 Route::get('/reponseevaluation/{id}',[ReponsesEvaluationController::class,'show']);
 Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::class,'evenementquestion']);
 //evaluation
-//Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
-
+Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
 Route::get('/categories/questions-and-reponses/{CategorieId}/{evaluationId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategoryAndEvaluation']);
-//
+//evenement coté utilistauer
 Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class, 'getEventQuestionsAndResponses']);
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -134,7 +130,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/fedddbacks/{id}/soft-delete', [FeddbackController::class, 'softDelete'])->middleware('auth:api');
     //QuestionFeddback
     Route::post('/questionsfeedback/create',[QuestionsfeedbackController::class,'create'])->middleware('auth:api');
-    //
     Route::post('/questionsfeedback/update/{id}', [QuestionsfeedbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/questionsfeedbacks/{id}/soft-delete', [QuestionsfeedbackController::class, 'softDelete'])->middleware('auth:api');
     //QuestionEvaluation
@@ -153,10 +148,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/import/participants', [ImportUserController::class, 'import'])->middleware('auth:api');
     //listes totala des utlisateurs ayan passer une evaluation
     Route::get('/listes/total/utlisateur/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getAllEvaluators'])->middleware('auth');
-
-
     Route::get('/liste/user/evaluer/admin', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsListAdmin'])->middleware('auth');
-
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/participant/entreprse/{categoryId}',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntrepriseAndCategory'])->middleware('auth:api');
@@ -182,11 +174,7 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/listes/evenements/evaluer', [EvenementController::class, 'getEvenementsForCurrentUser'])->middleware('auth');
     Route::get('/evenement/feedback/{id}', [EvenementController::class, 'getFeedbackForEvent'])->middleware('auth');
     Route::get('/evaluated-users', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluators'])->middleware('auth');
-
-
-
     Route::get('/user/events', [EvenementController::class, 'getUserEvents'])->middleware('auth');
-
 });
 
 Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
@@ -197,9 +185,7 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::get('/ContactAbonement/{id}',[ContactAbonementController::class,'show'])->middleware('auth:api');
     Route::get('/ContactAbonementCs',[ContactAbonementController::class,'index'])->middleware('auth:api');
     Route::delete('/ContactAbonements/{id}/soft-delete', [ContactAbonementController::class, 'softDelete'])->middleware('auth:api');
-
     Route::get('/contact-abonements/{id}', [ContactAbonementController::class, 'getAbonnementByContactAbonnementId'])->middleware('auth:api');
-
     //Contacte
     Route::get('/contacte/{id}',[ContacteController::class,'show'])->middleware('auth:api');
     Route::get('/contactes',[ContacteController::class,'index'])->middleware('auth:api');
@@ -219,10 +205,10 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     Route::get('/listes/entrepriseAbonement',[EntrepriseAbonementController::class,'index'])->middleware('auth:api');
     Route::get('/entrepriseAbonement/{id}',[EntrepriseAbonementController::class,'show'])->middleware('auth:api');
     //Abonement
+    Route::post('/abonment/create',[AbonnementController::class,'create'])->middleware('auth:api');
     Route::get('/abonment/{id}',[AbonnementController::class,'show'])->middleware('auth:api');
     Route::delete('/abonements/{id}/soft-delete', [AbonnementController::class, 'softDelete'])->middleware('auth:api');
     Route::post('/abonment/update/{id}',[AbonnementController::class,'update'])->middleware('auth:api');
-    Route::post('/abonment/create',[AbonnementController::class,'create'])->middleware('auth:api');
     //AbonementUtilisateurs
     Route::get('/abonnement-utilisateurs', [AbonnementUtlisateursController::class, 'index']);
     Route::put('/abonnement-utilisateurs/update/{id}', [AbonnementUtlisateursController::class, 'update']);
@@ -230,5 +216,4 @@ Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {
     //NOtifications
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead']);
-
 });
