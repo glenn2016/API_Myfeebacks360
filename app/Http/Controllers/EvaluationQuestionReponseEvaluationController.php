@@ -431,7 +431,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         ]);
     }
     
-    public function getAllEvaluators()
+    public function getAllEvaluatedUsers()
     {
         // Get the ID of the authenticated user
         $userId = auth()->id();
@@ -439,35 +439,34 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         // Fetch all evaluation responses
         $evaluationReponses = EvaluationQuestionReponseEvaluation::all();
     
-        // Initialize an array to store evaluators
-        $evaluators = [];
+        // Initialize an array to store evaluated users
+        $evaluatedUsers = [];
     
         // Iterate through the fetched evaluation responses
         foreach ($evaluationReponses as $evaluationReponse) {
-            // Fetch the evaluator user ID
-            $evaluatorId = $evaluationReponse->evaluatuer_id;
+            // Fetch the evaluated user ID
+            $evaluatedUserId = $evaluationReponse->evaluer_id;
     
             // Fetch the user create ID for the evaluated user
-            $evaluatedUserId = $evaluationReponse->evaluer->usercreate;
+            $userCreateId = $evaluationReponse->evaluer->usercreate;
     
             // Check if the user create ID matches the authenticated user ID
-            if ($evaluatedUserId == $userId) {
-                // Add the evaluator to the list
-                if (!in_array($evaluatorId, $evaluators)) {
-                    $evaluators[] = $evaluatorId;
-                }
+            if ($userCreateId == $userId) {
+                // Add the evaluated user to the list
+                $evaluatedUsers[] = $evaluatedUserId;
             }
         }
     
-        // Fetch user details for each evaluator ID
-        $users = User::whereIn('id', $evaluators)->get();
+        // Fetch user details for each evaluated user ID
+        $users = User::whereIn('id', $evaluatedUsers)->get();
     
-        // Return the evaluators as a JSON response
+        // Return the evaluated users as a JSON response
         return response()->json([
-            'evaluators' => $users,
+            'evaluatedUsers' => $users,
             'status' => 200
         ]);
     }
+    
     /**
      * Remove the specified resource from storage.
      */
