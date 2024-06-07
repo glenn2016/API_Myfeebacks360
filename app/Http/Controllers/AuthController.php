@@ -321,8 +321,9 @@ class AuthController extends Controller
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id],
-            'categorie_id' => ['nullable', 'exists:categories,id'],
             'entreprise_id' => ['nullable', 'exists:entreprises,id'],
+            'entrepriseAbaonement' => ['required', 'string', 'max:255'],
+            
         ]);
         // Vérifie si la validation a échoué
         if ($validator->fails()) {
@@ -335,12 +336,10 @@ class AuthController extends Controller
         $user = User::findOrFail($id);
         // Mise à jour des attributs de l'utilisateur
         $user->nom = $request->nom;
+        $user->entrepriseAbaonement = $request->entrepriseAbaonement;
         $user->prenom = $request->prenom;
         $user->email = $request->email;
-        // Mise à jour de la catégorie et de l'entreprise si les IDs sont fournis dans la requête
-        if ($request->filled('categorie_id')) {
-            $user->categorie_id = $request->categorie_id;
-        }
+
         if ($request->filled('entreprise_id')) {
             $user->entreprise_id = $request->entreprise_id;
         }
