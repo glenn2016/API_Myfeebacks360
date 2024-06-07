@@ -199,7 +199,6 @@ class AuthController extends Controller
                 'nom' => $request->nom,
                 'prenom' => $request->prenom,
                 'email' => $request->email,
-                'categorie_id' => $request->categorie_id,
                 'entreprise_id' => $request->entreprise_id,
                 'password' => Hash::make($request->password),
                 'usercreate'=> $userId
