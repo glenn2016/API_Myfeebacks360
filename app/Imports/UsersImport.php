@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\User;
 use App\Models\Role;
-use App\Models\Categorie;
 use App\Models\Entreprise;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -12,7 +11,6 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Exception;
 
 
@@ -54,16 +52,6 @@ class UsersImport implements ToCollection,WithHeadingRow
                     continue;
                 }
 
-                // Vérifiez si la catégorie existe pour cet utilisateur, sinon créez-la
-                $categorie = Categorie::where('nom', $row['categorie'])
-                    ->where('usercreate', $currentUserId)
-                    ->first();
-                if (!$categorie) {
-                    $categorie = Categorie::create([
-                        'nom' => $row['categorie'],
-                        'usercreate' => $currentUserId,
-                    ]);
-                }
 
                 // Vérifiez si l'entreprise existe pour cet utilisateur, sinon créez-la
                 $entreprise = Entreprise::where('nom', $row['entreprise'])
@@ -82,7 +70,6 @@ class UsersImport implements ToCollection,WithHeadingRow
                     'prenom' => $row['prenom'],
                     'email' => $row['email'],
                     'password' => bcrypt($row['password']),
-                    'categorie_id' => $categorie->id,
                     'entreprise_id' => $entreprise->id,
                     'usercreate' => $currentUserId,
                 ]);
@@ -108,7 +95,6 @@ class UsersImport implements ToCollection,WithHeadingRow
             'prenom' => 'required|string',
             'email' => 'required|email',
             'password' => 'required|string|min:8',
-            'categorie' => 'required|string',
             'entreprise' => 'required|string',
         ]);
 
