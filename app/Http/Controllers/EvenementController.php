@@ -96,7 +96,7 @@ class EvenementController extends Controller
             $user = Auth::user();
             $validatedData = $request->validate([
                 'titre' => ['required', 'string', 'max:255'],
-                'description' => ['required', 'string', 'max:355'],
+                'description' => [ 'string', 'max:355'],
                 'date_debut' => ['required', 'date'],
                 'date_fin' => ['required', 'date'],
             ]);
