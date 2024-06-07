@@ -131,7 +131,7 @@ class AuthController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => 'required|string|min:8',
             'abonnement_id' => ['required', 'exists:abonnements,id'],
-            'entreprise_abonements_id' => ['required', 'exists:entreprise_abonements,id'],
+            'entrepriseAbaonement' => ['required', 'string', 'max:255'],
             'date_debut_abonnement' => ['required', 'date'],
             'date_fin_abonnement' => ['required', 'date', 'after_or_equal:date_debut_abonnement'],
         ]);
@@ -149,7 +149,7 @@ class AuthController extends Controller
                 'nom' => $request->nom,
                 'prenom' => $request->prenom,
                 'email' => $request->email,
-                'entreprise_abonements_id'=>$request->entreprise_abonements_id,
+                'entrepriseAbaonement'=>$request->entrepriseAbaonement,
                 'password' => Hash::make($request->password),
                 'usercreate'=> $userId
             ]);

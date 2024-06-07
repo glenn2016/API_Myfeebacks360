@@ -30,7 +30,7 @@ class User extends Authenticatable implements JWTSubject
         'entreprise_id',
         'entreprise_id',
         'usercreate',
-        'entreprise_abonements_id',
+        'entrepriseAbaonement',
     ];
 
     /**
