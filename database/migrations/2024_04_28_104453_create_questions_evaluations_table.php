@@ -9,21 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('questions_evaluations', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom');
-            $table->unsignedBigInteger('evaluation_id')->nullable();
-            $table->foreign('evaluation_id')->references('id')->on('evaluations')->onDelete('cascade')->nullable();
-
-            $table->unsignedBigInteger('categorie_id')->nullable();
-            $table->foreign('categorie_id')->references('id')->on('categories')->onDelete('cascade')->nullable();
-
-            $table->softDeletes();
-            $table->timestamps();   
-        });
-    }
+        public function up(): void
+        {
+            Schema::create('questions_evaluations', function (Blueprint $table) {
+                $table->id();
+                $table->string('nom');
+                $table->unsignedBigInteger('evaluation_id')->nullable();
+                $table->foreign('evaluation_id')->references('id')->on('evaluations')->onDelete('cascade')->nullable();
+                $table->softDeletes();
+                $table->timestamps();   
+            });
+        }
 
     /**
      * Reverse the migrations.

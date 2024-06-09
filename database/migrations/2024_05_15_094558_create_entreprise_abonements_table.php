@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('pays');
             $table->string('ville');
             $table->string('adresse');
-            $table->unsignedBigInteger('usercreate')->nullable();
-            $table->foreign('usercreate')->references('id')->on('users')->onDelete('cascade')->nullable();
+            $table->integer('usercreate')->nullable();
             $table->timestamps();
         });
     }

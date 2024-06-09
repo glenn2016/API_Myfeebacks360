@@ -28,7 +28,7 @@ class QuestionsEvaluation extends Model
 
     public function categorie()
     {
-        return $this->belongsTo(Categorie::class, 'categorie_id');
+        return $this->belongsToMany(Categorie::class, 'questions_evaluations_categorie', 'questions_evaluations_id', 'categorie_id');
     }
 
     public function reponses()
