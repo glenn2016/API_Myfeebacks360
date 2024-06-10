@@ -600,4 +600,57 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        try {
+            $user = Auth::user();
+    
+            // Retrieve the specific evaluation by ID, ensuring it's active and not deleted
+            $evaluation = Evaluation::where('id', $id)
+                ->where('etat', 1)
+                ->where('usercreate', $user->id)
+                ->whereNull('deleted_at') // Check for soft deletes
+                ->first();
+    
+            // Check if the evaluation exists
+            if (!$evaluation) {
+                return response()->json([
+                    'message' => 'Évaluation non trouvée',
+                ], 404);
+            }
+    
+            // Retrieve questions associated with the evaluation
+            $questions = QuestionsEvaluation::with('categorie')
+                ->where('evaluation_id', $evaluation->id)
+                ->whereNull('deleted_at') // Check for soft deletes in questions
+                ->get();
+    
+            // Retrieve responses for each question
+            foreach ($questions as $question) {
+                $question->reponses = ReponsesEvaluation::where('questions_evaluations_id', $question->id)
+                    ->get();
+            }
+    
+            // Structure the evaluation data
+            $evaluationData = [
+                'evaluation' => $evaluation,
+                'questions' => $questions,
+            ];
+    
+            return response()->json([
+                'evaluation' => $evaluationData,
+            ], 200);
+        } catch (\Exception $e) {
+            // Generic error handling
+            return response()->json([
+                'message' => 'Une erreur est survenue',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+    
+    
+
+
 }
