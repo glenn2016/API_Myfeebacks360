@@ -479,32 +479,34 @@ class EvaluationQuestionReponseEvaluationController extends Controller
     {
         try {
             $user = Auth::user();
-            // Récupérer toutes les évaluations
+    
+            // Récupérer toutes les évaluations actives de l'utilisateur connecté
             $evaluations = Evaluation::where('etat', 1)
-            ->where('usercreate', $user->id)
-            ->get();
-
-            // Initialiser un tableau pour stocker les données de toutes les évaluations avec leurs questions et réponses
+                ->where('usercreate', $user->id)
+                ->get();
+    
+            // Initialiser un tableau pour stocker les données des évaluations avec leurs questions, réponses et catégories
             $evaluationsData = [];
-
+    
             // Pour chaque évaluation, récupérer ses questions et réponses associées
             foreach ($evaluations as $evaluation) {
-                // Récupérer les questions associées à cette évaluation
-                $questions = QuestionsEvaluation::where('evaluation_id', $evaluation->id)->get();
-
+                $questions = QuestionsEvaluation::where('evaluation_id', $evaluation->id)
+                    ->with('categorie') // Joindre la table des catégories
+                    ->get();
+    
                 // Pour chaque question, récupérer les réponses associées
                 foreach ($questions as $question) {
                     $question->reponses = ReponsesEvaluation::where('questions_evaluations_id', $question->id)->get();
                 }
-
-                // Stocker les données de l'évaluation avec ses questions et réponses associées dans le tableau
+    
+                // Stocker les données de l'évaluation avec ses questions, réponses et catégories associées dans le tableau
                 $evaluationsData[] = [
                     'evaluation' => $evaluation,
                     'questions' => $questions,
                 ];
             }
-
-            // Retourner les données de toutes les évaluations avec leurs questions et réponses associées
+    
+            // Retourner les données des évaluations avec leurs questions, réponses et catégories
             return response()->json([
                 'evaluations' => $evaluationsData,
             ], 200);
@@ -516,6 +518,8 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
+    
+    
 
 
     public function getEvaluerrsListAdmin()
