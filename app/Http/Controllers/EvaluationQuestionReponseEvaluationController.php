@@ -177,36 +177,37 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         try {
             // Validation des données d'entrée
             $validator = Validator::make($request->all(), [
-                'evaluation.*.reponse_id' => 'required|numeric',
-                'evaluer_id' => 'required|numeric|max:255',
+                'evaluation.*.reponse_id' => 'required|numeric|exists:reponses_evaluations,id', // Chaque réponse doit exister
+                'evaluer_id' => 'required|numeric|exists:users,id', // L'utilisateur à évaluer doit exister
+                'categorie_id' => 'required|numeric|exists:categories,id', // La catégorie doit exister
                 'commentaire' => 'required|string|max:255',
             ]);
-
+    
             // Vérification des erreurs de validation
             if ($validator->fails()) {
                 return response()->json(['message' => 'Validation failed', 'errors' => $validator->errors()], 422);
             }
-
+    
             $user = Auth::user();  // Récupération de l'utilisateur authentifié
             $validatedData = $validator->validated();
             $evaluations = [];
             $totalNiveau = 0;
             $countNiveau = 0;
-
+    
             foreach ($validatedData['evaluation'] as $evaluationData) {
                 // Vérifier si l'évaluation existe déjà
                 $existingEvaluation = EvaluationQuestionReponseEvaluation::where('reponse_id', $evaluationData['reponse_id'])
                     ->where('evaluatuer_id', $user->id)
                     ->where('evaluer_id', $validatedData['evaluer_id'])
                     ->first();  
-
+    
                 if ($existingEvaluation) {
                     return response()->json([
                         'message' => 'Évaluation déjà existante pour cet utilisateur et cette réponse',
-                        'status' =>409
+                        'status' => 409
                     ], 409);
                 }
-
+    
                 // Récupérer la réponse associée
                 $reponse = ReponsesEvaluation::find($evaluationData['reponse_id']);
                 if ($reponse) {
@@ -215,21 +216,22 @@ class EvaluationQuestionReponseEvaluationController extends Controller
                     $countNiveau++;
                 }
             }
-
+    
             // Calculer la moyenne des niveaux
             $moyenneNiveau = $countNiveau > 0 ? ($totalNiveau / $countNiveau) : 0;
-
+    
             foreach ($validatedData['evaluation'] as $evaluationData) {
                 $evaluation = new EvaluationQuestionReponseEvaluation();
                 $evaluation->reponse_id = $evaluationData['reponse_id'];
                 $evaluation->evaluatuer_id = $user->id;
                 $evaluation->evaluer_id = $validatedData['evaluer_id'];
+                $evaluation->categorie_id = $validatedData['categorie_id']; // Associer la catégorie
                 $evaluation->niveau = $moyenneNiveau . ' %'; // Appliquer la moyenne calculée
                 $evaluation->commentaire = $validatedData['commentaire'];
                 $evaluation->save();
                 $evaluations[] = $evaluation;
             }
-
+    
             return response()->json([
                 'message' => 'Évaluations créées avec succès',
                 'evaluations' => $evaluations,
@@ -241,6 +243,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
+    
 
     
      public function getUserEvaluations($id)

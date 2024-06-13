@@ -240,7 +240,6 @@ class QuestionsEvaluationController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      */
@@ -451,14 +450,7 @@ class QuestionsEvaluationController extends Controller
             ], 500);
         }
     }
-     
 
-
-    
-    
-    
-    
-    
     /**
      * Remove the specified resource from storage.
      */
