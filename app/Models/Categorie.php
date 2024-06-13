@@ -19,6 +19,11 @@ class Categorie extends Model
         return $this->hasMany(User::class);
     }
 
+    public function EvaluationQuestionReponseEvaluation()
+    {
+        return $this->hasMany(EvaluationQuestionReponseEvaluation::class);
+    }
+
     public function questionsEvaluations()
     {
         return $this->hasMany(QuestionsEvaluation::class, 'categorie_id');
@@ -33,4 +38,6 @@ class Categorie extends Model
     {
         return $this->belongsToMany(QuestionsEvaluation::class, 'questions_evaluations_categorie', 'categorie_id', 'questions_evaluations_id');
     }
+
+    
 }

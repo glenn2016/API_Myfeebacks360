@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('evaluation_question_reponse_evaluations', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('categorie_id')->nullable();
+            $table->foreign('categorie_id')->references('id')->on('categories')->onDelete('cascade')->nullable();
+
             $table->unsignedBigInteger('reponse_id')->nullable();
             $table->foreign('reponse_id')->references('id')->on('reponses_evaluations')->onDelete('cascade');
 

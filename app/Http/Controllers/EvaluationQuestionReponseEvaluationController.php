@@ -518,10 +518,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
-    
-    
-
-
+  
     public function getEvaluerrsListAdmin()
     {
         try {
@@ -648,9 +645,5 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             ], 500);
         }
     }
-    
-    
-    
-
 
 }
