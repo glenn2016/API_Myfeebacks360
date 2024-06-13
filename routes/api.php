@@ -152,6 +152,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/liste/user/evaluer/admin', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsListAdmin'])->middleware('auth');
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
+    Route::get('participant/same-enterprise', [EvaluationQuestionReponseEvaluationController::class, 'usersInSameEnterprise'])->middleware('auth:api');
     Route::get('/participant/entreprse/{categoryId}',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntrepriseAndCategory'])->middleware('auth:api');
     //ReponseFeddback
     Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');

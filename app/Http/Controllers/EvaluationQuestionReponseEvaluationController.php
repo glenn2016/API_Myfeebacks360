@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Categorie;
+use App\Models\Entreprise;
 use App\Models\Evaluation;
 use App\Models\QuestionsEvaluation;
 use Illuminate\Http\Request;
@@ -644,6 +645,40 @@ class EvaluationQuestionReponseEvaluationController extends Controller
             // Generic error handling
             return response()->json([
                 'message' => 'Une erreur est survenue',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function usersInSameEnterprise(Request $request)
+    {
+        try {
+            $user = Auth::user(); // Récupération de l'utilisateur connecté
+
+            // Vérifier si l'utilisateur appartient à une entreprise
+            if (!$user->entreprise_id) {
+                return response()->json(['message' => 'L\'utilisateur ne fait pas partie d\'une entreprise.'], 404);
+            }
+
+            // Récupérer l'entreprise de l'utilisateur connecté
+            $entreprise = Entreprise::find($user->entreprise_id);
+
+            if (!$entreprise) {
+                return response()->json(['message' => 'L\'entreprise de l\'utilisateur n\'a pas été trouvée.'], 404);
+            }
+
+            // Récupérer tous les utilisateurs ayant le même créateur d'entreprise que l'utilisateur connecté
+            $users = User::where('entreprise_id', $entreprise->id)
+                         ->where('id', '!=', $user->id) // Exclure l'utilisateur connecté lui-même
+                         ->get();
+
+            return response()->json([
+                'message' => 'Liste des utilisateurs de la même entreprise récupérée avec succès.',
+                'users' => $users,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des utilisateurs de la même entreprise.',
                 'error' => $e->getMessage(),
             ], 500);
         }
