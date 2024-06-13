@@ -41,11 +41,12 @@ class ReponsesEvaluationController extends Controller
         // Récupérer la catégorie
         $categorie = Categorie::findOrFail($categorieId);
 
-        // Récupérer les questions liées à cette catégorie et à cette évaluation avec leurs réponses
+        // Récupérer les questions liées à cette catégorie via la table pivot
         $questions = $categorie->questionsEvaluations()
-                                ->where('evaluation_id', $evaluationId)
-                                ->with('reponsesEvaluation')
-                                ->get();
+                               ->wherePivot('categorie_id', $categorieId) // Filtrer par catégorie sur la table pivot
+                               ->where('evaluation_id', $evaluationId)    // Filtrer par évaluation sur la table questions
+                               ->with('reponsesEvaluation')               // Charger les réponses associées
+                               ->get();
 
         // Retourner les données au format JSON
         return response()->json($questions);

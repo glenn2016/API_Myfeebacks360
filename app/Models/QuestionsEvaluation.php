@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Model;
 
 class QuestionsEvaluation extends Model
@@ -35,6 +36,18 @@ class QuestionsEvaluation extends Model
     {
         return $this->hasMany(ReponsesEvaluation::class, 'questions_evaluations_id');
     }
+
+    // Relation many-to-many avec Categorie
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Categorie::class,
+            'questions_evaluations_categorie',
+            'questions_evaluations_id',
+            'categorie_id'
+        );
+    }
+
 
 
 }

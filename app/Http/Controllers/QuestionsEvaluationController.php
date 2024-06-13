@@ -178,7 +178,7 @@ class QuestionsEvaluationController extends Controller
                 'questions.*.reponses.*.niveau' => [
                     'required',
                     'integer',
-                    'between:1,100', // Limiter le niveau entre 1 et 100
+                    'between:0,100', // Limiter le niveau entre 1 et 100
                 ],
             ]);
 

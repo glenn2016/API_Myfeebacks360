@@ -92,7 +92,7 @@ Route::get('/reponseevaluation/{id}',[ReponsesEvaluationController::class,'show'
 Route::get('/questions-feedbacks/{evenement_id}',[QuestionsfeedbackController::class,'evenementquestion']);
 //evaluation
 Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategory']);
-Route::get('/categories/questions-and-reponses/{CategorieId}/{evaluationId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategoryAndEvaluation']);
+Route::get('/categories/questions-and-reponses/{CategorieId}/*{evaluationId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategoryAndEvaluation']);
 //evenement coté utilistauer
 Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class, 'getEventQuestionsAndResponses']);
 
