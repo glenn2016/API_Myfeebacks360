@@ -684,4 +684,102 @@ class EvaluationQuestionReponseEvaluationController extends Controller
         }
     }
 
-}
+    /*
+    Cette méthode récupérera toutes les catégories ayant des
+    questions pour lesquelles l'utilisateur connecté a reçu des évaluations.
+
+    */
+
+    public function getUserReceivedEvaluationCategories()
+    {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+
+        // Vérifier si l'utilisateur est connecté
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur non connecté'], 401);
+        }
+
+        // Récupérer les catégories associées aux questions pour lesquelles l'utilisateur a reçu des évaluations
+        $categories = Categorie::whereHas('questions.evaluations', function($query) use ($user) {
+            $query->where('evaluer_id', $user->id);
+        })->get();
+
+        // Retourner les catégories au format JSON
+        return response()->json($categories);
+    }
+    /*
+
+
+
+
+
+
+
+    */
+
+    public function getUserReceivedEvaluationsByCategory($categorieId)
+    {
+        // Récupérer l'utilisateur connecté
+        $user = Auth::user();
+
+        // Vérifier si l'utilisateur est connecté
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur non connecté'], 401);
+        }
+
+        // Récupérer les évaluations destinées à l'utilisateur connecté pour la catégorie spécifiée
+        $evaluations = EvaluationQuestionReponseEvaluation::where('evaluer_id', $user->id)
+                            ->whereHas('reponse.question.categories', function($query) use ($categorieId) {
+                                $query->where('categories.id', $categorieId);
+                            })
+                            ->with(['reponse.question'])
+                            ->get();
+
+        // Structure pour stocker les résultats
+        $result = [];
+
+        // Parcourir les évaluations reçues pour collecter les données
+        foreach ($evaluations as $evaluation) {
+            // Récupérer la réponse et la question associée
+            $reponse = $evaluation->reponse;
+            $question = $reponse->question;
+
+            // Vérifier si la question existe déjà dans les résultats
+            if (!isset($result[$question->id])) {
+                $result[$question->id] = [
+                    'question' => $question->nom,  // Nom de la question
+                    'reponses' => []              // Initialisation des réponses
+                ];
+            }
+
+            // Ajouter ou mettre à jour la réponse dans les résultats
+            if (isset($result[$question->id]['reponses'][$reponse->reponse])) {
+                $result[$question->id]['reponses'][$reponse->reponse]['count'] += 1;
+            } else {
+                $result[$question->id]['reponses'][$reponse->reponse] = [
+                    'count' => 1
+                ];
+            }
+        }
+
+        // Réorganiser les résultats pour être plus lisibles
+        $formattedResult = [];
+        foreach ($result as $questionId => $questionData) {
+            $formattedResult[] = [
+                'id' => $questionId,
+                'nom' => $questionData['question'],
+                'reponses' => array_map(function ($reponseText, $data) {
+                    return [
+                        'reponse' => $reponseText,
+                        'count' => $data['count']
+                    ];
+                }, array_keys($questionData['reponses']), $questionData['reponses'])
+            ];
+        }
+
+        // Retourner les données au format JSON
+        return response()->json($formattedResult);
+    }
+
+}			

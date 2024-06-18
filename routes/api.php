@@ -47,8 +47,6 @@ Route::post('refresh', [AuthController::class ,'refresh']);
 Route::post('me', [AuthController::class ,'me']);
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [ForgotPasswordController::class, 'resetPassword']);
-
-
 //Abonement
 Route::get('/listes/abonements',[AbonnementController::class,'index']);
 //Participant
@@ -95,6 +93,8 @@ Route::get('/categories/questions-and-reponses/{CategorieId}', [ReponsesEvaluati
 Route::get('/categories/questions-and-reponses/{CategorieId}/{evaluationId}', [ReponsesEvaluationController::class, 'questionsAndReponsesByCategoryAndEvaluation']);
 //evenement coté utilistauer
 Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class, 'getEventQuestionsAndResponses']);
+
+Route::get('/liste/question/reponses/evaluation/{categorieId}', [EvaluationQuestionReponseEvaluationController::class, 'getUserReceivedEvaluationsByCategory']);
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //ADmin_Authentifie
@@ -150,6 +150,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     //listes totala des utlisateurs ayant recu une evaluation
     Route::get('/listes/total/utlisateur/evaluer', [EvaluationQuestionReponseEvaluationController::class, 'getAllEvaluatedUsers'])->middleware('auth');
     Route::get('/liste/user/evaluer/admin', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluerrsListAdmin'])->middleware('auth');
+
+
 });
 Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('participant/same-enterprise', [EvaluationQuestionReponseEvaluationController::class, 'usersInSameEnterprise'])->middleware('auth:api');
