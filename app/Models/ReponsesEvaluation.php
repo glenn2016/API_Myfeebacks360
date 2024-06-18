@@ -32,4 +32,11 @@ class ReponsesEvaluation extends Model
         return $this->hasMany(EvaluationQuestionReponseEvaluation::class, 'reponse_id');
     }
 
+    public function countEvaluationsByUser($userId)
+    {
+        return $this->evaluations()
+                    ->where('evaluer_id', $userId)
+                    ->count();
+    }
+
 }

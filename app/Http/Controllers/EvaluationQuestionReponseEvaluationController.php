@@ -718,68 +718,100 @@ class EvaluationQuestionReponseEvaluationController extends Controller
 
     */
 
+
     public function getUserReceivedEvaluationsByCategory($categorieId)
-    {
-        // Récupérer l'utilisateur connecté
-        $user = Auth::user();
+{
+    // Récupérer l'utilisateur connecté
+    $user = Auth::user();
 
-        // Vérifier si l'utilisateur est connecté
-        if (!$user) {
-            return response()->json(['message' => 'Utilisateur non connecté'], 401);
+    // Vérifier si l'utilisateur est connecté
+    if (!$user) {
+        return response()->json(['message' => 'Utilisateur non connecté'], 401);
+    }
+
+    // Vérifier l'existence de la catégorie
+    $categorie = Categorie::find($categorieId);
+    if (!$categorie) {
+        return response()->json(['message' => 'Catégorie non trouvée'], 404);
+    }
+
+    // Récupérer toutes les questions liées à la catégorie spécifiée
+    $questions = QuestionsEvaluation::whereHas('categories', function($query) use ($categorieId) {
+            $query->where('categories.id', $categorieId);
+        })
+        ->with('reponsesEvaluation')
+        ->get();
+
+    // Structure pour stocker les résultats des questions
+    $result = [
+        'questions' => []
+    ];
+
+    // Parcourir chaque question de la catégorie
+    foreach ($questions as $question) {
+        $questionData = [
+            'id' => $question->id,
+            'nom' => $question->nom,
+            'reponses' => []
+        ];
+
+        // Préparer un tableau pour compter les réponses
+        $responseCounts = [];
+
+        // Initialiser le count pour chaque réponse possible à zéro
+        foreach ($question->reponsesEvaluation as $possibleResponse) {
+            $responseCounts[$possibleResponse->reponse] = 0;
         }
 
-        // Récupérer les évaluations destinées à l'utilisateur connecté pour la catégorie spécifiée
+        // Récupérer les évaluations pour cette question spécifique dans la catégorie donnée
         $evaluations = EvaluationQuestionReponseEvaluation::where('evaluer_id', $user->id)
-                            ->whereHas('reponse.question.categories', function($query) use ($categorieId) {
-                                $query->where('categories.id', $categorieId);
-                            })
-                            ->with(['reponse.question'])
-                            ->get();
+            ->where('categorie_id', $categorieId)
+            ->whereIn('reponse_id', $question->reponsesEvaluation->pluck('id'))
+            ->with('reponse')
+            ->get();
 
-        // Structure pour stocker les résultats
-        $result = [];
-
-        // Parcourir les évaluations reçues pour collecter les données
+        // Compter combien de fois chaque réponse a été choisie
         foreach ($evaluations as $evaluation) {
-            // Récupérer la réponse et la question associée
-            $reponse = $evaluation->reponse;
-            $question = $reponse->question;
-
-            // Vérifier si la question existe déjà dans les résultats
-            if (!isset($result[$question->id])) {
-                $result[$question->id] = [
-                    'question' => $question->nom,  // Nom de la question
-                    'reponses' => []              // Initialisation des réponses
-                ];
-            }
-
-            // Ajouter ou mettre à jour la réponse dans les résultats
-            if (isset($result[$question->id]['reponses'][$reponse->reponse])) {
-                $result[$question->id]['reponses'][$reponse->reponse]['count'] += 1;
-            } else {
-                $result[$question->id]['reponses'][$reponse->reponse] = [
-                    'count' => 1
-                ];
+            $responseText = $evaluation->reponse->reponse;
+            if (isset($responseCounts[$responseText])) {
+                $responseCounts[$responseText]++;
             }
         }
 
-        // Réorganiser les résultats pour être plus lisibles
-        $formattedResult = [];
-        foreach ($result as $questionId => $questionData) {
-            $formattedResult[] = [
-                'id' => $questionId,
-                'nom' => $questionData['question'],
-                'reponses' => array_map(function ($reponseText, $data) {
-                    return [
-                        'reponse' => $reponseText,
-                        'count' => $data['count']
-                    ];
-                }, array_keys($questionData['reponses']), $questionData['reponses'])
+        // Formater les réponses avec leur count
+        foreach ($responseCounts as $responseText => $count) {
+            $questionData['reponses'][] = [
+                'reponse' => $responseText,
+                'count' => $count
             ];
         }
 
-        // Retourner les données au format JSON
-        return response()->json($formattedResult);
+        // Vérifier si au moins une réponse a un count > 0
+        $hasNonZeroResponse = collect($questionData['reponses'])->contains(function ($response) {
+            return $response['count'] > 0;
+        });
+
+        // Ajouter la question avec ses réponses formatées au résultat si elle a au moins une réponse sélectionnée
+        if ($hasNonZeroResponse) {
+            $result['questions'][] = $questionData;
+        }
     }
+
+    // Ne retourner la catégorie que si au moins une question est présente
+    if (empty($result['questions'])) {
+        return response()->json(['message' => 'Aucune question avec des réponses sélectionnées trouvée pour cette catégorie'], 404);
+    }
+
+    // Retourner les données au format JSON sans les informations de la catégorie
+    return response()->json($result);
+}
+
+    
+    
+
+
+
+
+
 
 }			
