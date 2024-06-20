@@ -179,6 +179,9 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('/evenement/feedback/{id}', [EvenementController::class, 'getFeedbackForEvent'])->middleware('auth');
     Route::get('/evaluated-users', [EvaluationQuestionReponseEvaluationController::class, 'getEvaluators'])->middleware('auth');
     Route::get('/user/events', [EvenementController::class, 'getUserEvents'])->middleware('auth');
+    //actegorie
+    Route::get('liste/categories', [CategorieController::class, 'getCategoriesByUserCreate']);
+
 });
 
 Route::middleware(['auth', 'role:SuperAdmin'])->group(function () {

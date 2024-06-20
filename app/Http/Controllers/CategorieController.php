@@ -129,5 +129,37 @@ class CategorieController extends Controller
                 'status' => 500
             ],);
         }
-    }  
+    }
+    
+    public function getCategoriesByUserCreate()
+    {
+        try {
+            // Récupérer l'utilisateur connecté
+            $user = Auth::user();
+            
+            // Vérifier si l'utilisateur est connecté
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Utilisateur non connecté',
+                    'status' => 401
+                ], 401);
+            }
+
+            // Récupérer les catégories dont le champ usercreate est identique à celui de l'utilisateur connecté
+            $categories = Categorie::where('usercreate', $user->usercreate)->get();
+
+            return response()->json([
+                'categories' => $categories,
+                'status' => 200
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la récupération des catégories',
+                'error' => $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
+
+
 }
