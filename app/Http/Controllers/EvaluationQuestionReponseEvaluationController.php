@@ -799,7 +799,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
 
     // Ne retourner la catégorie que si au moins une question est présente
     if (empty($result['questions'])) {
-        return response()->json(['message' => 'Aucune question avec des réponses sélectionnées trouvée pour cette catégorie'], 404);
+        return response()->json(['message' => 'Aucune question avec des réponses sélectionnées trouvée pour cette catégorie'], 406);
     }
 
     // Retourner les données au format JSON sans les informations de la catégorie
