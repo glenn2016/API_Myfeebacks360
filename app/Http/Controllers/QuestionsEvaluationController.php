@@ -336,120 +336,139 @@ class QuestionsEvaluationController extends Controller
     }*/
 
     public function update(Request $request, $evaluationId)
-    {
-        try {
-            // Récupérer l'ID de l'utilisateur connecté
-            $userId = Auth::id();
-    
-            // Validation des données pour la mise à jour de l'évaluation
-            $validator = Validator::make($request->all(), [
-                'titre' => 'required|string|max:255',
-                'questions' => 'required|array',
-                'questions.*.id' => 'nullable|integer|exists:questions_evaluations,id', // Question ID can be null for new questions
-                'questions.*.nom' => 'required|string|max:255',
-                'questions.*.categorie_ids' => 'array', // Array of category IDs
-                'questions.*.categorie_ids.*' => 'integer|exists:categories,id', // Each category ID must exist
-                'questions.*.reponses' => 'array',
-                'questions.*.reponses.*.id' => 'nullable|integer|exists:reponses_evaluations,id', // Response ID can be null for new responses
-                'questions.*.reponses.*.reponse' => 'required|string|max:255',
-                'questions.*.reponses.*.niveau' => [
-                    'required',
-                    'integer',
-                    'between:1,100', // Limiter le niveau entre 1 et 100
-                ],
-            ]);
-    
-            // Retourner les erreurs de validation si elles existent
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Erreur de validation',
-                    'errors' => $validator->errors(),
-                ], 422);
+{
+    try {
+        // Récupérer l'ID de l'utilisateur connecté
+        $userId = Auth::id();
+
+        // Récupérer l'évaluation à mettre à jour
+        $evaluation = Evaluation::findOrFail($evaluationId);
+
+        // Vérifier si cette évaluation a déjà été évaluée en vérifiant les réponses
+        $hasBeenEvaluated = false;
+        foreach ($evaluation->questionsEvaluation as $question) {
+            if ($question->reponsesEvaluation()->has('evaluationQuestionReponseEvaluations')->exists()) {
+                $hasBeenEvaluated = true;
+                break;
             }
-    
-            $validatedData = $validator->validated();
-    
-            // Récupérer l'évaluation à mettre à jour
-            $evaluation = Evaluation::findOrFail($evaluationId);
-    
-            // Mettre à jour le titre de l'évaluation
-            $evaluation->update([
-                'titre' => $validatedData['titre'],
-                'usercreate' => $userId,
-            ]);
-    
-            // Récupérer les questions existantes pour cette évaluation
-            $existingQuestionIds = $evaluation->questionsEvaluation()->pluck('id')->toArray();
-            $updatedQuestionIds = [];
-    
-            // Mettre à jour ou créer les questions et les réponses associées
-            foreach ($validatedData['questions'] as $questionData) {
-                if (isset($questionData['id'])) {
-                    // Mettre à jour la question existante
-                    $question = QuestionsEvaluation::findOrFail($questionData['id']);
-                    $question->update([
-                        'nom' => $questionData['nom'],
-                    ]);
-                    $updatedQuestionIds[] = $question->id;
-                } else {
-                    // Créer une nouvelle question
-                    $question = QuestionsEvaluation::create([
-                        'nom' => $questionData['nom'],
-                        'evaluation_id' => $evaluationId,
-                    ]);
-                }
-    
-                // Associer la question aux catégories
-                if (isset($questionData['categorie_ids']) && is_array($questionData['categorie_ids'])) {
-                    $question->categorie()->sync($questionData['categorie_ids']);
-                }
-    
-                // Mettre à jour les réponses pour cette question
-                $existingReponseIds = $question->reponsesEvaluation()->pluck('id')->toArray();
-                $updatedReponseIds = [];
-    
-                if (isset($questionData['reponses']) && is_array($questionData['reponses'])) {
-                    foreach ($questionData['reponses'] as $reponseData) {
-                        if (isset($reponseData['id'])) {
-                            // Mettre à jour la réponse existante
-                            $reponse = ReponsesEvaluation::findOrFail($reponseData['id']);
-                            $reponse->update([
-                                'reponse' => $reponseData['reponse'],
-                                'niveau' => $reponseData['niveau'],
-                            ]);
-                            $updatedReponseIds[] = $reponse->id;
-                        } else {
-                            // Créer une nouvelle réponse
-                            ReponsesEvaluation::create([
-                                'reponse' => $reponseData['reponse'],
-                                'questions_evaluations_id' => $question->id,
-                                'niveau' => $reponseData['niveau'],
-                            ]);
-                        }
+        }
+
+        if ($hasBeenEvaluated) {
+            return response()->json([
+                'message' => 'Impossible de modifier l\'évaluation car elle a déjà été évaluée.',
+            ], 407);
+        }
+
+        // Validation des données pour la mise à jour de l'évaluation
+        $validator = Validator::make($request->all(), [
+            'titre' => 'required|string|max:255',
+            'questions' => 'required|array',
+            'questions.*.id' => 'nullable|integer|exists:questions_evaluations,id', // Question ID can be null for new questions
+            'questions.*.nom' => 'required|string|max:255',
+            'questions.*.categorie_ids' => 'array', // Array of category IDs
+            'questions.*.categorie_ids.*' => 'integer|exists:categories,id', // Each category ID must exist
+            'questions.*.reponses' => 'array',
+            'questions.*.reponses.*.id' => 'nullable|integer|exists:reponses_evaluations,id', // Response ID can be null for new responses
+            'questions.*.reponses.*.reponse' => 'required|string|max:255',
+            'questions.*.reponses.*.niveau' => [
+                'required',
+                'integer',
+                'between:1,100', // Limiter le niveau entre 1 et 100
+            ],
+        ]);
+
+        // Retourner les erreurs de validation si elles existent
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $validatedData = $validator->validated();
+
+        // Mettre à jour le titre de l'évaluation
+        $evaluation->update([
+            'titre' => $validatedData['titre'],
+            'usercreate' => $userId,
+        ]);
+
+        // Récupérer les questions existantes pour cette évaluation
+        $existingQuestionIds = $evaluation->questionsEvaluation()->pluck('id')->toArray();
+        $updatedQuestionIds = [];
+
+        // Mettre à jour ou créer les questions et les réponses associées
+        foreach ($validatedData['questions'] as $questionData) {
+            if (isset($questionData['id'])) {
+                // Mettre à jour la question existante
+                $question = QuestionsEvaluation::findOrFail($questionData['id']);
+                $question->update([
+                    'nom' => $questionData['nom'],
+                ]);
+                $updatedQuestionIds[] = $question->id;
+            } else {
+                // Créer une nouvelle question
+                $question = QuestionsEvaluation::create([
+                    'nom' => $questionData['nom'],
+                    'evaluation_id' => $evaluationId,
+                ]);
+            }
+
+            // Associer la question aux catégories
+            if (isset($questionData['categorie_ids']) && is_array($questionData['categorie_ids'])) {
+                $question->categorie()->sync($questionData['categorie_ids']);
+            }
+
+            // Mettre à jour les réponses pour cette question
+            $existingReponseIds = $question->reponsesEvaluation()->pluck('id')->toArray();
+            $updatedReponseIds = [];
+
+            if (isset($questionData['reponses']) && is_array($questionData['reponses'])) {
+                foreach ($questionData['reponses'] as $reponseData) {
+                    if (isset($reponseData['id'])) {
+                        // Mettre à jour la réponse existante
+                        $reponse = ReponsesEvaluation::findOrFail($reponseData['id']);
+                        $reponse->update([
+                            'reponse' => $reponseData['reponse'],
+                            'niveau' => $reponseData['niveau'],
+                        ]);
+                        $updatedReponseIds[] = $reponse->id;
+                    } else {
+                        // Créer une nouvelle réponse
+                        ReponsesEvaluation::create([
+                            'reponse' => $reponseData['reponse'],
+                            'questions_evaluations_id' => $question->id,
+                            'niveau' => $reponseData['niveau'],
+                        ]);
                     }
                 }
-    
-                // Supprimer les réponses qui ne sont plus présentes dans la requête
-                $reponsesToDelete = array_diff($existingReponseIds, $updatedReponseIds);
-                ReponsesEvaluation::destroy($reponsesToDelete);
             }
-    
-            // Supprimer les questions qui ne sont plus présentes dans la requête
-            $questionsToDelete = array_diff($existingQuestionIds, $updatedQuestionIds);
-            QuestionsEvaluation::destroy($questionsToDelete);
-    
-            // Retourner une réponse indiquant que l'évaluation a été mise à jour avec succès
-            return response()->json([
-                'message' => 'Évaluation mise à jour avec succès',
-                'evaluation_id' => $evaluation->id
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erreur lors de la mise à jour de l\'évaluation',
-                'error' => $e->getMessage(),
-            ], 500);
+
+            // Supprimer les réponses qui ne sont plus présentes dans la requête
+            $reponsesToDelete = array_diff($existingReponseIds, $updatedReponseIds);
+            ReponsesEvaluation::destroy($reponsesToDelete);
         }
+
+        // Supprimer les questions qui ne sont plus présentes dans la requête
+        $questionsToDelete = array_diff($existingQuestionIds, $updatedQuestionIds);
+        QuestionsEvaluation::destroy($questionsToDelete);
+
+        // Retourner une réponse indiquant que l'évaluation a été mise à jour avec succès
+        return response()->json([
+            'message' => 'Évaluation mise à jour avec succès',
+            'evaluation_id' => $evaluation->id
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Erreur lors de la mise à jour de l\'évaluation',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
+    
+
+    
 
     /**
      * Remove the specified resource from storage.
