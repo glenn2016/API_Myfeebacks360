@@ -503,7 +503,7 @@ class AuthController extends Controller
     /*
      * Modification d'un utilisateur
      * 
-     */
+     */    
     public function update(Request $request, $id)
     {
         try {
@@ -513,7 +513,9 @@ class AuthController extends Controller
                 'prenom' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $id],
                 'entreprise_id' => ['nullable', 'exists:entreprises,id'],
-                'entrepriseAbaonement' => ['required', 'string', 'max:255'],
+                'entrepriseAbaonement' => ['nullable', 'string', 'max:255'],
+                'password' => 'required|string|min:8',
+
             ]);
     
             // Vérifie si la validation a échoué
@@ -532,6 +534,8 @@ class AuthController extends Controller
             $user->entrepriseAbaonement = $request->entrepriseAbaonement;
             $user->prenom = $request->prenom;
             $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+
     
             if ($request->filled('entreprise_id')) {
                 $user->entreprise_id = $request->entreprise_id;
@@ -555,6 +559,27 @@ class AuthController extends Controller
                 'status' => 500
             ], 500); // 500 Internal Server Error
         }
+    }
+
+
+        /*
+     * Liste Participants bloquer
+     * 
+     */
+    public function indexParticipantsBolquer()
+    {
+        $userId = Auth::id();
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('nom', 'Participant');
+        })
+        ->where('etat', 0) // Modifiez cette condition pour filtrer les utilisateurs avec un état égal à 1
+        ->with('categorie', 'entreprise', 'roles')
+        ->where('usercreate', $userId)
+        ->get();
+        return response()->json([
+            'participants' => $users,
+            'status' => 200
+        ]);
     }
     
     /*

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Evenement;
+use App\Models\QuestionsFeedback;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class EvenementController extends Controller
@@ -89,6 +91,7 @@ class EvenementController extends Controller
             ], 500);
         }
     }
+    /*
 
     public function create(Request $request)
     {
@@ -127,7 +130,7 @@ class EvenementController extends Controller
             ]);
         }
     }
-    
+    */
     /**
      * Show the form for creating a new resource.
      */
@@ -244,59 +247,57 @@ class EvenementController extends Controller
         return response()->json($result);
     }
 
-    public function getUserEvents(Request $request)
+    public function createEvenementWithQuestions(Request $request)
     {
-        $user = $request->user();
-
-        // Fetch events where the user has responded
-        $events = Evenement::whereHas('questionsFeedback.reponseFeedbacks', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->get();
-
-        return response()->json($events);
-    }
-
-    public function getEventQuestionsAndResponses($id, Request $request)
-    {
-        $user = $request->user();
-
-        // Fetch the event with related questions and responses where the user has responded
-        $event = Evenement::where('id', $id)
-            ->whereHas('questionsfeedback.reponseFeedbacks', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
-            ->with(['questionsfeedback.reponseFeedbacks' => function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            }])
-            ->first();
-
-        if (!$event) {
-            return response()->json(['message' => 'Événement introuvable ou aucune réponse de l\'utilisateur'], 404);
+        // Débogage initial des données de la requête
+        Log::info('Requête reçue : ', $request->all());
+    
+        // Validation des données d'entrée
+        $validatedData = $request->validate([
+            'titre' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'date_debut' => 'required|date',
+            'date_fin' => 'required|date|after_or_equal:date_debut',
+            'questions' => 'required|array',
+            'questions.*.nom' => 'required|string|max:255'
+        ]);
+    
+        try {
+            // Log des données validées pour débogage
+            Log::info('Données validées : ', $validatedData);
+    
+            // Création de l'événement
+            $evenement = Evenement::create([
+                'titre' => $validatedData['titre'],
+                'description' => $validatedData['description'],
+                'date_debut' => $validatedData['date_debut'],
+                'date_fin' => $validatedData['date_fin'],
+                'usercreate' => auth()->id()
+            ]);
+    
+            // Ajout des questions associées
+            foreach ($validatedData['questions'] as $questionData) {
+                QuestionsFeedback::create([
+                    'nom' => $questionData['nom'],
+                    'evenement_id' => $evenement->id
+                ]);
+            }
+    
+            return response()->json([
+                'message' => 'Événement et questions ajoutés avec succès!',
+                'evenement' => $evenement
+            ], 201);
+        } catch (\Exception $e) {
+            // Log de l'erreur pour débogage
+            Log::error('Erreur lors de la création de l\'événement : '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    
+            return response()->json([
+                'message' => 'Erreur lors de la création de l\'événement',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Check if questionsfeedback is not null
-        if ($event->questionsfeedback->isEmpty()) {
-            return response()->json(['message' => 'Aucune question trouvée pour cet événement'], 404);
-        }
-
-        // Extract only the questions and responses
-        $questionsAndResponses = $event->questionsfeedback->map(function ($question) {
-            return [
-                'id' => $question->id,
-                'nom' => $question->nom,
-                'reponse_feedbacks' => $question->reponseFeedbacks->map(function ($response) {
-                    return [
-                        'id' => $response->id,
-                        'nom' => $response->nom,
-                        'questionsfeedbacks_id' => $response->questionsfeedbacks_id,
-                        'user_id' => $response->user_id,
-                        'created_at' => $response->created_at,
-                        'updated_at' => $response->updated_at,
-                    ];
-                })
-            ];
-        });
-
-        return response()->json($questionsAndResponses);
     }
+    
+    
+    
 }

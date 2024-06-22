@@ -289,7 +289,7 @@ class EvaluationQuestionReponseEvaluationController extends Controller
              'user' => array_values($groupedEvaluations),
              'status' => 200
          ]);
-     }
+    }
      
     /**
      * Display the specified resource.
