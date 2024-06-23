@@ -96,10 +96,9 @@ Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class
 
 Route::get('/liste/question/reponses/evaluation/{categorieId}', [EvaluationQuestionReponseEvaluationController::class, 'getUserReceivedEvaluationsByCategory']);
 
-
-
 // Dans votre fichier de routes (web.php ou api.php)
-Route::get('event/{event_id}/respond', [EvenementController::class, 'showRespondForm'])->name('respondToEvent');
+Route::get('/repondre/{token}', [ReponsefeedbackController::class, 'showQuestions']);
+Route::post('/repondre/evenement', [ReponsefeedbackController::class, 'SubmitReponse']);
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -144,7 +143,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/Questions/reponse/evaluation/update/{id}', [QuestionsEvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/Questionsevaluations/{id}/soft-delete', [QuestionsEvaluationController::class, 'softDelete'])->middleware('auth:api');
     //Evaluations
-    Route::get(' l{id}', [EvaluationQuestionReponseEvaluationController::class, 'show'])->middleware('auth:api');
+    Route::get('/evaluation/question/reponse/{id}', [EvaluationQuestionReponseEvaluationController::class, 'show'])->middleware('auth:api');
     Route::post('/evaluation/create',[EvaluationController::class,'create'])->middleware('auth:api');
     Route::post('/evaluation/update/{id}', [EvaluationController::class, 'update'])->middleware('auth:api');
     Route::delete('/evaluations/{id}/soft-delete', [EvaluationController::class, 'softDelete'])->middleware('auth:api');
@@ -163,7 +162,6 @@ Route::middleware(['auth', 'role:participant'])->group(function () {
     Route::get('participant/same-enterprise', [EvaluationQuestionReponseEvaluationController::class, 'usersInSameEnterprise'])->middleware('auth:api');
     Route::get('/participant/entreprse/{categoryId}',[EvaluationQuestionReponseEvaluationController::class,'showUsersWithSimilarEntrepriseAndCategory'])->middleware('auth:api');
     //ReponseFeddback
-    Route::post('/reponsefeedback/create',[ReponsefeedbackController::class,'create'])->middleware('auth:api');
     Route::post('/reponsefeedback/update/{id}', [reponsefeedbackController::class, 'update'])->middleware('auth:api');
     Route::delete('/reponsefeedback/{id}/soft-delete', [reponsefeedbackController::class, 'softDelete'])->middleware('auth:api');
     //reponseevaluationsd

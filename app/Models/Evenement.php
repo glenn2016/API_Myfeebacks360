@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Evenement extends Model
 {
     use HasFactory;
-
+    
     protected $fillable = [
         'titre',
         'description',
         'date_debut',
         'date_fin',
+        'token',
     ];
 
     public function questionsfeedback()

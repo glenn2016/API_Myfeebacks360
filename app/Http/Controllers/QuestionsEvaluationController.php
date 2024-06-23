@@ -457,8 +457,9 @@ class QuestionsEvaluationController extends Controller
             // Retourner une réponse indiquant que l'évaluation a été mise à jour avec succès
             return response()->json([
                 'message' => 'Évaluation mise à jour avec succès',
-                'evaluation_id' => $evaluation->id
-            ], 200);
+                'evaluation_id' => $evaluation->id,
+                'satus' => 200
+            ], );
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Erreur lors de la mise à jour de l\'évaluation',

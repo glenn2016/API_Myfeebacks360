@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Evenement;
 use App\Models\QuestionsFeedback;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class EvenementController extends Controller
@@ -249,9 +250,9 @@ class EvenementController extends Controller
 
     public function createEvenementWithQuestions(Request $request)
     {
-        // Journaliser les données initiales de la requête pour le débogage
+        // Débogage initial des données de la requête
         Log::info('Requête reçue : ', $request->all());
-    
+
         // Validation des données d'entrée
         $validatedData = $request->validate([
             'titre' => 'required|string|max:255',
@@ -261,20 +262,24 @@ class EvenementController extends Controller
             'questions' => 'required|array',
             'questions.*.nom' => 'required|string|max:255'
         ]);
-    
+
         try {
-            // Journaliser les données validées pour le débogage
+            // Log des données validées pour débogage
             Log::info('Données validées : ', $validatedData);
-    
-            // Création de l'événement
+
+            // Génération d'un token unique pour l'événement
+            $token = Str::random(32);
+
+            // Création de l'événement avec le token
             $evenement = Evenement::create([
                 'titre' => $validatedData['titre'],
                 'description' => $validatedData['description'],
                 'date_debut' => $validatedData['date_debut'],
                 'date_fin' => $validatedData['date_fin'],
-                'usercreate' => auth()->id() // Utilisateur créant l'événement
+                'usercreate' => auth()->id(),
+                'token' => $token
             ]);
-    
+
             // Ajout des questions associées
             foreach ($validatedData['questions'] as $questionData) {
                 QuestionsFeedback::create([
@@ -282,29 +287,29 @@ class EvenementController extends Controller
                     'evenement_id' => $evenement->id
                 ]);
             }
-    
-            // Générer un lien unique pour répondre aux questions de l'événement
-            $responseLink = route('respondToEvent', ['event_id' => $evenement->id]);
-    
+
+            // Générer le lien pour répondre aux questions
+            //$responseLink = url('/repondre/' . $token);
+            $responseLink = url(config('app.frontend_url') . '/reponse.php/' .$token);
+
+
             return response()->json([
                 'message' => 'Événement et questions ajoutés avec succès!',
                 'evenement' => $evenement,
-                'response_link' => $responseLink // Lien de réponse généré
+                'response_link' => $responseLink
             ], 201);
         } catch (\Exception $e) {
-            // Journaliser l'erreur pour le débogage
-            Log::error('Erreur lors de la création de l\'événement : ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-    
+            // Log de l'erreur pour débogage
+            Log::error('Erreur lors de la création de l\'événement : '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
             return response()->json([
                 'message' => 'Erreur lors de la création de l\'événement',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
-    
-    
 
-    
+    /*
 
     public function showRespondForm($event_id)
     {
@@ -315,6 +320,6 @@ class EvenementController extends Controller
         return view('respondForm', ['evenement' => $evenement]);
     }
 
-    
+    */
     
 }
