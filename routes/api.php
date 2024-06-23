@@ -96,6 +96,12 @@ Route::get('/user/evenements/question/reponse/{id}', [EvenementController::class
 
 Route::get('/liste/question/reponses/evaluation/{categorieId}', [EvaluationQuestionReponseEvaluationController::class, 'getUserReceivedEvaluationsByCategory']);
 
+
+
+// Dans votre fichier de routes (web.php ou api.php)
+Route::get('event/{event_id}/respond', [EvenementController::class, 'showRespondForm'])->name('respondToEvent');
+
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     //ADmin_Authentifie
     Route::get('/user_admin',[Authcontroller::class,'user'])->middleware('auth:api');

@@ -249,7 +249,7 @@ class EvenementController extends Controller
 
     public function createEvenementWithQuestions(Request $request)
     {
-        // Débogage initial des données de la requête
+        // Journaliser les données initiales de la requête pour le débogage
         Log::info('Requête reçue : ', $request->all());
     
         // Validation des données d'entrée
@@ -263,7 +263,7 @@ class EvenementController extends Controller
         ]);
     
         try {
-            // Log des données validées pour débogage
+            // Journaliser les données validées pour le débogage
             Log::info('Données validées : ', $validatedData);
     
             // Création de l'événement
@@ -272,7 +272,7 @@ class EvenementController extends Controller
                 'description' => $validatedData['description'],
                 'date_debut' => $validatedData['date_debut'],
                 'date_fin' => $validatedData['date_fin'],
-                'usercreate' => auth()->id()
+                'usercreate' => auth()->id() // Utilisateur créant l'événement
             ]);
     
             // Ajout des questions associées
@@ -283,13 +283,17 @@ class EvenementController extends Controller
                 ]);
             }
     
+            // Générer un lien unique pour répondre aux questions de l'événement
+            $responseLink = route('respondToEvent', ['event_id' => $evenement->id]);
+    
             return response()->json([
                 'message' => 'Événement et questions ajoutés avec succès!',
-                'evenement' => $evenement
+                'evenement' => $evenement,
+                'response_link' => $responseLink // Lien de réponse généré
             ], 201);
         } catch (\Exception $e) {
-            // Log de l'erreur pour débogage
-            Log::error('Erreur lors de la création de l\'événement : '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            // Journaliser l'erreur pour le débogage
+            Log::error('Erreur lors de la création de l\'événement : ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
     
             return response()->json([
                 'message' => 'Erreur lors de la création de l\'événement',
@@ -298,6 +302,18 @@ class EvenementController extends Controller
         }
     }
     
+
+    
+
+    public function showRespondForm($event_id)
+    {
+        // Récupérer l'événement et ses questions
+        $evenement = Evenement::with('questionsfeedback')->findOrFail($event_id);
+
+        // Retourner une vue ou une réponse JSON avec les détails de l'événement et les questions
+        return view('respondForm', ['evenement' => $evenement]);
+    }
+
     
     
 }
