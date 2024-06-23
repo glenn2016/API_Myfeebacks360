@@ -249,65 +249,72 @@ class EvenementController extends Controller
     }
 
     public function createEvenementWithQuestions(Request $request)
-    {
-        // Débogage initial des données de la requête
-        Log::info('Requête reçue : ', $request->all());
+{
+    // Débogage initial des données de la requête
+    Log::info('Requête reçue : ', $request->all());
 
-        // Validation des données d'entrée
-        $validatedData = $request->validate([
-            'titre' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'date_debut' => 'required|date',
-            'date_fin' => 'required|date|after_or_equal:date_debut',
-            'questions' => 'required|array',
-            'questions.*.nom' => 'required|string|max:255'
+    // Validation des données d'entrée
+    $validatedData = $request->validate([
+        'titre' => 'required|string|max:255',
+        'description' => 'required|string|max:255',
+        'date_debut' => 'required|date',
+        'date_fin' => 'required|date|after_or_equal:date_debut',
+        'questions' => 'required|array',
+        'questions.*.nom' => 'required|string|max:255'
+    ]);
+
+    try {
+        // Récupérer l'ID de l'utilisateur authentifié
+        $userId = Auth::id();
+
+        // Vérifiez si l'utilisateur est authentifié
+        if (!$userId) {
+            return response()->json(['message' => 'Utilisateur non authentifié'], 401);
+        }
+
+        // Log des données validées pour débogage
+        Log::info('Données validées : ', $validatedData);
+
+        // Génération d'un token unique pour l'événement
+        $token = Str::random(32);
+
+        // Création de l'événement avec le token
+        $evenement = Evenement::create([
+            'titre' => $validatedData['titre'],
+            'description' => $validatedData['description'],
+            'date_debut' => $validatedData['date_debut'],
+            'date_fin' => $validatedData['date_fin'],
+            'usercreate' => $userId,  // Enregistrement de l'ID de l'utilisateur
+            'token' => $token
         ]);
 
-        try {
-            // Log des données validées pour débogage
-            Log::info('Données validées : ', $validatedData);
-
-            // Génération d'un token unique pour l'événement
-            $token = Str::random(32);
-
-            // Création de l'événement avec le token
-            $evenement = Evenement::create([
-                'titre' => $validatedData['titre'],
-                'description' => $validatedData['description'],
-                'date_debut' => $validatedData['date_debut'],
-                'date_fin' => $validatedData['date_fin'],
-                'usercreate' => auth()->id(),
-                'token' => $token
+        // Ajout des questions associées
+        foreach ($validatedData['questions'] as $questionData) {
+            QuestionsFeedback::create([
+                'nom' => $questionData['nom'],
+                'evenement_id' => $evenement->id
             ]);
-
-            // Ajout des questions associées
-            foreach ($validatedData['questions'] as $questionData) {
-                QuestionsFeedback::create([
-                    'nom' => $questionData['nom'],
-                    'evenement_id' => $evenement->id
-                ]);
-            }
-
-            // Générer le lien pour répondre aux questions
-            //$responseLink = url('/repondre/' . $token);
-            $responseLink = url(config('app.frontend_url') . '/reponse.php/' .$token);
-
-
-            return response()->json([
-                'message' => 'Événement et questions ajoutés avec succès!',
-                'evenement' => $evenement,
-                'response_link' => $responseLink
-            ], 201);
-        } catch (\Exception $e) {
-            // Log de l'erreur pour débogage
-            Log::error('Erreur lors de la création de l\'événement : '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
-
-            return response()->json([
-                'message' => 'Erreur lors de la création de l\'événement',
-                'error' => $e->getMessage()
-            ], 500);
         }
+
+        // Générer le lien pour répondre aux questions
+        $responseLink = url(config('app.frontend_url') . '/reponse.php/' . $token);
+
+        return response()->json([
+            'message' => 'Événement et questions ajoutés avec succès!',
+            'evenement' => $evenement,
+            'response_link' => $responseLink
+        ], 201);
+    } catch (\Exception $e) {
+        // Log de l'erreur pour débogage
+        Log::error('Erreur lors de la création de l\'événement : ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+
+        return response()->json([
+            'message' => 'Erreur lors de la création de l\'événement',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
     /*
 

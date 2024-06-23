@@ -98,7 +98,7 @@ Route::get('/liste/question/reponses/evaluation/{categorieId}', [EvaluationQuest
 
 // Dans votre fichier de routes (web.php ou api.php)
 Route::get('/repondre/{token}', [ReponsefeedbackController::class, 'showQuestions']);
-Route::post('/repondre/evenement', [ReponsefeedbackController::class, 'SubmitReponse']);
+Route::post('/repondre/evenement/{token}', [ReponsefeedbackController::class, 'submitResponses']);
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

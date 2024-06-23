@@ -15,6 +15,7 @@ class Evenement extends Model
         'date_debut',
         'date_fin',
         'token',
+        'usercreate',
     ];
 
     public function questionsfeedback()
