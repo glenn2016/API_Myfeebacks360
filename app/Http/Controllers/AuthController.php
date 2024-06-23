@@ -179,7 +179,7 @@ class AuthController extends Controller
                     'token' => $token,
                     'type' => 'Bearer',
                     'message' => 'Admin créé avec succès',
-                    'status' => 201
+                    'status' => 200
                 ], 200); // 201 Created
             }
         } catch (\Exception $e) {
