@@ -180,7 +180,7 @@ class AuthController extends Controller
                     'type' => 'Bearer',
                     'message' => 'Admin créé avec succès',
                     'status' => 200
-                ], 200); // 201 Created
+                ], ); // 201 Created
             }
         } catch (\Exception $e) {
             // En cas d'exception, retourner une réponse JSON avec un message d'erreur
@@ -332,8 +332,8 @@ class AuthController extends Controller
                     'token' => $token,
                     'type' => 'Bearer',
                     'message' => 'Utilisateur créé avec succès',
-                    'status' => 201
-                ], 200); // 201 Created
+                    'status' => 200
+                ], ); // 201 Created
             }
         } catch (\Exception $e) {
             // En cas d'exception, retourner une réponse JSON avec un message d'erreur
