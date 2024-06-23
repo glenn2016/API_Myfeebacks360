@@ -178,7 +178,7 @@ class AuthController extends Controller
                 return response()->json([
                     'token' => $token,
                     'type' => 'Bearer',
-                    'message' => 'Admin créé avec succès',
+                    'message' => 'Admin créé avecsuccès ',
                     'status' => 200
                 ], ); // 201 Created
             }
@@ -514,7 +514,6 @@ class AuthController extends Controller
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $id],
                 'entreprise_id' => ['nullable', 'exists:entreprises,id'],
                 'entrepriseAbaonement' => ['nullable', 'string', 'max:255'],
-                'password' => 'required|string|min:8',
 
             ]);
     
@@ -534,7 +533,6 @@ class AuthController extends Controller
             $user->entrepriseAbaonement = $request->entrepriseAbaonement;
             $user->prenom = $request->prenom;
             $user->email = $request->email;
-            $user->password = Hash::make($request->password);
 
     
             if ($request->filled('entreprise_id')) {
