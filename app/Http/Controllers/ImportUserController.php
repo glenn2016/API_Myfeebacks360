@@ -29,7 +29,7 @@ class ImportUserController extends Controller
                     return response()->json(['message' => 'Le mot de passe est trop court'], 423);
                 }
             }
-
+                    
             if (!empty($import->errors)) {
                 $message = 'Importation partielle avec erreurs';
                 $status = 422;
