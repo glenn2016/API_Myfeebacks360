@@ -389,17 +389,31 @@ class EvenementController extends Controller
     }
 
 
-    /*
 
-    public function showRespondForm($event_id)
+    public function showQuestionsAndResponses($evenementId)
     {
-        // Récupérer l'événement et ses questions
-        $evenement = Evenement::with('questionsfeedback')->findOrFail($event_id);
+        // Récupérer l'événement par ID
+        $evenement = Evenement::find($evenementId);
 
-        // Retourner une vue ou une réponse JSON avec les détails de l'événement et les questions
-        return view('respondForm', ['evenement' => $evenement]);
+        // Vérifier si l'événement existe
+        if (!$evenement) {
+            return response()->json(['message' => 'Événement non trouvé'], 404);
+        }
+
+        // Charger les questions et leurs réponses pour l'événement
+        $questions = Questionsfeedback::where('evenement_id', $evenementId)
+                        ->with('reponsefeedbacks')
+                        ->get();
+
+        // Retourner les données en JSON
+        return response()->json([
+            'evenement' => $evenement,
+            'questions' => $questions
+        ]);
     }
 
-    */
+
+    
+    
     
 }
