@@ -297,7 +297,7 @@ class EvenementController extends Controller
         }
 
         // Générer le lien pour répondre aux questions
-        $responseLink = url(config('app.frontend_url') . '/eventform/:token/'.$token);
+        $responseLink = url(config('app.frontend_url') . '/eventform/'.$token);
 
         return response()->json([
             'message' => 'Événement et questions ajoutés avec succès!',
