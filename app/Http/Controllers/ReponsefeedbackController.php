@@ -322,11 +322,12 @@ class ReponsefeedbackController extends Controller
         if (!$evenement) {
             return response()->json(['message' => 'Événement non trouvé'], 404);
         }
+        /*
 
         // Vérifier si l'état de l'événement est différent de 1
-        if ($evenement->etat == 1) {
+        if ($evenement->etat != 1) {
             return response()->json(['message' => 'Soumission de réponses non autorisée pour cet événement.'], 403);
-        }
+        }*/
 
         // Récupérer la date de fin de l'événement
         $dateFinEvenement = new \DateTime($evenement->date_fin);
