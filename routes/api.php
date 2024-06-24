@@ -100,7 +100,6 @@ Route::get('/liste/question/reponses/evaluation/{categorieId}', [EvaluationQuest
 Route::get('/repondre/{token}', [ReponsefeedbackController::class, 'showQuestions']);
 Route::post('/repondre/evenement/{token}', [ReponsefeedbackController::class, 'submitResponses']);
 
-//Route::post('/repondre/evenement/{id}', [ReponsefeedbackController::class, 'submitResponses']);
 
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

@@ -322,12 +322,12 @@ class ReponsefeedbackController extends Controller
         if (!$evenement) {
             return response()->json(['message' => 'Événement non trouvé'], 404);
         }
-        /*
+        
 
         // Vérifier si l'état de l'événement est différent de 1
         if ($evenement->etat != 1) {
             return response()->json(['message' => 'Soumission de réponses non autorisée pour cet événement.'], 403);
-        }*/
+        }
 
         // Récupérer la date de fin de l'événement
         $dateFinEvenement = new \DateTime($evenement->date_fin);
@@ -341,7 +341,7 @@ class ReponsefeedbackController extends Controller
 
         // Validation des réponses
         $validator = Validator::make($request->all(), [
-            'reponses.*.questionsfeedbacks_id' => 'required|numeric|exists:questions_feedback,id',
+            'reponses.*.questionsfeedbacks_id' => 'required|numeric|exists:questionsfeedbacks,id',
             'reponses.*.nom' => 'required|string|max:255',
         ]);
 
@@ -353,14 +353,12 @@ class ReponsefeedbackController extends Controller
         }
 
         // Créer les réponses de feedback
-        $user = Auth::user();
         $validatedData = $validator->validated();
         $reponses = [];
 
         foreach ($validatedData['reponses'] as $reponseData) {
             $reponsefeedback = new Reponsefeedback();
             $reponsefeedback->nom = $reponseData['nom'];
-            $reponsefeedback->user_id = $user->id;
             $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
             $reponsefeedback->save();
 
