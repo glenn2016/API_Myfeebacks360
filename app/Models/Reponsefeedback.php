@@ -24,4 +24,9 @@ class Reponsefeedback extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function reponseSelections()
+    {
+        return $this->hasMany(RepondreQuestionsEvenebeemnt::class);
+    }
 }

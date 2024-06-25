@@ -23,6 +23,7 @@ use App\Http\Controllers\ImportUserController;
 use App\Http\Controllers\AbonnementController;
 use App\Http\Controllers\AbonnementUtlisateursController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RepondreQuestionsEvenebeemntController;
 
 
 /*
@@ -98,7 +99,7 @@ Route::get('/liste/question/reponses/evaluation/{categorieId}', [EvaluationQuest
 
 // Dans votre fichier de routes (web.php ou api.php)
 Route::get('/repondre/{token}', [ReponsefeedbackController::class, 'showQuestions']);
-Route::post('/repondre/evenement/{token}', [ReponsefeedbackController::class, 'submitResponses']);
+Route::post('/repondre/evenement', [RepondreQuestionsEvenebeemntController::class, 'selectReponses']);
 
 
 

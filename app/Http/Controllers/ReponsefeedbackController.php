@@ -49,150 +49,6 @@ class ReponsefeedbackController extends Controller
         }
     }
     /**
-     * Show the form for creating a new resource.
-     */
-    /*
-    public function create(Request $request)
-    {
-        try {
-            // Debugging: Journaliser les données de la requête
-            Log::info('Données de la requête:', $request->all());
-            // Validation des données de la requête
-            $validator = Validator::make($request->all(), [
-                'reponses.*.questionsfeedbacks_id' => 'required|numeric',
-                'reponses.*.nom' => 'required|string|max:255',
-            ]);
-            // Si la validation échoue, retourner les erreurs de validation
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Erreur de validation',
-                    'errors' => $validator->errors(),
-                    'status' => 400
-                ], 400);
-            }
-            // Récupérer l'utilisateur authentifié
-            $user = Auth::user();
-            // Récupérer les données validées
-            $validatedData = $validator->validated();
-            // Journaliser les données validées
-            Log::info('Données validées:', $validatedData);
-            // Vérifier si le tableau 'reponses' existe et n'est pas vide
-            if (!isset($validatedData['reponses']) || empty($validatedData['reponses'])) {
-                return response()->json([
-                    'message' => 'Aucune réponse fournie',
-                    'status' => 400
-                ], 400);
-            }
-            // Créer chaque réponse
-            $reponses = [];
-            foreach ($validatedData['reponses'] as $reponseData) {
-                // Journaliser les données de la réponse actuelle
-                Log::info('Données de la réponse actuelle:', $reponseData);
-                // Créer la réponse de feedback
-                $reponsefeedback = new Reponsefeedback();
-                $reponsefeedback->nom = $reponseData['nom'];
-                $reponsefeedback->user_id = $user->id;
-                $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
-                $reponsefeedback->save();
-                $reponses[] = $reponsefeedback;
-            }
-            // Retourner une réponse indiquant que les réponses ont été créées avec succès
-            return response()->json([
-                'message' => 'Réponses créées avec succès',
-                'reponses' => $reponses,
-            ], 200);
-        } catch (\Exception $e) {
-            // En cas d'erreur, retourner une réponse avec un message d'erreur
-            return response()->json([
-                'message' => 'Une erreur est survenue lors de la création des réponses de feedback',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }*/
-    /*
-
-    public function create(Request $request)
-    {
-        try {
-            // Debugging: Journaliser les données de la requête
-            Log::info('Données de la requête:', $request->all());
-
-            // Validation des données de la requête
-            $validator = Validator::make($request->all(), [
-                'reponses.*.questionsfeedbacks_id' => 'required|numeric',
-                'reponses.*.nom' => 'required|string|max:255',
-            ]);
-
-            // Si la validation échoue, retourner les erreurs de validation
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Erreur de validation',
-                    'errors' => $validator->errors(),
-                    'status' => 400
-                ], 400);
-            }
-
-            // Récupérer l'utilisateur authentifié
-            $user = Auth::user();
-
-            // Récupérer les données validées
-            $validatedData = $validator->validated();
-
-            // Journaliser les données validées
-            Log::info('Données validées:', $validatedData);
-
-            // Vérifier si le tableau 'reponses' existe et n'est pas vide
-            if (!isset($validatedData['reponses']) || empty($validatedData['reponses'])) {
-                return response()->json([
-                    'message' => 'Aucune réponse fournie',
-                    'status' => 400
-                ], 400);
-            }
-
-            // Vérifier si l'utilisateur a déjà répondu à ces questions
-            $questionIds = array_column($validatedData['reponses'], 'questionsfeedbacks_id');
-            $existingResponses = Reponsefeedback::whereIn('questionsfeedbacks_id', $questionIds)
-                ->where('user_id', $user->id)
-                ->exists();
-
-            if ($existingResponses) {
-                return response()->json([
-                    'message' => 'Vous avez déjà répondu à ces questions',
-                    'status' => 410
-                ], 410);
-            }
-
-            // Créer chaque réponse
-            $reponses = [];
-            foreach ($validatedData['reponses'] as $reponseData) {
-                // Journaliser les données de la réponse actuelle
-                Log::info('Données de la réponse actuelle:', $reponseData);
-
-                // Créer la réponse de feedback
-                $reponsefeedback = new Reponsefeedback();
-                $reponsefeedback->nom = $reponseData['nom'];
-                $reponsefeedback->user_id = $user->id;
-                $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
-                $reponsefeedback->save();
-
-                $reponses[] = $reponsefeedback;
-            }
-
-            // Retourner une réponse indiquant que les réponses ont été créées avec succès
-            return response()->json([
-                'message' => 'Réponses créées avec succès',
-                'reponses' => $reponses,
-            ], 200);
-        } catch (\Exception $e) {
-            // En cas d'erreur, retourner une réponse avec un message d'erreur
-            return response()->json([
-                'message' => 'Une erreur est survenue lors de la création des réponses de feedback',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show($id)
@@ -249,72 +105,6 @@ class ReponsefeedbackController extends Controller
         }
     }
     
-    /*
-        public function SubmitReponse(Request $request)
-        {
-            try {
-                // Journaliser les données de la requête pour le débogage
-                Log::info('Données de la requête:', $request->all());
-
-                // Validation des données de la requête
-                $validator = Validator::make($request->all(), [
-                    'reponses.*.questionsfeedbacks_id' => 'required|numeric|exists:questionsfeedbacks,id',
-                    'reponses.*.nom' => 'required|string|max:255',
-                ]);
-
-                // Si la validation échoue, retourner les erreurs de validation
-                if ($validator->fails()) {
-                    return response()->json([
-                        'message' => 'Erreur de validation',
-                        'errors' => $validator->errors(),
-                        'status' => 400
-                    ], 400);
-                }
-
-                // Récupérer les données validées
-                $validatedData = $validator->validated();
-
-                // Journaliser les données validées pour le débogage
-                Log::info('Données validées:', $validatedData);
-
-                // Vérifier si le tableau 'reponses' existe et n'est pas vide
-                if (!isset($validatedData['reponses']) || empty($validatedData['reponses'])) {
-                    return response()->json([
-                        'message' => 'Aucune réponse fournie',
-                        'status' => 400
-                    ], 400);
-                }
-
-                // Créer chaque réponse
-                $reponses = [];
-                foreach ($validatedData['reponses'] as $reponseData) {
-                    // Journaliser les données de la réponse actuelle pour le débogage
-                    Log::info('Données de la réponse actuelle:', $reponseData);
-
-                    // Créer la réponse de feedback
-                    $reponsefeedback = new Reponsefeedback();
-                    $reponsefeedback->nom = $reponseData['nom'];
-                    $reponsefeedback->questionsfeedbacks_id = $reponseData['questionsfeedbacks_id'];
-                    $reponsefeedback->save();
-
-                    $reponses[] = $reponsefeedback;
-                }
-
-                // Retourner une réponse indiquant que les réponses ont été créées avec succès
-                return response()->json([
-                    'message' => 'Réponses créées avec succès',
-                    'reponses' => $reponses,
-                ], 200);
-            } catch (\Exception $e) {
-                // En cas d'erreur, retourner une réponse avec un message d'erreur
-                return response()->json([
-                    'message' => 'Une erreur est survenue lors de la création des réponses de feedback',
-                    'error' => $e->getMessage(),
-                ], 500);
-            }
-        }
-    */
-
     public function submitResponses(Request $request, $token)
     {
         $evenement = Evenement::where('token', $token)->first();
@@ -373,22 +163,39 @@ class ReponsefeedbackController extends Controller
     }
 
 
-
     public function showQuestions($token)
     {
+        // Trouver l'événement en utilisant le token
         $evenement = Evenement::where('token', $token)->first();
     
+        // Vérifier si l'événement existe
         if (!$evenement) {
             return response()->json(['message' => 'Événement non trouvé'], 404);
         }
     
-        $questions = QuestionsFeedback::where('evenement_id', $evenement->id)->get();
+        // Récupérer les questions associées à l'événement avec leurs réponses
+        $questions = QuestionsFeedback::with('reponsefeedbacks')
+            ->where('evenement_id', $evenement->id)
+            ->get();
     
+        // Formater la réponse JSON
         return response()->json([
             'evenement' => $evenement,
-            'questions' => $questions
+            'questions' => $questions->map(function ($question) {
+                return [
+                    'id' => $question->id,
+                    'nom' => $question->nom,
+                    'reponses' => $question->reponsefeedbacks->map(function ($reponse) {
+                        return [
+                            'id' => $reponse->id,
+                            'nom' => $reponse->nom
+                        ];
+                    })
+                ];
+            })
         ]);
     }
+    
     
    
 
