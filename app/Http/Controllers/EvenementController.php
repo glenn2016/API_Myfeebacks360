@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Evenement;
 use App\Models\QuestionsFeedback;
+use App\Models\Reponsefeedback;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+
 
 class EvenementController extends Controller
 {
@@ -325,7 +327,7 @@ class EvenementController extends Controller
     {
         // Débogage initial des données de la requête
         Log::info('Requête reçue : ', $request->all());
-
+    
         // Validation des données d'entrée
         $validatedData = $request->validate([
             'titre' => 'required|string|max:255',
@@ -333,24 +335,26 @@ class EvenementController extends Controller
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after_or_equal:date_debut',
             'questions' => 'required|array',
-            'questions.*.nom' => 'required|string|max:255'
+            'questions.*.nom' => 'required|string|max:255',
+            'questions.*.reponses' => 'required|array',
+            'questions.*.reponses.*.nom' => 'required|string|max:255'
         ]);
-
+    
         try {
             // Récupérer l'ID de l'utilisateur authentifié
             $userId = Auth::id();
-
+    
             // Vérifiez si l'utilisateur est authentifié
             if (!$userId) {
                 return response()->json(['message' => 'Utilisateur non authentifié'], 401);
             }
-
+    
             // Log des données validées pour débogage
             Log::info('Données validées : ', $validatedData);
-
+    
             // Génération d'un token unique pour l'événement
             $token = Str::random(32);
-
+    
             // Création de l'événement avec le token
             $evenement = Evenement::create([
                 'titre' => $validatedData['titre'],
@@ -360,56 +364,40 @@ class EvenementController extends Controller
                 'usercreate' => $userId,  // Enregistrement de l'ID de l'utilisateur
                 'token' => $token
             ]);
-
+    
             // Ajout des questions associées
             foreach ($validatedData['questions'] as $questionData) {
-                QuestionsFeedback::create([
+                $question = QuestionsFeedback::create([
                     'nom' => $questionData['nom'],
                     'evenement_id' => $evenement->id
                 ]);
+    
+                // Ajout des réponses associées à chaque question
+                foreach ($questionData['reponses'] as $reponseData) {
+                    Reponsefeedback::create([
+                        'nom' => $reponseData['nom'],
+                        'questionsfeedbacks_id' => $question->id
+                    ]);
+                }
             }
-
+    
             // Générer le lien pour répondre aux questions
-            $responseLink = url(config('app.frontend_url') . '/eventform/:token/'.$token);
-
+            $responseLink = url(config('app.frontend_url') . '/eventform/' . $token);
+    
             return response()->json([
-                'message' => 'Événement et questions ajoutés avec succès!',
+                'message' => 'Événement, questions et réponses ajoutés avec succès!',
                 'evenement' => $evenement,
                 'response_link' => $responseLink
             ], 201);
         } catch (\Exception $e) {
             // Log de l'erreur pour débogage
             Log::error('Erreur lors de la création de l\'événement : ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-
+    
             return response()->json([
                 'message' => 'Erreur lors de la création de l\'événement',
                 'error' => $e->getMessage()
             ], 500);
         }
-    }
-
-
-
-    public function showQuestionsAndResponses($evenementId)
-    {
-        // Récupérer l'événement par ID
-        $evenement = Evenement::find($evenementId);
-
-        // Vérifier si l'événement existe
-        if (!$evenement) {
-            return response()->json(['message' => 'Événement non trouvé'], 404);
-        }
-
-        // Charger les questions et leurs réponses pour l'événement
-        $questions = Questionsfeedback::where('evenement_id', $evenementId)
-                        ->with('reponsefeedbacks')
-                        ->get();
-
-        // Retourner les données en JSON
-        return response()->json([
-            'evenement' => $evenement,
-            'questions' => $questions
-        ]);
     }
 
 
