@@ -7,6 +7,7 @@ use App\Models\Evenement;
 use App\Models\QuestionsFeedback;
 use App\Models\Reponsefeedback;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
@@ -141,77 +142,116 @@ class EvenementController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function updateEvenement(Request $request, $id)
+    public function updateEvenementWithQuestions(Request $request, $id)
     {
-        // Log de la requête reçue pour débogage
-        Log::info('Requête de mise à jour reçue : ', $request->all());
-
+        // Débogage initial des données de la requête
+        Log::info('Requête reçue pour mise à jour : ', $request->all());
+    
         // Validation des données d'entrée
         $validatedData = $request->validate([
-            'titre' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string|max:255',
-            'date_debut' => 'sometimes|required|date',
-            'date_fin' => 'sometimes|required|date|after_or_equal:date_debut',
-            'questions' => 'sometimes|array',
-            'questions.*.id' => 'sometimes|numeric|exists:questionsfeedbacks,id',
-            'questions.*.nom' => 'sometimes|required|string|max:255'
+            'titre' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'date_debut' => 'required|date',
+            'date_fin' => 'required|date|after_or_equal:date_debut',
+            'questions' => 'required|array',
+            'questions.*.id' => 'nullable|exists:questionsfeedbacks,id',
+            'questions.*.nom' => 'required|string|max:255',
+            'questions.*.reponses' => 'required|array',
+            'questions.*.reponses.*.id' => 'nullable|exists:reponsefeedbacks,id',
+            'questions.*.reponses.*.nom' => 'required|string|max:255'
         ]);
-
+    
         try {
             // Récupérer l'ID de l'utilisateur authentifié
             $userId = Auth::id();
-
+    
             // Vérifiez si l'utilisateur est authentifié
             if (!$userId) {
                 return response()->json(['message' => 'Utilisateur non authentifié'], 401);
             }
-
-            // Rechercher l'événement par son ID
-            $evenement = Evenement::findOrFail($id);
-            /*
-
-            // Vérifier si l'utilisateur a le droit de modifier cet événement
-            if ($evenement->usercreate !== $userId) {
-                return response()->json(['message' => 'Permission refusée pour modifier cet événement'], 403);
-            }*/
-
-            // Mise à jour des informations de l'événement
-            $evenement->update($validatedData);
-
-            // Gestion des questions associées (ajout, modification, suppression)
-            if (!empty($validatedData['questions'])) {
-                foreach ($validatedData['questions'] as $questionData) {
-                    if (isset($questionData['id'])) {
-                        // Mettre à jour la question existante
-                        $question = QuestionsFeedback::find($questionData['id']);
-                        if ($question && $question->evenement_id == $evenement->id) {
-                            $question->update(['nom' => $questionData['nom']]);
-                        }
-                    } else {
-                        // Ajouter une nouvelle question à l'événement
-                        QuestionsFeedback::create([
+    
+            // Log des données validées pour débogage
+            Log::info('Données validées : ', $validatedData);
+    
+            // Récupérer l'événement
+            $evenement = Evenement::find($id);
+    
+            if (!$evenement) {
+                return response()->json(['message' => 'Événement non trouvé'], 404);
+            }
+    
+            // Mise à jour des détails de l'événement
+            $evenement->update([
+                'titre' => $validatedData['titre'],
+                'description' => $validatedData['description'],
+                'date_debut' => $validatedData['date_debut'],
+                'date_fin' => $validatedData['date_fin'],
+                'usercreate' => $userId  // Enregistrement de l'ID de l'utilisateur
+            ]);
+    
+            // Traitement des questions et réponses associées
+            foreach ($validatedData['questions'] as $questionData) {
+                if (isset($questionData['id'])) {
+                    // Mise à jour de la question existante
+                    $question = QuestionsFeedback::find($questionData['id']);
+                    if ($question) {
+                        $question->update([
                             'nom' => $questionData['nom'],
                             'evenement_id' => $evenement->id
+                        ]);
+    
+                        // Traitement des réponses associées à la question existante
+                        foreach ($questionData['reponses'] as $reponseData) {
+                            if (isset($reponseData['id'])) {
+                                // Mise à jour de la réponse existante
+                                $reponse = Reponsefeedback::find($reponseData['id']);
+                                if ($reponse) {
+                                    $reponse->update([
+                                        'nom' => $reponseData['nom'],
+                                        'questionsfeedbacks_id' => $question->id
+                                    ]);
+                                }
+                            } else {
+                                // Création d'une nouvelle réponse
+                                Reponsefeedback::create([
+                                    'nom' => $reponseData['nom'],
+                                    'questionsfeedbacks_id' => $question->id
+                                ]);
+                            }
+                        }
+                    }
+                } else {
+                    // Création d'une nouvelle question
+                    $question = QuestionsFeedback::create([
+                        'nom' => $questionData['nom'],
+                        'evenement_id' => $evenement->id
+                    ]);
+    
+                    // Création des réponses associées à la nouvelle question
+                    foreach ($questionData['reponses'] as $reponseData) {
+                        Reponsefeedback::create([
+                            'nom' => $reponseData['nom'],
+                            'questionsfeedbacks_id' => $question->id
                         ]);
                     }
                 }
             }
-
-            // Retourner une réponse de succès
+    
             return response()->json([
-                'message' => 'Événement mis à jour avec succès!',
+                'message' => 'Événement, questions et réponses mis à jour avec succès!',
                 'evenement' => $evenement
             ], 200);
         } catch (\Exception $e) {
             // Log de l'erreur pour débogage
             Log::error('Erreur lors de la mise à jour de l\'événement : ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-
+    
             return response()->json([
                 'message' => 'Erreur lors de la mise à jour de l\'événement',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
+    
 
     /*
     public function update(Request $request, $id)
@@ -400,8 +440,41 @@ class EvenementController extends Controller
         }
     }
 
-
     
+
+    public function getQuestionsAndResponses($evenementId)
+    {
+        // Récupérer l'événement avec les questions et les réponses
+        $evenement = Evenement::with(['questionsfeedback.reponsefeedbacks'])
+            ->findOrFail($evenementId);
+
+        // Parcourir les questions et les réponses pour compter les sélections
+        $data = [];
+        foreach ($evenement->questionsfeedback as $question) {
+            $responsesData = [];
+            foreach ($question->reponsefeedbacks as $response) {
+                $count = DB::table('repondre_questions_evenebeemnts')
+                    ->where('reponsefeedback_id', $response->id)
+                    ->count();
+                $responsesData[] = [
+                    'id' => $response->id,
+                    'nom' => $response->nom,
+                    'count' => $count
+                ];
+            }
+            $data[] = [
+                'id' => $question->id,
+                'nom' => $question->nom,
+                'reponses' => $responsesData
+            ];
+        }
+
+        return response()->json([
+            'evenement_id' => $evenement->id,
+            'titre' => $evenement->titre,
+            'questions' => $data
+        ]);
+    }
     
     
 }

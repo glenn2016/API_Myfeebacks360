@@ -9,7 +9,7 @@ class RepondreQuestionsEvenebeemnt extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['reponsefeedback_id'];
+    protected $fillable = ['reponsefeedback_id','email'];
 
     public function reponsefeedback()
     {
