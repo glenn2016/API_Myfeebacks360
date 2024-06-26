@@ -188,9 +188,9 @@ class EvenementController extends Controller
             'questions' => 'required|array',
             'questions.*.id' => 'nullable|exists:questionsfeedbacks,id',
             'questions.*.nom' => 'required|string|max:255',
-            'questions.*.reponses' => 'required|array',
+            'questions.*.reponses' => 'nullable|array',
             'questions.*.reponses.*.id' => 'nullable|exists:reponsefeedbacks,id',
-            'questions.*.reponses.*.nom' => 'required|string|max:255'
+            'questions.*.reponses.*.nom' => 'nullable|string|max:255'
         ]);
     
         try {
@@ -408,8 +408,8 @@ class EvenementController extends Controller
             'date_fin' => 'required|date|after_or_equal:date_debut',
             'questions' => 'required|array',
             'questions.*.nom' => 'required|string|max:255',
-            'questions.*.reponses' => 'required|array',
-            'questions.*.reponses.*.nom' => 'required|string|max:255'
+            'questions.*.reponses' => 'nullable|array',
+            'questions.*.reponses.*.nom' => 'nullable|string|max:255'
         ]);
     
         try {
