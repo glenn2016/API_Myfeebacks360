@@ -20,14 +20,44 @@ class EvenementController extends Controller
     public function index()
     {
         try {
-            $user = Auth::user();   
-            // Utilisez where pour spécifier chaque condition séparément
+            $user = Auth::user();
+            
+            // Utilisez with pour charger les relations questionsfeedbacks et reponsefeedbacks
             $evenements = Evenement::where('etat', 1)
                                     ->where('usercreate', $user->id)
+                                    ->with(['questionsfeedback.reponsefeedbacks'])
                                     ->get();
             
+            // Préparer les données pour la réponse JSON
+            $data = [];
+            foreach ($evenements as $evenement) {
+                $questionsData = [];
+                foreach ($evenement->questionsfeedback as $question) {
+                    $responsesData = [];
+                    foreach ($question->reponsefeedbacks as $response) {
+                        $responsesData[] = [
+                            'id' => $response->id,
+                            'nom' => $response->nom
+                        ];
+                    }
+                    $questionsData[] = [
+                        'id' => $question->id,
+                        'nom' => $question->nom,
+                        'reponses' => $responsesData
+                    ];
+                }
+                $data[] = [
+                    'id' => $evenement->id,
+                    'titre' => $evenement->titre,
+                    'description' => $evenement->description,
+                    'date_debut' => $evenement->date_debut,
+                    'date_fin' => $evenement->date_fin,
+                    'questions' => $questionsData
+                ];
+            }
+    
             return response()->json([
-                'evenements' => $evenements,
+                'evenements' => $data,
                 'status' => 200
             ]);
         } catch (\Exception $e) {
@@ -38,6 +68,8 @@ class EvenementController extends Controller
             ], 500);
         }
     }
+    
+    
 
     public function indexevenement()
     {
