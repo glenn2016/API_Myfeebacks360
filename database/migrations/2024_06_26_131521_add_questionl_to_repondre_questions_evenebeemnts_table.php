@@ -11,19 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('repondre_questions_evenebeemnts', function (Blueprint $table) {
-            $table->id();
-            $table->string('email');
-
+        Schema::table('repondre_questions_evenebeemnts', function (Blueprint $table) {
+            //
             $table->unsignedBigInteger('reponsefeedback_id')->nullable();
             $table->foreign('reponsefeedback_id')->references('id')->on('reponsefeedbacks')->onDelete('cascade')->nullable();
-            
-            $table->unsignedBigInteger('questionsfeedbacks_id')->nullable();
-            $table->foreign('questionsfeedbacks_id')->references('id')->on('questionsfeedbacks')->onDelete('cascade')->nullable();
-
-            $table->string('repondre')->nullable();
-            
-            $table->timestamps();
+  
         });
     }
 
@@ -32,6 +24,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('repondre_questions_evenebeemnts');
+        Schema::table('repondre_questions_evenebeemnts', function (Blueprint $table) {
+            //
+        });
     }
 };

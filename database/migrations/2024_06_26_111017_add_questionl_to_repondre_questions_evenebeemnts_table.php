@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::table('repondre_questions_evenebeemnts', function (Blueprint $table) {
             //
-            $table->string('email');
+            $table->unsignedBigInteger('questionsfeedbacks_id')->nullable();
+            $table->foreign('questionsfeedbacks_id')->references('id')->on('questionsfeedbacks')->onDelete('cascade')->nullable();
+
         });
     }
 

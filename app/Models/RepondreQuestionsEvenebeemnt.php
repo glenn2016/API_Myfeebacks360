@@ -9,11 +9,22 @@ class RepondreQuestionsEvenebeemnt extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['reponsefeedback_id','email'];
+    protected $fillable = [
+        'reponsefeedback_id',
+        'email',
+        'questionsfeedbacks_id',
+        'repondre'
+    ];
 
     public function reponsefeedback()
     {
         return $this->belongsTo(Reponsefeedback::class);
     }
+
+    public function questionsfeedback()
+    {
+        return $this->belongsTo(questionsfeedback::class);
+    }
+
 
 }
