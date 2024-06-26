@@ -356,7 +356,7 @@ class QuestionsEvaluationController extends Controller
             if ($hasBeenEvaluated) {
                 return response()->json([
                     'message' => 'Impossible de modifier l\'évaluation car elle a déjà été évaluée.',
-                    "satuts"=>407
+                    "status"=>407
                 ], );
             }
 
