@@ -128,6 +128,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/evenement/create',[EvenementController::class,'createEvenementWithQuestions'])->middleware('auth:api');
     Route::post('/evenement/update/{id}', [EvenementController::class, 'updateEvenementWithQuestions'])->middleware('auth:api');
     Route::get('/listes/reponses/question/evenement/{evenementId}', [EvenementController::class, 'getQuestionsAndResponses'])->middleware('auth:api');
+    Route::get('/listes/reponses/question/evenement/repnodre/{evenementId}', [EvenementController::class, 'getQuestionsAndResponsess'])->middleware('auth:api');
     Route::delete('/evenements/{id}/soft-delete', [EvenementController::class, 'softDelete'])->middleware('auth:api');
     Route::get('/evenement/questions-reponses/{evenement_id}', [ReponsefeedbackController::class, 'evenementquestionreponse']);
     Route::post('/archiver/evenement/{id}',[EvenementController::class,'archiver'])->middleware('auth:api');

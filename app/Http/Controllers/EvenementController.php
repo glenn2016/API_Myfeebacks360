@@ -479,7 +479,7 @@ class EvenementController extends Controller
         // Récupérer l'événement avec les questions et les réponses
         $evenement = Evenement::with(['questionsfeedback.reponsefeedbacks'])
             ->findOrFail($evenementId);
-
+    
         // Parcourir les questions et les réponses pour compter les sélections
         $data = [];
         foreach ($evenement->questionsfeedback as $question) {
@@ -494,13 +494,17 @@ class EvenementController extends Controller
                     'count' => $count
                 ];
             }
-            $data[] = [
-                'id' => $question->id,
-                'nom' => $question->nom,
-                'reponses' => $responsesData
-            ];
+    
+            // N'ajouter la question que si elle a des réponses
+            if (!empty($responsesData)) {
+                $data[] = [
+                    'id' => $question->id,
+                    'nom' => $question->nom,
+                    'reponses' => $responsesData
+                ];
+            }
         }
-
+    
         return response()->json([
             'evenement_id' => $evenement->id,
             'titre' => $evenement->titre,
@@ -508,5 +512,62 @@ class EvenementController extends Controller
         ]);
     }
     
+    public function getQuestionsAndResponsess($evenementId)
+    {
+        try {
+            // Récupérer l'événement avec les questions et les réponses de reponsefeedbacks et repondre_questions_evenebeemnts
+            $evenement = Evenement::with(['questionsfeedback.reponsefeedbacks', 'questionsfeedback.repondreQuestionsEvenebeemnts'])
+                ->findOrFail($evenementId);
+    
+            // Parcourir les questions et les réponses pour récupérer toutes les réponses
+            $data = [];
+            foreach ($evenement->questionsfeedback as $question) {
+                $responsesData = [];
+    
+                // Récupérer les réponses de la table reponsefeedbacks
+                foreach ($question->reponsefeedbacks as $response) {
+                    $responsesData[] = [
+                        'id' => $response->id,
+                        'nom' => $response->nom,
+                        'type' => 'feedback'
+                    ];
+                }
+    
+                // Récupérer les réponses de la table repondre_questions_evenebeemnts
+                foreach ($question->repondreQuestionsEvenebeemnts as $additionalResponse) {
+                    $responsesData[] = [
+                        'id' => $additionalResponse->id,
+                        'nom' => $additionalResponse->repondre,
+                        'email' => $additionalResponse->email,
+                        'type' => 'reponse'
+                    ];
+                }
+    
+                // N'ajouter la question que si elle a des réponses
+                if (!empty($responsesData)) {
+                    $data[] = [
+                        'id' => $question->id,
+                        'nom' => $question->nom,
+                        'reponses' => $responsesData
+                    ];
+                }
+            }
+    
+            return response()->json([
+                'evenement_id' => $evenement->id,
+                'titre' => $evenement->titre,
+                'questions' => $data
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Gérer les erreurs et retourner un message d'erreur approprié
+            return response()->json([
+                'message' => 'Erreur lors de la récupération des questions et des réponses',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+
     
 }

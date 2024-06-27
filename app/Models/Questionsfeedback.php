@@ -30,7 +30,7 @@ class Questionsfeedback extends Model
         return $this->hasMany(Reponsefeedback::class, 'questionsfeedbacks_id', 'id');
     }
 
-    public function questionSelections()
+    public function repondreQuestionsEvenebeemnts()
     {
         return $this->hasMany(RepondreQuestionsEvenebeemnt::class);
     }
