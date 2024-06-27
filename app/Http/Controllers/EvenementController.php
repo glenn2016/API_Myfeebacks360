@@ -395,6 +395,8 @@ class EvenementController extends Controller
         return response()->json($result);
     }
 
+    /*Creation d'un evenement avec ses reponses et ses questions*/
+
     public function createEvenementWithQuestions(Request $request)
     {
         // Débogage initial des données de la requête
@@ -472,7 +474,8 @@ class EvenementController extends Controller
         }
     }
 
-    
+    /*listes des questions et des reponses choisies en fonction d'un evenemnt*/
+
 
     public function getQuestionsAndResponses($evenementId)
     {
@@ -511,39 +514,34 @@ class EvenementController extends Controller
             'questions' => $data
         ]);
     }
+
     
+    /*listes des questions et des reponses saisies en fonction d'un evenemnt*/
+    
+
     public function getQuestionsAndResponsess($evenementId)
     {
         try {
-            // Récupérer l'événement avec les questions et les réponses de reponsefeedbacks et repondre_questions_evenebeemnts
-            $evenement = Evenement::with(['questionsfeedback.reponsefeedbacks', 'questionsfeedback.repondreQuestionsEvenebeemnts'])
+            // Récupérer l'événement avec les questions et les réponses de repondre_questions_evenebeemnts
+            $evenement = Evenement::with(['questionsfeedback.repondreQuestionsEvenebeemnts'])
                 ->findOrFail($evenementId);
-    
-            // Parcourir les questions et les réponses pour récupérer toutes les réponses
+
+            // Parcourir les questions pour organiser les réponses
             $data = [];
             foreach ($evenement->questionsfeedback as $question) {
                 $responsesData = [];
-    
-                // Récupérer les réponses de la table reponsefeedbacks
-                foreach ($question->reponsefeedbacks as $response) {
-                    $responsesData[] = [
-                        'id' => $response->id,
-                        'nom' => $response->nom,
-                        'type' => 'feedback'
-                    ];
-                }
-    
+
                 // Récupérer les réponses de la table repondre_questions_evenebeemnts
                 foreach ($question->repondreQuestionsEvenebeemnts as $additionalResponse) {
-                    $responsesData[] = [
-                        'id' => $additionalResponse->id,
-                        'nom' => $additionalResponse->repondre,
-                        'email' => $additionalResponse->email,
-                        'type' => 'reponse'
-                    ];
+                    if (!is_null($additionalResponse->repondre)) {
+                        $responsesData[] = [
+                            'id' => $additionalResponse->id,
+                            'repondre' => $additionalResponse->repondre
+                        ];
+                    }
                 }
-    
-                // N'ajouter la question que si elle a des réponses
+
+                // N'ajouter la question que si elle a des réponses non nulles
                 if (!empty($responsesData)) {
                     $data[] = [
                         'id' => $question->id,
@@ -552,13 +550,13 @@ class EvenementController extends Controller
                     ];
                 }
             }
-    
+
             return response()->json([
                 'evenement_id' => $evenement->id,
                 'titre' => $evenement->titre,
                 'questions' => $data
             ], 200);
-    
+
         } catch (\Exception $e) {
             // Gérer les erreurs et retourner un message d'erreur approprié
             return response()->json([
@@ -567,6 +565,63 @@ class EvenementController extends Controller
             ], 500);
         }
     }
+
+    //version ave email
+
+    /*public function getQuestionsAndResponses($evenementId)
+    {
+        try {
+            // Récupérer l'événement avec les questions et les réponses de repondre_questions_evenebeemnts
+            $evenement = Evenement::with(['questionsfeedback.repondreQuestionsEvenebeemnts'])
+                ->findOrFail($evenementId);
+
+            // Parcourir les questions pour organiser les réponses
+            $data = [];
+            foreach ($evenement->questionsfeedback as $question) {
+                $responsesData = [];
+
+                // Récupérer les réponses de la table repondre_questions_evenebeemnts
+                foreach ($question->repondreQuestionsEvenebeemnts as $additionalResponse) {
+                    if (!is_null($additionalResponse->repondre)) {
+                        $responsesData[] = [
+                            'id' => $additionalResponse->id,
+                            'repondre' => $additionalResponse->repondre,
+                            'email' => $additionalResponse->email
+                        ];
+                    }
+                }
+
+                // N'ajouter la question que si elle a des réponses non nulles
+                if (!empty($responsesData)) {
+                    $data[] = [
+                        'id' => $question->id,
+                        'nom' => $question->nom,
+                        'reponses' => $responsesData
+                    ];
+                }
+            }
+
+            return response()->json([
+                'evenement_id' => $evenement->id,
+                'titre' => $evenement->titre,
+                'questions' => $data
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Gérer les erreurs et retourner un message d'erreur approprié
+            return response()->json([
+                'message' => 'Erreur lors de la récupération des questions et des réponses',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    */
+
+
+
+    
+    
+
     
 
     

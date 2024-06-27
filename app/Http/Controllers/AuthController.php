@@ -131,7 +131,7 @@ class AuthController extends Controller
             $validations = Validator::make($request->all(), [
                 'nom' => ['required', 'string', 'max:255'],
                 'prenom' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
                 'password' => 'required|string|min:8',
                 'abonnement_id' => ['required', 'exists:abonnements,id'],
                 'entrepriseAbaonement' => ['required', 'string', 'max:255'],
@@ -154,7 +154,7 @@ class AuthController extends Controller
                 $user = User::create([
                     'nom' => $request->nom,
                     'prenom' => $request->prenom,
-                    'email' => $request->email,
+                    'email' => strtolower($request->email),
                     'entrepriseAbaonement' => $request->entrepriseAbaonement,
                     'password' => Hash::make($request->password),
                     'usercreate' => $userId
@@ -297,7 +297,7 @@ class AuthController extends Controller
             $validations = Validator::make($request->all(), [
                 'nom' => ['required', 'string', 'max:255'],
                 'prenom' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'email' => ['required', 'string',  'email', 'max:255', 'unique:'.User::class],
                 'password' => 'required|string|min:8',
             ]);
 
@@ -315,7 +315,7 @@ class AuthController extends Controller
                 $user = User::create([
                     'nom' => $request->nom,
                     'prenom' => $request->prenom,
-                    'email' => $request->email,
+                    'email' => strtolower($request->email),
                     'entreprise_id' => $request->entreprise_id, // Assurez-vous que ce champ est présent dans la table 'users'
                     'password' => Hash::make($request->password),
                     'usercreate' => $userId

@@ -30,31 +30,40 @@ class NewsletterController extends Controller
     public function create(Request $request)
     {
         try {
-            $id = $request->input('id');
-            $uniqueRule = $id ? 'unique:users,email,'.$id : 'unique:users,email';
-    
+            // Validation des données d'entrée avec l'email en minuscules
             $validatedData = $request->validate([
-                'email' => ['required', 'string', 'email', 'max:255', $uniqueRule],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:newsletters,email'],
             ]);
     
+            // Transformation de l'email en minuscules pour éviter les conflits de casse
+            $validatedData['email'] = strtolower($validatedData['email']);
+    
+            // Vérifier si l'email existe déjà dans la table 'newsletters'
             $existingNewsletter = Newsletter::where('email', $validatedData['email'])->first();
             if ($existingNewsletter) {
                 return response()->json([
                     'message' => 'L\'adresse e-mail existe déjà dans la newsletter',
                     'newsletter' => $existingNewsletter,
-                ], 409);
+                ], 409); // 409 Conflict
             }
+    
+            // Créer une nouvelle entrée dans la table 'newsletters'
+            $newNewsletter = Newsletter::create($validatedData);
+    
+            // Retourner une réponse JSON avec la nouvelle entrée créée
             return response()->json([
-                'newsletter' => Newsletter::create($validatedData),
+                'newsletter' => $newNewsletter,
                 'message' => 'Newsletter créée avec succès',
-            ], 200);
+            ], 201); // 201 Created
         } catch (\Exception $e) {
+            // Retourner une réponse JSON en cas d'erreur
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la création de la newsletter',
                 'error' => $e->getMessage(),
-            ], 500);
+            ], 500); // 500 Internal Server Error
         }
     }
+    
     /**
      * Remove the specified resource from storage.
      */

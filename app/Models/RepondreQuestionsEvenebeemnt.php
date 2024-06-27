@@ -18,12 +18,12 @@ class RepondreQuestionsEvenebeemnt extends Model
 
     public function reponsefeedback()
     {
-        return $this->belongsTo(Reponsefeedback::class);
+        return $this->belongsTo(Reponsefeedback::class, 'reponsefeedback_id');
     }
 
     public function questionsfeedback()
     {
-        return $this->belongsTo(questionsfeedback::class);
+        return $this->belongsTo(Questionsfeedback::class,'questionsfeedbacks_id');
     }
 
 
