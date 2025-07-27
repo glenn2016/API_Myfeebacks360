@@ -29,7 +29,7 @@ WORKDIR /var/www
 COPY . .
 
 # Installer les dépendances PHP
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install
 
 # Exposer le port
 EXPOSE 8000
