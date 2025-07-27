@@ -28,9 +28,6 @@ WORKDIR /var/www
 # Copier les fichiers de l'application
 COPY . .
 
-# Installer les dépendances PHP
-RUN composer install
-
 # Exposer le port
 EXPOSE 8000
 
