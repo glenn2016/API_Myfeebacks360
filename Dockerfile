@@ -1,7 +1,6 @@
 FROM php:8.2-fpm
 
 # Installer les dépendances système
-
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -15,11 +14,9 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     lsb-release \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd
-
-
-# Installer les extensions PHP nécessaires
-RUN docker-php-ext-install pdo pdo_pgsql pgsql
+    && docker-php-ext-install gd \
+    && docker-php-ext-install zip \
+    && docker-php-ext-install pdo pdo_pgsql pgsql
 
 # Définir le répertoire de travail
 WORKDIR /var/www
@@ -31,7 +28,7 @@ COPY . .
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Installer les dépendances PHP avec Composer
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Exposer le port
 EXPOSE 8000
