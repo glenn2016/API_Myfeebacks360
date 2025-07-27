@@ -14,19 +14,26 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg2 \
     lsb-release \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists \
+    && apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd/*
+
 
 # Installer les extensions PHP nécessaires
 RUN docker-php-ext-install pdo pdo_pgsql pgsql
-
-# Installer Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Définir le répertoire de travail
 WORKDIR /var/www
 
 # Copier les fichiers de l'application
 COPY . .
+
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Installer les dépendances PHP avec Composer
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Exposer le port
 EXPOSE 8000
